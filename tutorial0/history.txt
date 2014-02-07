@@ -1,0 +1,892 @@
+    1  2013-12-17 17:03:07  ls
+    2  2013-12-17 17:03:07  pwd
+    3  2013-12-17 17:03:07  exit
+    4  2013-12-17 17:03:07  df
+    5  2013-12-17 17:03:07  ls /antonfs/
+    6  2013-12-17 17:03:07  vim junk
+    7  2013-12-17 17:03:07  ls
+    8  2013-12-17 17:03:07  cd build/
+    9  2013-12-17 17:03:07  ls
+   10  2013-12-17 17:03:07  vim Makefile
+   11  2013-12-17 17:03:07  ls
+   12  2013-12-17 17:03:07  svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
+   13  2013-12-17 17:03:07  ls
+   14  2013-12-17 17:03:07  cd llvm/
+   15  2013-12-17 17:03:07  ls
+   16  2013-12-17 17:03:07  cd tools/
+   17  2013-12-17 17:03:07  ls
+   18  2013-12-17 17:03:07  svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
+   19  2013-12-17 17:03:07  cd ../projects/
+   20  2013-12-17 17:03:07  ls
+   21  2013-12-17 17:03:07  svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt
+   22  2013-12-17 17:03:07  cd ..
+   23  2013-12-17 17:03:07  mkdir build
+   24  2013-12-17 17:03:07  cd build/
+   25  2013-12-17 17:03:07  ls
+   26  2013-12-17 17:03:07  ../llvm/configure
+   27  2013-12-17 17:03:07  cd ..
+   28  2013-12-17 17:03:07  rmdir build
+   29  2013-12-17 17:03:07  cd ..
+   30  2013-12-17 17:03:07  mkdir build 
+   31  2013-12-17 17:03:07  cd build/
+   32  2013-12-17 17:03:07  ../llvm/configure
+   33  2013-12-17 17:03:07  make
+   34  2013-12-17 17:03:07  make check-all
+   35  2013-12-17 17:03:07  ls
+   36  2013-12-17 17:03:07  cd llvm/
+   37  2013-12-17 17:03:07  ls
+   38  2013-12-17 17:03:07  make check
+   39  2013-12-17 17:03:07  make check-all
+   40  2013-12-17 17:03:07  ls
+   41  2013-12-17 17:03:07  cd ../build/
+   42  2013-12-17 17:03:07  ls
+   43  2013-12-17 17:03:07  make check-all
+   44  2013-12-17 17:03:07  make update
+   45  2013-12-17 17:03:07  ls
+   46  2013-12-17 17:03:07  wget https://github.com/halide/Halide/archive/master.zip
+   47  2013-12-17 17:03:07  ls
+   48  2013-12-17 17:03:07  unzip master.zip 
+   49  2013-12-17 17:03:07  ls
+   50  2013-12-17 17:03:07  cd Halide-master/
+   51  2013-12-17 17:03:07  make
+   52  2013-12-17 17:03:07  export LLVM_CONFIG=/home/dkirby/llvm/Release+Asserts/bin/llvm-config
+   53  2013-12-17 17:03:07  ls
+   54  2013-12-17 17:03:07  cd
+   55  2013-12-17 17:03:07  ls
+   56  2013-12-17 17:03:07  export CLANG=/home/dkirby/llvm/Release+Asserts/bin/clang
+   57  2013-12-17 17:03:07  ls
+   58  2013-12-17 17:03:07  cd llvm/
+   59  2013-12-17 17:03:07  ls
+   60  2013-12-17 17:03:07  cd
+   61  2013-12-17 17:03:07  ls
+   62  2013-12-17 17:03:07  locate Halide-Master
+   63  2013-12-17 17:03:07  locate master.zip
+   64  2013-12-17 17:03:07  ls
+   65  2013-12-17 17:03:07  cd
+   66  2013-12-17 17:03:07  ls
+   67  2013-12-17 17:03:07  cd build/
+   68  2013-12-17 17:03:07  ls
+   69  2013-12-17 17:03:07  rm -r Halide-master/
+   70  2013-12-17 17:03:07  mv master.zip ..
+   71  2013-12-17 17:03:07  cd ..
+   72  2013-12-17 17:03:07  ls
+   73  2013-12-17 17:03:07  unzip master.zip 
+   74  2013-12-17 17:03:07  cd Halide-master/
+   75  2013-12-17 17:03:07  make
+   76  2013-12-17 17:03:07  echo $LLVM_CONFIG
+   77  2013-12-17 17:03:07  ls echo $LLVM_CONFIG
+   78  2013-12-17 17:03:07  cd
+   79  2013-12-17 17:03:07  ls
+   80  2013-12-17 17:03:07  cd llvm/
+   81  2013-12-17 17:03:07  ls
+   82  2013-12-17 17:03:07  ./configure --enable-optimized --enable-assertions --with-clang --enable-targets=x86,arm,nvptx
+   83  2013-12-17 17:03:07  make -j8
+   84  2013-12-17 17:03:07  make check-all
+   85  2013-12-17 17:03:07  pwd
+   86  2013-12-17 17:03:07  cd ..
+   87  2013-12-17 17:03:07  ls
+   88  2013-12-17 17:03:07  cd Halide-master/
+   89  2013-12-17 17:03:07  ls
+   90  2013-12-17 17:03:07  make
+   91  2013-12-17 17:03:07  locate Halide.h
+   92  2013-12-17 17:03:07  ls /usr/
+   93  2013-12-17 17:03:07  ls /usr/include/
+   94  2013-12-17 17:03:07  ls
+   95  2013-12-17 17:03:07  cd
+   96  2013-12-17 17:03:07  ls
+   97  2013-12-17 17:03:07  mkdir Halide
+   98  2013-12-17 17:03:07  cd Halide
+   99  2013-12-17 17:03:07  ls
+  100  2013-12-17 17:03:07  touch lesson_01
+  101  2013-12-17 17:03:07  vim lesson_01 
+  102  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  103  2013-12-17 17:03:07  mv lesson_01 lesson_01.cpp
+  104  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  105  2013-12-17 17:03:07  locate Halide.h
+  106  2013-12-17 17:03:07  g++ lesson_01.cpp -I /home/dkirby/Halide-master/include/ -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  107  2013-12-17 17:03:07  ls Hal
+  108  2013-12-17 17:03:07  cd ..
+  109  2013-12-17 17:03:07  ls
+  110  2013-12-17 17:03:07  ls Halide-master/
+  111  2013-12-17 17:03:07  cd Halide0
+  112  2013-12-17 17:03:07  cd Halide-master/
+  113  2013-12-17 17:03:07  ls
+  114  2013-12-17 17:03:07  cd tutorial/
+  115  2013-12-17 17:03:07  ls
+  116  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  117  2013-12-17 17:03:07  ls
+  118  2013-12-17 17:03:07  ./lesson_01 
+  119  2013-12-17 17:03:07  locate libHalide.so
+  120  2013-12-17 17:03:07  ./lesson_01 g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  121  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  122  2013-12-17 17:03:07  lsA
+  123  2013-12-17 17:03:07  ./lesson_01 
+  124  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  125  2013-12-17 17:03:07  ./lesson_01 
+  126  2013-12-17 17:03:07  ls ../bin/libHalide.
+  127  2013-12-17 17:03:07  ls ../bin/libHalide.so 
+  128  2013-12-17 17:03:07  ls -ltr ../bin/libHalide.so 
+  129  2013-12-17 17:03:07  gcc lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  130  2013-12-17 17:03:07  ls
+  131  2013-12-17 17:03:07  ./lesson_01 
+  132  2013-12-17 17:03:07  vim lesson_02.cpp 
+  133  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L /home/dkirby/Halide-master/bin -lHalide -lpthread -ldl -o lesson_01
+  134  2013-12-17 17:03:07  ./lesson_01 
+  135  2013-12-17 17:03:07  cp ../bin/libHalide.so /usr/lib
+  136  2013-12-17 17:03:07  cp ../bin/libHalide.so /lib
+  137  2013-12-17 17:03:07  cp ../bin/libHalide.so /usr/local/lib
+  138  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L /home/dkirby/Halide-master/bin/ -lHalide -lpthread -ldl -o lesson_01
+  139  2013-12-17 17:03:07  ./lesson_01 
+  140  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L /home/dkirby/Halide-master/bin/ -lHalide -lpthread -ldl -o lesson_01
+  141  2013-12-17 17:03:07  ./lesson_01 
+  142  2013-12-17 17:03:07  chmod 777 ../bin/libHalide.so
+  143  2013-12-17 17:03:07  ./lesson_01 
+  144  2013-12-17 17:03:07  export $LD_LIBRARY_PATH /home/dkirby/Halide-master/bin/
+  145  2013-12-17 17:03:07  echo $LD_LIBRARY_PATH
+  146  2013-12-17 17:03:07  export LD_LIBRARY_PATH /home/dkirby/Halide-master/bin/
+  147  2013-12-17 17:03:07  man ld_library_path
+  148  2013-12-17 17:03:07  export LD_LIBRARY_PATH=/home/dkirby/Halide-master/bin/
+  149  2013-12-17 17:03:07  export LD_LIBRARY_PATH /home/dkirby/Halide-master/bin/
+  150  2013-12-17 17:03:07  echo $LD_LIBRARY_PATH
+  151  2013-12-17 17:03:07  ./lesson_01 
+  152  2013-12-17 17:03:07  ldd
+  153  2013-12-17 17:03:07  ldd lesson_01.cpp 
+  154  2013-12-17 17:03:07  ldd lesson_01
+  155  2013-12-17 17:03:07  ls
+  156  2013-12-17 17:03:07  vim dansfisthalideprogram.cpp
+  157  2013-12-17 17:03:07  g++ dansfisthalideprogram.cpp -I ../include -L /home/dkirby/Halide-master/bin/ -lHalide -lpthread -ldl -o hai
+  158  2013-12-17 17:03:07  ls
+  159  2013-12-17 17:03:07  ./hai 
+  160  2013-12-17 17:03:07  export LD_LIBRARY_PATH=
+  161  2013-12-17 17:03:07  echo $LD_LIBRARY_PATH
+  162  2013-12-17 17:03:07  ./hai 
+  163  2013-12-17 17:03:07  g++ dansfisthalideprogram.cpp -I ../include -L /home/dkirby/Halide-master/bin/ -lHalide -lpthread -ldl -o hai -rpath=/home/dkirby/Halide-master/bin/
+  164  2013-12-17 17:03:07  export LD_LIBRARY_PATH=/home/dkirby/Halide-master/bin/
+  165  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L /home/dkirby/Halide-master/bin/ -lHalide -lpthread -ldl -o lesson_01
+  166  2013-12-17 17:03:07  ./lesson_01 
+  167  2013-12-17 17:03:07  ./hai 
+  168  2013-12-17 17:03:07  vim runhalideprogram.sh
+  169  2013-12-17 17:03:07  ls
+  170  2013-12-17 17:03:07  chmod +x runhalideprogram.sh 
+  171  2013-12-17 17:03:07  ./runhalideprogram.sh hai 
+  172  2013-12-17 17:03:07  vim runhalideprogram.sh
+  173  2013-12-17 17:03:07  ./runhalideprogram.sh 
+  174  2013-12-17 17:03:07  ./runhalideprogram.sh hai
+  175  2013-12-17 17:03:07  vim runhalideprogram.sh
+  176  2013-12-17 17:03:07  ./runhalideprogram.sh hai
+  177  2013-12-17 17:03:07  echo $LD_LIBRARY_PATH
+  178  2013-12-17 17:03:07  exit
+  179  2013-12-17 17:03:07  vim lesson_02.cpp 
+  180  2013-12-17 17:03:07  locate png.h
+  181  2013-12-17 17:03:07  cp /antonfs/scratch/dittrich/vmd_source/fltk/fltk-1.1.10/png/png.h .
+  182  2013-12-17 17:03:07  ls
+  183  2013-12-17 17:03:07  cp png.h ../include/
+  184  2013-12-17 17:03:07  rm ../include/png.h 
+  185  2013-12-17 17:03:07  vim png.h 
+  186  2013-12-17 17:03:07  cp png.h ../include/
+  187  2013-12-17 17:03:07  vim png.h 
+  188  2013-12-17 17:03:07  locate zlib.h
+  189  2013-12-17 17:03:07  cp /antonfs/scratch/dittrich/vmd_source/fltk/fltk-1.1.10/zlib/zlib.
+  190  2013-12-17 17:03:07  cp /antonfs/scratch/dittrich/vmd_source/fltk/fltk-1.1.10/zlib/zlib.h .
+  191  2013-12-17 17:03:07  ls
+  192  2013-12-17 17:03:07  cp zlib.h ../include/
+  193  2013-12-17 17:03:07  vim png.h 
+  194  2013-12-17 17:03:07  ls /antonfs/scratch/dittrich/vmd_source/fltk/fltk-1.1.10/png/pngconf.h .
+  195  2013-12-17 17:03:07  cp /antonfs/scratch/dittrich/vmd_source/fltk/fltk-1.1.10/png/pngconf.h .
+  196  2013-12-17 17:03:07  ls
+  197  2013-12-17 17:03:07  cp pngconf.h ../include/
+  198  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  199  2013-12-17 17:03:07  man g++
+  200  2013-12-17 17:03:07  sudo apt-get install libpng
+  201  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  202  2013-12-17 17:03:07  exit
+  203  2013-12-17 17:03:07  who
+  204  2013-12-17 17:03:07  last
+  205  2013-12-17 17:03:07  ls
+  206  2013-12-17 17:03:07  cd Halide-master/
+  207  2013-12-17 17:03:07  ls
+  208  2013-12-17 17:03:07  cd tutorial/
+  209  2013-12-17 17:03:07  ls
+  210  2013-12-17 17:03:07  ./lesson_01 
+  211  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_01
+  212  2013-12-17 17:03:07  ls
+  213  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_01
+  214  2013-12-17 17:03:07  vim Makefile
+  215  2013-12-17 17:03:07  fg
+  216  2013-12-17 17:03:07  make
+  217  2013-12-17 17:03:07  make lesson
+  218  2013-12-17 17:03:07  make lesson_01.cpp
+  219  2013-12-17 17:03:07  vim Makefile
+  220  2013-12-17 17:03:07  ls
+  221  2013-12-17 17:03:07  g++ lesson_03.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_03
+  222  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_0
+  223  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_03
+  224  2013-12-17 17:03:07  ls
+  225  2013-12-17 17:03:07  locate brighter.php
+  226  2013-12-17 17:03:07  locate brighter.png
+  227  2013-12-17 17:03:07  ls
+  228  2013-12-17 17:03:07  ls ../apps/
+  229  2013-12-17 17:03:07  ls ../apps/images/
+  230  2013-12-17 17:03:07  display ../apps/images/rgb
+  231  2013-12-17 17:03:07  display ../apps/images/rgb.png
+  232  2013-12-17 17:03:07  sl
+  233  2013-12-17 17:03:07  cat gradient.cpp 
+  234  2013-12-17 17:03:07  ./gra
+  235  2013-12-17 17:03:07  ls
+  236  2013-12-17 17:03:07  ls- l
+  237  2013-12-17 17:03:07  ls -l
+  238  2013-12-17 17:03:07  export HL_DEBUG_CODEGEN=1
+  239  2013-12-17 17:03:07  export HL_DEBUG_CODEGEN=0
+  240  2013-12-17 17:03:07  export HL_DEBUG_CODEGEN=1
+  241  2013-12-17 17:03:07  ./lesson_03
+  242  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_03
+  243  2013-12-17 17:03:07  ls
+  244  2013-12-17 17:03:07  vim gradient.cpp 
+  245  2013-12-17 17:03:07  vim lesson_01.cpp 
+  246  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  247  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_01
+  248  2013-12-17 17:03:07  vim lesson_01.cpp 
+  249  2013-12-17 17:03:07  ls
+  250  2013-12-17 17:03:07  cat todo.txt 
+  251  2013-12-17 17:03:07  vim lesson_01.cpp 
+  252  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  253  2013-12-17 17:03:07  vim lesson_01.cpp 
+  254  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  255  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_02
+  256  2013-12-17 17:03:07  vim lesson_01.cpp 
+  257  2013-12-17 17:03:07  vim lesson_02.cpp 
+  258  2013-12-17 17:03:07  g++ lesson_0.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_02
+  259  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_02
+  260  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  261  2013-12-17 17:03:07  vim lesson_01.cpp
+  262  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  263  2013-12-17 17:03:07  gnome-terminal &
+  264  2013-12-17 17:03:07  exit
+  265  2013-12-17 17:03:07  ls
+  266  2013-12-17 17:03:07  vim lesson_01.cpp 
+  267  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  268  2013-12-17 17:03:07  vim lesson_01.cpp 
+  269  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  270  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01 > gaaaaheverythingexploded
+  271  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01 2> gaaaaheverythingexploded
+  272  2013-12-17 17:03:07  vim gaaaaheverythingexploded 
+  273  2013-12-17 17:03:07  ls
+  274  2013-12-17 17:03:07  cd Halide-master/
+  275  2013-12-17 17:03:07  ls
+  276  2013-12-17 17:03:07  cd tutorial/
+  277  2013-12-17 17:03:07  ls
+  278  2013-12-17 17:03:07  cd Halide-master/
+  279  2013-12-17 17:03:07  ls /usr/bin/ld
+  280  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  281  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng3 -o lesson_02
+  282  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_02
+  283  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  284  2013-12-17 17:03:07  ls /usr/lib/
+  285  2013-12-17 17:03:07  ls /usr/lib/lib*
+  286  2013-12-17 17:03:07  ls /usr/lib/libpng*
+  287  2013-12-17 17:03:07  cd
+  288  2013-12-17 17:03:07  wget http://spiegl.de/qiv/download/qiv-2.2.4.tgz
+  289  2013-12-17 17:03:07  ls
+  290  2013-12-17 17:03:07  tar -xvf qiv-2.2.4.tgz 
+  291  2013-12-17 17:03:07  ls
+  292  2013-12-17 17:03:07  cd qiv-2.2.4/
+  293  2013-12-17 17:03:07  ls
+  294  2013-12-17 17:03:07  vim README.INSTALL 
+  295  2013-12-17 17:03:07  make
+  296  2013-12-17 17:03:07  make install
+  297  2013-12-17 17:03:07  vim README.INSTALL 
+  298  2013-12-17 17:03:07  dpkg-buildpackage -uc -B -m"your@email.address" -rfakeroot
+  299  2013-12-17 17:03:07  ls
+  300  2013-12-17 17:03:07  exit
+  301  2013-12-17 17:03:07  ls
+  302  2013-12-17 17:03:07  sudo apt-get install libpng-devel
+  303  2013-12-17 17:03:07  cd qiv-2.2.4/
+  304  2013-12-17 17:03:07  ls
+  305  2013-12-17 17:03:07  make
+  306  2013-12-17 17:03:07  sudo apt-get install dpkg-buildpackage
+  307  2013-12-17 17:03:07  ls
+  308  2013-12-17 17:03:07  rmdir Halide
+  309  2013-12-17 17:03:07  ls Halide
+  310  2013-12-17 17:03:07  rm -r Halide
+  311  2013-12-17 17:03:07  cd Halide-master/
+  312  2013-12-17 17:03:07  ls
+  313  2013-12-17 17:03:07  cd tutorial/
+  314  2013-12-17 17:03:07  ls
+  315  2013-12-17 17:03:07  cat gaaaaheverythingexploded 
+  316  2013-12-17 17:03:07  rm gaaaaheverythingexploded 
+  317  2013-12-17 17:03:07  ls
+  318  2013-12-17 17:03:07  locate libpng.so
+  319  2013-12-17 17:03:07  locate libpng.so.3
+  320  2013-12-17 17:03:07  ls /usr/lib/libpng.so.3 
+  321  2013-12-17 17:03:07  man ln
+  322  2013-12-17 17:03:07  ln -s /usr/lib/libpng.so.3 /usr/lib/libpng.so
+  323  2013-12-17 17:03:07  sudo ln -s /usr/lib/libpng.so.3 /usr/lib/libpng.so
+  324  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  325  2013-12-17 17:03:07  man gcc
+  326  2013-12-17 17:03:07  man g++
+  327  2013-12-17 17:03:07  ls /usr/lib/libpng
+  328  2013-12-17 17:03:07  ls /usr/lib/libpng*
+  329  2013-12-17 17:03:07  ls /usr/lib/libpng.so
+  330  2013-12-17 17:03:07  sudo ln -s /usr/lib/libpng.so.3 /usr/lib/libpng.so
+  331  2013-12-17 17:03:07  man ln
+  332  2013-12-17 17:03:07  rm /usr/lib/libpng.so
+  333  2013-12-17 17:03:07  sudo rm /usr/lib/libpng.so
+  334  2013-12-17 17:03:07  pkg-config --libs libpng
+  335  2013-12-17 17:03:07  sudo apt-get install libpng12-dev
+  336  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  337  2013-12-17 17:03:07  man g++
+  338  2013-12-17 17:03:07  pkg-config --libs libpng
+  339  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02 'pkg-config --libs libpng'
+  340  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl $(pkg-config --cflags libpng) -o lesson_02
+  341  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02 'pkg-config --libs libpng'
+  342  2013-12-17 17:03:07  ./lesson_02
+  343  2013-12-17 17:03:07  ls
+  344  2013-12-17 17:03:07  rm *.h
+  345  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  346  2013-12-17 17:03:07  ls
+  347  2013-12-17 17:03:07  ./lesson_0
+  348  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_0
+  349  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_02
+  350  2013-12-17 17:03:07  ls
+  351  2013-12-17 17:03:07  display brighter.png 
+  352  2013-12-17 17:03:07  bg
+  353  2013-12-17 17:03:07  display ../apps/images/rgb.png 
+  354  2013-12-17 17:03:07  ls
+  355  2013-12-17 17:03:07  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_01
+  356  2013-12-17 17:03:07  gnome-terminal &
+  357  2013-12-17 17:03:07  ps
+  358  2013-12-17 17:03:07  exit
+  359  2013-12-17 17:03:07  vim lesson_01.cpp 
+  360  2013-12-17 17:03:07  vim flip.cpp 
+  361  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  362  2013-12-17 17:03:07  ./flop 
+  363  2013-12-17 17:03:07  ./runhalideprogram.sh flop 
+  364  2013-12-17 17:03:07  ./flop 
+  365  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  366  2013-12-17 17:03:07  ./runhalideprogram.sh flop 
+  367  2013-12-17 17:03:07  ls
+  368  2013-12-17 17:03:07  display flip.
+  369  2013-12-17 17:03:07  display flip.png 
+  370  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  371  2013-12-17 17:03:07  ./runhalideprogram.sh flop 
+  372  2013-12-17 17:03:07  ls
+  373  2013-12-17 17:03:07  vim lesson_01.cpp 
+  374  2013-12-17 17:03:07  cp lesson_02.cpp flip.cpp
+  375  2013-12-17 17:03:07  vim flip.cpp 
+  376  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  377  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  378  2013-12-17 17:03:07  ls
+  379  2013-12-17 17:03:07  ./flop 
+  380  2013-12-17 17:03:07  ./runhalideprogram.sh flop 
+  381  2013-12-17 17:03:07  vim flip.cpp 
+  382  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  383  2013-12-17 17:03:07  vim flip.cpp 
+  384  2013-12-17 17:03:07  ls
+  385  2013-12-17 17:03:07  cd tut
+  386  2013-12-17 17:03:07  cd tutorial
+  387  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  388  2013-12-17 17:03:07  ls
+  389  2013-12-17 17:03:07  vim flip.cpp 
+  390  2013-12-17 17:03:07  who
+  391  2013-12-17 17:03:07  ls
+  392  2013-12-17 17:03:07  gcc -lpng weirdcolors.c
+  393  2013-12-17 17:03:07  ls /tmp/
+  394  2013-12-17 17:03:07  ls
+  395  2013-12-17 17:03:07  cp /tmp/iavg.c .
+  396  2013-12-17 17:03:07  cp /tmp/myimio.h 
+  397  2013-12-17 17:03:07  cp /tmp/myimio.h .
+  398  2013-12-17 17:03:07  ls
+  399  2013-12-17 17:03:07  vim iavg.c 
+  400  2013-12-17 17:03:07  ls
+  401  2013-12-17 17:03:07  cd Halide-master/
+  402  2013-12-17 17:03:07  ls
+  403  2013-12-17 17:03:07  cd tutorial/
+  404  2013-12-17 17:03:07  ls
+  405  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  406  2013-12-17 17:03:07  ./runhalideprogram.sh fl
+  407  2013-12-17 17:03:07  ./runhalideprogram.sh flop
+  408  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  409  2013-12-17 17:03:07  ./runhalideprogram.sh flop
+  410  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  411  2013-12-17 17:03:07  ./runhalideprogram.sh flop
+  412  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  413  2013-12-17 17:03:07  ./runhalideprogram.sh flop
+  414  2013-12-17 17:03:07  display flip.png 
+  415  2013-12-17 17:03:07  who
+  416  2013-12-17 17:03:07  ps
+  417  2013-12-17 17:03:07  top
+  418  2013-12-17 17:03:07  display flip.png 
+  419  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  420  2013-12-17 17:03:07  vim lesson_01.cpp 
+  421  2013-12-17 17:03:07  vim lesson_02.cpp 
+  422  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  423  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_02
+  424  2013-12-17 17:03:07  ls
+  425  2013-12-17 17:03:07  display brighter.png 
+  426  2013-12-17 17:03:07  vim lesson_02.cpp 
+  427  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  428  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_0
+  429  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_02
+  430  2013-12-17 17:03:07  vim lesson_02.cpp 
+  431  2013-12-17 17:03:07  g++ lesson_02.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+  432  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  433  2013-12-17 17:03:07  ./runhalideprogram.sh lesson_02
+  434  2013-12-17 17:03:07  ./runhalideprogram.sh flop 
+  435  2013-12-17 17:03:07  display flip.png 
+  436  2013-12-17 17:03:07  vim lesson_01.cpp 
+  437  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  438  2013-12-17 17:03:07  ./runhalideprogram.sh flop 
+  439  2013-12-17 17:03:07  g++ flip.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o flop
+  440  2013-12-17 17:03:07  ./runhalideprogram.sh flop 
+  441  2013-12-17 17:03:07  cp flip.cpp weirdcolors.cpp
+  442  2013-12-17 17:03:07  vim weirdcolors.cpp 
+  443  2013-12-17 17:03:07  g++ spooky.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o spooky
+  444  2013-12-17 17:03:07  ls
+  445  2013-12-17 17:03:07  g++ weirdcolors.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o spooky
+  446  2013-12-17 17:03:07  vim weirdcolors.cpp 
+  447  2013-12-17 17:03:07  g++ weirdcolors.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o spooky
+  448  2013-12-17 17:03:07  ./runhalideprogram.sh spooky 
+  449  2013-12-17 17:03:07  display spooky.png 
+  450  2013-12-17 17:03:07  vim weirdcolors.cpp 
+  451  2013-12-17 17:03:07  ./runhalideprogram.sh spooky 
+  452  2013-12-17 17:03:07  g++ weirdcolors.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o spooky
+  453  2013-12-17 17:03:07  ./runhalideprogram.sh spooky 
+  454  2013-12-17 17:03:07  display spooky.png 
+  455  2013-12-17 17:03:07  ls
+  456  2013-12-17 17:03:07  vim weirdcolors.c
+  457  2013-12-17 17:03:07  mv weirdcolors.c gauss.c
+  458  2013-12-17 17:03:07  vim gauss.c 
+  459  2013-12-17 17:03:07  ls
+  460  2013-12-17 17:03:07  cd Halide-master/
+  461  2013-12-17 17:03:07  ls
+  462  2013-12-17 17:03:07  cd tutorial/
+  463  2013-12-17 17:03:07  ls
+  464  2013-12-17 17:03:07  vim gauss.c 
+  465  2013-12-17 17:03:07  ls -a
+  466  2013-12-17 17:03:07  rm *.swp
+  467  2013-12-17 17:03:07  ls
+  468  2013-12-17 17:03:07  ls -a
+  469  2013-12-17 17:03:07  rm .gauss.c.swp 
+  470  2013-12-17 17:03:07  vim gauss.c 
+  471  2013-12-17 17:03:07  exit
+  472  2013-12-17 17:03:07  who
+  473  2013-12-17 17:03:07  ls
+  474  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  475  2013-12-17 17:03:07  ls
+  476  2013-12-17 17:03:07  vim iavg.c 
+  477  2013-12-17 17:03:07  vim myimio.h
+  478  2013-12-17 17:03:07  exit
+  479  2013-12-17 17:03:07  ls
+  480  2013-12-17 17:03:07  cd Halide-master/
+  481  2013-12-17 17:03:07  ls
+  482  2013-12-17 17:03:07  cd tutorial/
+  483  2013-12-17 17:03:07  ls
+  484  2013-12-17 17:03:07  ls -ltr ;
+  485  2013-12-17 17:03:07  cat todo.txt 
+  486  2013-12-17 17:03:07  vim blur.c 
+  487  2013-12-17 17:03:07  vim blur.c
+  488  2013-12-17 17:03:07  exit
+  489  2013-12-17 17:03:07  ls
+  490  2013-12-17 17:03:07  cd Halide-master/
+  491  2013-12-17 17:03:07  ls
+  492  2013-12-17 17:03:07  cd tutorial/
+  493  2013-12-17 17:03:07  ls
+  494  2013-12-17 17:03:07  gcc -O -o blur.c -ljpeg -ltiff
+  495  2013-12-17 17:03:07  ls /lib/crt
+  496  2013-12-17 17:03:07  ls /lib/crt*
+  497  2013-12-17 17:03:07  ls /lib/
+  498  2013-12-17 17:03:07  gcc -O -o blur.c -ljpeg -ltiff
+  499  2013-12-17 17:03:07  ls /usr/lib/crt*
+  500  2013-12-17 17:03:07  gcc -O -o iavg.c -ljpeg -ltiff
+  501  2013-12-17 17:03:07  gcc -O -o blur.c -ljpeg -ltiff
+  502  2013-12-17 17:03:07  exit
+  503  2013-12-17 17:03:07  ls
+  504  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  505  2013-12-17 17:03:07  ls
+  506  2013-12-17 17:03:07  vim gauss.c 
+  507  2013-12-17 17:03:07  vim iavg.c 
+  508  2013-12-17 17:03:07  ls *.h
+  509  2013-12-17 17:03:07  vim myimio.h 
+  510  2013-12-17 17:03:07  fg
+  511  2013-12-17 17:03:07  vim myimio.h 
+  512  2013-12-17 17:03:07  ls
+  513  2013-12-17 17:03:07  who
+  514  2013-12-17 17:03:07  last
+  515  2013-12-17 17:03:07  ls
+  516  2013-12-17 17:03:07  vim ;q;:q
+  517  2013-12-17 17:03:07  vim blur.c 
+  518  2013-12-17 17:03:07  exit
+  519  2013-12-17 17:03:07  ls
+  520  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  521  2013-12-17 17:03:07  ls
+  522  2013-12-17 17:03:07  vim iavg.c 
+  523  2013-12-17 17:03:07  vim sketchyinternetgauss.c
+  524  2013-12-17 17:03:07  gcc sketchyinternetgauss.c 
+  525  2013-12-17 17:03:07  ls
+  526  2013-12-17 17:03:07  cc sketchyinternetgauss.c -lm
+  527  2013-12-17 17:03:07  ls
+  528  2013-12-17 17:03:07  ./a.out 
+  529  2013-12-17 17:03:07  vim sketchyinternetgauss.c 
+  530  2013-12-17 17:03:07  ls
+  531  2013-12-17 17:03:07  vim blur.c
+  532  2013-12-17 17:03:07  ;ls
+  533  2013-12-17 17:03:07  vim iavg.c 
+  534  2013-12-17 17:03:07  exit
+  535  2013-12-17 17:03:07  ls
+  536  2013-12-17 17:03:07  cd Halide-master/
+  537  2013-12-17 17:03:07  ls
+  538  2013-12-17 17:03:07  cd tutorial/
+  539  2013-12-17 17:03:07  ls
+  540  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  541  2013-12-17 17:03:07  ls
+  542  2013-12-17 17:03:07  exit
+  543  2013-12-17 17:03:07  ls
+  544  2013-12-17 17:03:07  cd Halide-master/
+  545  2013-12-17 17:03:07  ls
+  546  2013-12-17 17:03:07  cd tutorial/
+  547  2013-12-17 17:03:07  ls
+  548  2013-12-17 17:03:07  vim blur.c 
+  549  2013-12-17 17:03:07  ls
+  550  2013-12-17 17:03:07  cd Halide-master/
+  551  2013-12-17 17:03:07  ls
+  552  2013-12-17 17:03:07  cd tutorial/
+  553  2013-12-17 17:03:07  ls
+  554  2013-12-17 17:03:07  vim blur.c 
+  555  2013-12-17 17:03:07  /gcc -O -o blur blur.c -ljpeg -ltiff
+  556  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  557  2013-12-17 17:03:07  ./blur.c blur.ppm 
+  558  2013-12-17 17:03:07  ./blur blur.ppm 
+  559  2013-12-17 17:03:07  scp blurredimg.ppn dkirby@unix.andrew.cmu.edu:~/Desktop
+  560  2013-12-17 17:03:07  ls
+  561  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  562  2013-12-17 17:03:07  ls
+  563  2013-12-17 17:03:07  vim blur
+  564  2013-12-17 17:03:07  vim blur.c
+  565  2013-12-17 17:03:07  vim blur.c 
+  566  2013-12-17 17:03:07  vim blur.c
+  567  2013-12-17 17:03:07  vim 
+  568  2013-12-17 17:03:07  vim blur.co
+  569  2013-12-17 17:03:07  vim blur.c
+  570  2013-12-17 17:03:07  exit
+  571  2013-12-17 17:03:07  ls
+  572  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  573  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  574  2013-12-17 17:03:07  http://www.theonion.com/articles/study-people-appear-more-beautiful-in-groups,34464/?utm_source=Facebook&utm_medium=SocialMarketing&utm_campaign=LinkPreview:1:Default
+  575  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  576  2013-12-17 17:03:07  vim iav
+  577  2013-12-17 17:03:07  vim iavg.c
+  578  2013-12-17 17:03:07  ls
+  579  2013-12-17 17:03:07  locate iavg.c
+  580  2013-12-17 17:03:07  cp /antonfs/scratch/awetzel/bin/iavg.c .
+  581  2013-12-17 17:03:07  ls
+  582  2013-12-17 17:03:07  vim iavg.c 
+  583  2013-12-17 17:03:07  ls
+  584  2013-12-17 17:03:07  vim myimio.h 
+  585  2013-12-17 17:03:07  vim myimio.h
+  586  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  587  2013-12-17 17:03:07  vim iavg.c 
+  588  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  589  2013-12-17 17:03:07  ls
+  590  2013-12-17 17:03:07  ./blur dan
+  591  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  592  2013-12-17 17:03:07  ./blur dan
+  593  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  594  2013-12-17 17:03:07  ./blur dan
+  595  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  596  2013-12-17 17:03:07  ./blur dan
+  597  2013-12-17 17:03:07  vim iavg.c 
+  598  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  599  2013-12-17 17:03:07  ./blur dan
+  600  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  601  2013-12-17 17:03:07  ./blur dan
+  602  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  603  2013-12-17 17:03:07  ./blur
+  604  2013-12-17 17:03:07  ./blur afasdf
+  605  2013-12-17 17:03:07  ls
+  606  2013-12-17 17:03:07  ./blur spooky.png
+  607  2013-12-17 17:03:07  kolourpaint
+  608  2013-12-17 17:03:07  ls
+  609  2013-12-17 17:03:07  ./blur blur.ppm 
+  610  2013-12-17 17:03:07  ls
+  611  2013-12-17 17:03:07  xv blurred_img.tiff 
+  612  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  613  2013-12-17 17:03:07  vim iavg.c 
+  614  2013-12-17 17:03:07  vim myimio.h 
+  615  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  616  2013-12-17 17:03:07  ls
+  617  2013-12-17 17:03:07  ./blur blur.ppm 
+  618  2013-12-17 17:03:07  ls
+  619  2013-12-17 17:03:07  ./blur blur.ppn
+  620  2013-12-17 17:03:07  ls
+  621  2013-12-17 17:03:07  ./blur blur.ppn
+  622  2013-12-17 17:03:07  gdb blur blur.ppn
+  623  2013-12-17 17:03:07  ls
+  624  2013-12-17 17:03:07  mv blur.ppm blur.ppn
+  625  2013-12-17 17:03:07  gdb blur blur.pp
+  626  2013-12-17 17:03:07  gdb blur blur.ppn
+  627  2013-12-17 17:03:07  mv blur.ppn blur.ppm
+  628  2013-12-17 17:03:07  ./blur blur.ppm
+  629  2013-12-17 17:03:07  ls
+  630  2013-12-17 17:03:07  ./blur blur.pgm 
+  631  2013-12-17 17:03:07  vim sketchyinternetgauss.c 
+  632  2013-12-17 17:03:07  vim gauss.c 
+  633  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  634  2013-12-17 17:03:07  ./blur 
+  635  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  636  2013-12-17 17:03:07  ./blur 
+  637  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  638  2013-12-17 17:03:07  ./blur 
+  639  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  640  2013-12-17 17:03:07  ./blur 
+  641  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  642  2013-12-17 17:03:07  ./blur 
+  643  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  644  2013-12-17 17:03:07  ./blur 
+  645  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  646  2013-12-17 17:03:07  ./blur 
+  647  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  648  2013-12-17 17:03:07  ./blur 
+  649  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  650  2013-12-17 17:03:07  ./blur 
+  651  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  652  2013-12-17 17:03:07  ./blur 
+  653  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  654  2013-12-17 17:03:07  ./blur 
+  655  2013-12-17 17:03:07  exit
+  656  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  657  2013-12-17 17:03:07  vim blur.c 
+  658  2013-12-17 17:03:07  exit
+  659  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  660  2013-12-17 17:03:07  lss
+  661  2013-12-17 17:03:07  ls
+  662  2013-12-17 17:03:07  ./blur 
+  663  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  664  2013-12-17 17:03:07  ./blur 
+  665  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  666  2013-12-17 17:03:07  ./blur 
+  667  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  668  2013-12-17 17:03:07  ./blur 
+  669  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  670  2013-12-17 17:03:07  ./blur 
+  671  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  672  2013-12-17 17:03:07  ./blur 
+  673  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  674  2013-12-17 17:03:07  ./blur 
+  675  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  676  2013-12-17 17:03:07  ./blur 
+  677  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  678  2013-12-17 17:03:07  ./blur 
+  679  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  680  2013-12-17 17:03:07  ./blur 
+  681  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  682  2013-12-17 17:03:07  ./blur 
+  683  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  684  2013-12-17 17:03:07  ./blur 
+  685  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  686  2013-12-17 17:03:07  ./blur 
+  687  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  688  2013-12-17 17:03:07  ./blur 
+  689  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  690  2013-12-17 17:03:07  ./blur 
+  691  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  692  2013-12-17 17:03:07  ./blur 
+  693  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  694  2013-12-17 17:03:07  ./blur 
+  695  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  696  2013-12-17 17:03:07  ./blur 
+  697  2013-12-17 17:03:07  exit
+  698  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  699  2013-12-17 17:03:07  who
+  700  2013-12-17 17:03:07  exit
+  701  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  702  2013-12-17 17:03:07  ls
+  703  2013-12-17 17:03:07  vim gauss.c 
+  704  2013-12-17 17:03:07  vim blur
+  705  2013-12-17 17:03:07  vim blur.c
+  706  2013-12-17 17:03:07  exit
+  707  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  708  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  709  2013-12-17 17:03:07  less blur.
+  710  2013-12-17 17:03:07  less blur.c
+  711  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  712  2013-12-17 17:03:07  less blur.c
+  713  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  714  2013-12-17 17:03:07  ls
+  715  2013-12-17 17:03:07  ./blur blur.pgm
+  716  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  717  2013-12-17 17:03:07  ./blur blur.pgm
+  718  2013-12-17 17:03:07  exit
+  719  2013-12-17 17:03:07  who
+  720  2013-12-17 17:03:07  ls
+  721  2013-12-17 17:03:07  cd Halide-master/
+  722  2013-12-17 17:03:07  ls
+  723  2013-12-17 17:03:07  cd tutorial/
+  724  2013-12-17 17:03:07  ls
+  725  2013-12-17 17:03:07  gdb blur blur.pgm
+  726  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  727  2013-12-17 17:03:07  ls
+  728  2013-12-17 17:03:07  vim blur.c 
+  729  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  730  2013-12-17 17:03:07  ls
+  731  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  732  2013-12-17 17:03:07  ./blur blur.pgm
+  733  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  734  2013-12-17 17:03:07  ./blur blur.pgm
+  735  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  736  2013-12-17 17:03:07  ./blur blur.pgm
+  737  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  738  2013-12-17 17:03:07  ./blur blur.pgm
+  739  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  740  2013-12-17 17:03:07  ./blur blur.pgm
+  741  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  742  2013-12-17 17:03:07  ./blur blur.pgm
+  743  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  744  2013-12-17 17:03:07  ./blur blur.pgm
+  745  2013-12-17 17:03:07  ls
+  746  2013-12-17 17:03:07  ./blur blur.pgm
+  747  2013-12-17 17:03:07  ls
+  748  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  749  2013-12-17 17:03:07  ./blur blur.pgm
+  750  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  751  2013-12-17 17:03:07  ./blur blur.pgm
+  752  2013-12-17 17:03:07  cd Halide-master/
+  753  2013-12-17 17:03:07  cd tutorial/
+  754  2013-12-17 17:03:07  ls
+  755  2013-12-17 17:03:07  vim blur.c 
+  756  2013-12-17 17:03:07  rm .blur.c.swp 
+  757  2013-12-17 17:03:07  vim blur.c 
+  758  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  759  2013-12-17 17:03:07  ls
+  760  2013-12-17 17:03:07  gcc -O -o blur blur.c -ljpeg -ltiff
+  761  2013-12-17 17:03:07  vim blur.c
+  762  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff
+  763  2013-12-17 17:03:07  vim blur.c
+  764  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff
+  765  2013-12-17 17:03:07  ./blur
+  766  2013-12-17 17:03:07  vim blur.c
+  767  2013-12-17 17:03:07  ./blur
+  768  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff
+  769  2013-12-17 17:03:07  vim blur.c
+  770  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff
+  771  2013-12-17 17:03:07  ./blur
+  772  2013-12-17 17:03:07  vim blur.c
+  773  2013-12-17 17:03:07  ls
+  774  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  775  2013-12-17 17:03:07  ls
+  776  2013-12-17 17:03:07  ./blur blur.pgm
+  777  2013-12-17 17:03:07  gdb blur blur.pgm
+  778  2013-12-17 17:03:07  ./blur blur.pgm
+  779  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  780  2013-12-17 17:03:07  ls
+  781  2013-12-17 17:03:07  vim blur.c
+  782  2013-12-17 17:03:07  vim myimio.h 
+  783  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  784  2013-12-17 17:03:07  ls
+  785  2013-12-17 17:03:07  sudo su
+  786  2013-12-17 17:03:07  ls
+  787  2013-12-17 17:03:07  ./blur
+  788  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff
+  789  2013-12-17 17:03:07  ./blur
+  790  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff
+  791  2013-12-17 17:03:07  ./blur
+  792  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  793  2013-12-17 17:03:07  gdb ./blur
+  794  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  795  2013-12-17 17:03:07  ls
+  796  2013-12-17 17:03:07  gdb blur
+  797  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  798  2013-12-17 17:03:07  ./blur 
+  799  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  800  2013-12-17 17:03:07  ./blur 
+  801  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  802  2013-12-17 17:03:07  ./blur 
+  803  2013-12-17 17:03:07  exit
+  804  2013-12-17 17:03:07  ls
+  805  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  806  2013-12-17 17:03:07  ls
+  807  2013-12-17 17:03:07  vim blur.c
+  808  2013-12-17 17:03:07  touch ~/.vimrc
+  809  2013-12-17 17:03:07  vim /home/dkirby/.vimrc 
+  810  2013-12-17 17:03:07  vim blur.c
+  811  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  812  2013-12-17 17:03:07  vim blur.c
+  813  2013-12-17 17:03:07  vim myimio.h 
+  814  2013-12-17 17:03:07  vim blur.c
+  815  2013-12-17 17:03:07  ls
+  816  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  817  2013-12-17 17:03:07  ls
+  818  2013-12-17 17:03:07  ls -l
+  819  2013-12-17 17:03:07  ./blur blur.pgm 2
+  820  2013-12-17 17:03:07  ./blur blur.pgm 1
+  821  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  822  2013-12-17 17:03:07  ./blur blur.pgm 2
+  823  2013-12-17 17:03:07  ./blur blur.pgm 100
+  824  2013-12-17 17:03:07  ./blur blur.pgm 3
+  825  2013-12-17 17:03:07  ./blur blur.pgm 1
+  826  2013-12-17 17:03:07  ls
+  827  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  828  2013-12-17 17:03:07  ls
+  829  2013-12-17 17:03:07  ./blur blur.pgm 0.1
+  830  2013-12-17 17:03:07  ./blur blur.pgm 1
+  831  2013-12-17 17:03:07  ./blur blur.pgm 2
+  832  2013-12-17 17:03:07  ./blur blur.pgm 0.5
+  833  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  834  2013-12-17 17:03:07  ./blur blur.pgm 0.5
+  835  2013-12-17 17:03:07  ./blur blur.pgm 1
+  836  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  837  2013-12-17 17:03:07  ./blur blur.pgm 1
+  838  2013-12-17 17:03:07  ./blur blur.pgm 0.5
+  839  2013-12-17 17:03:07  ./blur blur.pgm 0.01
+  840  2013-12-17 17:03:07  ./blur blur.pgm 0.1
+  841  2013-12-17 17:03:07  ./blur blur.pgm 0.001
+  842  2013-12-17 17:03:07  ls
+  843  2013-12-17 17:03:07  cd Halide-master/tutorial/
+  844  2013-12-17 17:03:07  ls
+  845  2013-12-17 17:03:07  vim blur.c
+  846  2013-12-17 17:03:07  gcc -g2 -o blur blur.c -ljpeg -ltiff -ggdb
+  847  2013-12-17 17:03:07  vim blur.c
+  848  2013-12-17 17:03:07  ssh dreamm1
+  849  2013-12-17 17:03:07  ls
+  850  2013-12-17 17:03:07  exit
+  851  2013-12-17 17:03:09  ls
+  852  2013-12-17 17:03:11  cd Halide-master/
+  853  2013-12-17 17:03:12  ls
+  854  2013-12-17 17:03:13  cd tutorial/
+  855  2013-12-17 17:03:14  ls
+  856  2013-12-17 17:03:19  vim lesson_01.cpp 
+  857  2013-12-17 17:04:48  vim lesson_02.cpp 
+  858  2013-12-18 15:26:38  vim lesson_01.cpp 
+  859  2013-12-18 15:26:44  vim lesson_04.cpp 
+  860  2013-12-18 15:34:06  vim blur.cpp
+  861  2013-12-18 16:10:34  echo #LD_LIBRARY_PATH
+  862  2013-12-18 16:10:39  echo $LD_LIBRARY_PATH
+  863  2013-12-18 16:10:57  set $LD_LIBRARY_PATH=../bin
+  864  2013-12-18 16:10:59  echo $LD_LIBRARY_PATH
+  865  2013-12-18 16:13:50  ls
+  866  2013-12-18 16:14:04  cat runhalideprogram.sh 
+  867  2013-12-18 16:15:10  cat ~
+  868  2013-12-18 16:15:12  ls ~
+  869  2013-12-18 16:15:18  ls /home/dkirby/Do
+  870  2013-12-18 16:15:20  ls /home/dkirby/Documents/
+  871  2013-12-18 16:56:41  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_01
+  872  2013-12-18 17:12:26  g++ blur.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_0
+  873  2013-12-18 17:12:39  vim blur.cpp
+  874  2013-12-18 17:12:42  fg
+  875  2013-12-18 17:26:32  locate std.cpp
+  876  2013-12-18 17:36:54  ls
+  877  2013-12-18 17:37:00  vim blur.cpp 
+  878  2013-12-18 17:37:55  g++ blur.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_0
+  879  2013-12-18 17:38:00  vim blur.cpp 
+  880  2013-12-18 17:42:38  g++ blur.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_0
+  881  2013-12-18 17:44:27  g++ lesson_01.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -o lesson_0
+  882  2013-12-20 16:01:32  history
+  883  2013-12-20 16:01:57  export
+  884  2013-12-20 16:02:13  export HISTTIMEFORMAT='%F %T '
+  885  2013-12-20 16:02:24  export HISTTIMEFORMAT=`%F %T `
+  886  2013-12-20 16:02:31  export HISTTIMEFORMAT='%F %T  '
+  887  2013-12-20 16:02:46  export HIST
+  888  2013-12-20 16:02:48  export HIS
+  889  2013-12-20 16:03:15  ls -a
+  890  2013-12-20 16:16:47  echo $SHELL
+  891  2013-12-20 16:17:49  history
+  892  2013-12-20 16:18:08  history > history.txt
