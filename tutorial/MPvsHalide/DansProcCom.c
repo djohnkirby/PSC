@@ -57,10 +57,11 @@ char * parseFloat(char * input)
 
 int main()
 {
-  struct timeval start_time, stop_time, elapsed_time; //setup timer
+  struct timeval start_time, stop_time, elapsed_time; /*setup timer*/
 	int x, y, i, j;
 	int yo, y_base, y_in, yi, py;
-	int correctness = 0;
+	float ** halide_result;
+	//int correctness = 0;
   
 	gettimeofday(&start_time, NULL);
 	printf("Good morning\n");

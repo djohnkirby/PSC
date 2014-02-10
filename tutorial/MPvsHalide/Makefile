@@ -1,7 +1,7 @@
 #It's a makefile!
 
 CC= gcc
-CFLAGS=		-pedantic -ansi -W -Wall -Wextra -fopenmp -lm
+CFLAGS= -fopenmp -lm
 
 ProcCom: parseFloats.o getline.o
 	$(CC) $(CFLAGS) -c DansProcCom.c
@@ -9,5 +9,5 @@ ProcCom: parseFloats.o getline.o
 parseFloats.o : getline.o 
 	$(CC) $(CFLAGS) -c parseFloats.c
 
-getline.o : getline.c getline.h
+getline.o : getline.h
 	$(CC) $(CFLAGS) -c getline.c
