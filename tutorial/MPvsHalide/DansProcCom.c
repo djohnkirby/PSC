@@ -2,13 +2,12 @@
 	 tutorial.
 
 	Written by Daniel John Kirby.*/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <omp.h>
 #include <math.h>
 #include <sys/time.h>
-
+#include "parseFloats.h"
 #define CONSUMER_WIDTH 800
 #define CONSUMER_HEIGHT 600
 
@@ -41,7 +40,7 @@ float consumer(int x, int y)
 
 /* This function will parse out a floating point number and return
 	 a that char* This advances the pointer for you. */
-char * parseFloat(char * input)
+/*char * parseFloat(char * input)
 {
 	int i = 0;
 	char this;
@@ -54,7 +53,7 @@ char * parseFloat(char * input)
 	}
 	return ReturnMe;
 }
-
+*/
 int main()
 {
   struct timeval start_time, stop_time, elapsed_time; /*setup timer*/
