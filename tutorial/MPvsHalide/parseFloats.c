@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <getline.h>
+#include "getline.h"
 
 int countSpaces(char * line)
 {
