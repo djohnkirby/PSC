@@ -54,11 +54,17 @@ float ** parseFloats(char * filename)
   {
     for (j = 0 ; j < w; j++)
     {
-      fscanf(myfile,"%f",&myvariable);
-			floats[i][j] = myvariable;
+       fscanf(myfile,"%f",&myvariable);
+       floats[i][j] = myvariable;
     }
   }
-	line = line;
 	return floats; 
 }
 
+
+/*int main()
+{
+	float ** floats = parseFloats("Halide_solution.txt");
+	return 0;
+}
+*/
