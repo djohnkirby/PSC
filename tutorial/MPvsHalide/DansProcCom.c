@@ -9,10 +9,10 @@
 #include <sys/time.h>
 #include "parseFloats.h"
 
-#define STRIPE_SIZE 600
+#define STRIPE_SIZE 6 
 
-#define CONSUMER_WIDTH 800 
-#define CONSUMER_HEIGHT 600
+#define CONSUMER_WIDTH 3
+#define CONSUMER_HEIGHT 6
 
 
 #define PRODUCER_WIDTH CONSUMER_WIDTH + 1
@@ -61,11 +61,11 @@ int main()
 	
 	/*This loop executes the producer and consumer function in parallel strips
 		of 16*/
-/* 	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py)\
-													 shared(producer_arr, consumer_arr)*/
+	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py)\
+													 shared(producer_arr, consumer_arr)
 	for( yo = 0; yo < numPasses; yo++ )
 	{
-		printf("Hi I'm Mr. Meseeks LOOK AT ME!\n");
+//		printf("Hi I'm Mr. Meseeks LOOK AT ME!\n");
 		y_base = STRIPE_SIZE * yo;
 		if (y_base > CONSUMER_WIDTH - STRIPE_SIZE)
 			y_base = CONSUMER_WIDTH - STRIPE_SIZE;
@@ -81,7 +81,7 @@ int main()
 				producer_arr[x][y] = producer(x,y); //Now say that five times fast.
 			}
 		}
-		printf("Phew, made it out of the producer section\n");
+//		printf("Phew, made it out of the producer section\n");
 		/*Now compute this section of the consumer*/
 		for( x = 0; x < CONSUMER_WIDTH; x ++ )
 		{
@@ -92,25 +92,24 @@ int main()
 				//printf("(x, y) = (%d, %d)\n", x, y);
 			}
 		}
-		printf("Phew made it out of the consumer loop\n");
+	//	printf("Phew made it out of the consumer loop\n");
 	}
-	printf("Phew, made it out of the parallel loop\n");
+//	printf("Phew, made it out of the parallel loop\n");
 
 	gettimeofday(&stop_time,NULL);
   timersub(&stop_time, &start_time, &elapsed_time);//subtract time
 	/* Check Correctness */
 	/*Load Halide result*/
 	printf("Let's check whether the producer actually worked, why not?\n");
-	printf("Printing producer array\n");
 	for( x = 0; x < PRODUCER_WIDTH; x ++ )
 	{
 		for( y = 0; y < PRODUCER_HEIGHT; y ++ )
 		{
-//			printf("|%f|", producer_arr[x][y]);
+			printf("|%f|", producer_arr[x][y]);
 			if( producer_arr[x][y] - sqrt(x*y) > 0.001f )
-				printf("WTF?\n");
+				printf("producer[%d][%d] = %f instead of %f WTF?\n", x, y, producer_arr[x][y], sqrt(x*y));
 		}
-//		printf("\n");
+		printf("\n");
 	}
 
 
@@ -118,17 +117,17 @@ int main()
 	printf("Printing consumer array\n");
    for (x = 0; x < CONSUMER_WIDTH; x++) {
             for (y = 0; y < CONSUMER_HEIGHT; y++) {
-//								printf("|%f|",consumer_arr[x][y]);
+								printf("|%f|",consumer_arr[x][y]);
                 float error = halide_result[x][y] - consumer_arr[x][y];
                 // It's floating-point math, so we'll allow some slop:
 
-               if (error < -0.001f || error > 0.001f) {
-                    printf("halide_result(%d, %d) = %f instead of %f\n",
-                          x, y, halide_result[x][y], consumer_arr[x][y]);
-//                    return -1;
-                }
+               //if (error < -0.001f || error > 0.001f) {
+                 //   printf("halide_result(%d, %d) = %f instead of %f\n",
+                //          x, y, halide_result[x][y], consumer_arr[x][y]);
+                //    return -1;
+                //}
             }
-//					printf("\n");
+					printf("\n");
         }
 
 
