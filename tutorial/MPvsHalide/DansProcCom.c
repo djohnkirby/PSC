@@ -8,16 +8,21 @@
 #include <math.h>
 #include <sys/time.h>
 #include "parseFloats.h"
-#define CONSUMER_WIDTH 800
+
+#define STRIPE_SIZE 600
+
+#define CONSUMER_WIDTH 800 
 #define CONSUMER_HEIGHT 600
+
 
 #define PRODUCER_WIDTH CONSUMER_WIDTH + 1
 #define PRODUCER_HEIGHT CONSUMER_HEIGHT + 1
 
-float producer_arr[PRODUCER_HEIGHT][PRODUCER_WIDTH];
-float consumer_arr[CONSUMER_HEIGHT][CONSUMER_WIDTH];
-float halide_result[CONSUMER_HEIGHT][CONSUMER_WIDTH];
-float producer_buffer[2][PRODUCER_WIDTH];
+float producer_arr[PRODUCER_WIDTH][PRODUCER_HEIGHT];
+float consumer_arr[CONSUMER_WIDTH][CONSUMER_HEIGHT];
+float halide_result[CONSUMER_WIDTH][CONSUMER_HEIGHT];
+float producer_buffer[PRODUCER_WIDTH][2];
+
 
 float producer(int x, int y)
 {
@@ -38,65 +43,56 @@ float consumer(int x, int y)
 				 producer_arr[x+1][y] + producer_arr[x][y+1];
 }
 
-/* This function will parse out a floating point number and return
-	 a that char* This advances the pointer for you. */
-/*char * parseFloat(char * input)
-{
-	int i = 0;
-	char this;
-	char *ReturnMe = malloc(12*sizeof(char));
-	while(input[i] != ' ' && i < 9)
-	{
-		this = *input;
-		ReturnMe[i] = this;
-		i++;
-	}
-	return ReturnMe;
-}
-*/
 int main()
 {
   struct timeval start_time, stop_time, elapsed_time; /*setup timer*/
 	int x, y, i, j;
 	int yo, y_base, y_in, yi, py;
 	float ** halide_result;
+	int numPasses = CONSUMER_HEIGHT/STRIPE_SIZE;
 	//int correctness = 0;
-  
+
+	if( CONSUMER_HEIGHT % STRIPE_SIZE )
+		numPasses ++; 
+
 	gettimeofday(&start_time, NULL);
 	printf("Good morning\n");
+
+	
 	/*This loop executes the producer and consumer function in parallel strips
 		of 16*/
- 	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py)\
-													 shared(producer_arr, consumer_arr)
-	for( yo = 0; yo < 600/16 +1; yo++ )
+/* 	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py)\
+													 shared(producer_arr, consumer_arr)*/
+	for( yo = 0; yo < numPasses; yo++ )
 	{
-		//printf("Hi I'm Mr. Meecees LOOK AT ME!\n");
-		y_base = 16 * yo;
-		if (y_base > 600- 16)
-			y_base = 600 - 16;
+		printf("Hi I'm Mr. Meseeks LOOK AT ME!\n");
+		y_base = STRIPE_SIZE * yo;
+		if (y_base > CONSUMER_WIDTH - STRIPE_SIZE)
+			y_base = CONSUMER_WIDTH - STRIPE_SIZE;
 		/*Precompute the entire section of the producer we need*/
-		for( y_in = 0; y_in < 17; y_in ++ )
+		for( y_in = 0; y_in <= STRIPE_SIZE; y_in ++ )
 		{
+			/*This goes up to STRIPE_SIZE + 1 because the stripe size describes how
+				big the consumer function's stripes are, which are one smaller than the
+				producer function */
+			y = y_base + y_in;
 			for( x = 0; x < PRODUCER_WIDTH; x ++)
 			{
-				y = y_base + y_in;
-				producer_arr[y][x] = producer(x,y); //Now say that five times fast.
-				//printf("(x, y) = (%d, %d)\n", x, y); 
+				producer_arr[x][y] = producer(x,y); //Now say that five times fast.
 			}
 		}
-//		printf("Phew, made it out of the producer section\n");
+		printf("Phew, made it out of the producer section\n");
 		/*Now compute this section of the consumer*/
 		for( x = 0; x < CONSUMER_WIDTH; x ++ )
 		{
-			for( y_in = 0; y_in < 16; y_in ++ )
+			for( y_in = 0; y_in < STRIPE_SIZE; y_in ++ )
 			{
 				y = y_base + y_in;
-				consumer_arr[y][x] = consumer(x, y);
+				consumer_arr[x][y] = consumer(x, y);
 				//printf("(x, y) = (%d, %d)\n", x, y);
 			}
 		}
-//		printf("Phew made it out of the consumer loop\n");
-//		printf("Made it to the %dth episode\n", yo);
+		printf("Phew made it out of the consumer loop\n");
 	}
 	printf("Phew, made it out of the parallel loop\n");
 
@@ -104,22 +100,40 @@ int main()
   timersub(&stop_time, &start_time, &elapsed_time);//subtract time
 	/* Check Correctness */
 	/*Load Halide result*/
-	halide_result = parseFloats( "Halide_result.txt" );
-   for (y = 0; y < 600; y++) {
-            for (x = 0; x < 800; x++) {
+	printf("Let's check whether the producer actually worked, why not?\n");
+	printf("Printing producer array\n");
+	for( x = 0; x < PRODUCER_WIDTH; x ++ )
+	{
+		for( y = 0; y < PRODUCER_HEIGHT; y ++ )
+		{
+//			printf("|%f|", producer_arr[x][y]);
+			if( producer_arr[x][y] - sqrt(x*y) > 0.001f )
+				printf("WTF?\n");
+		}
+//		printf("\n");
+	}
+
+
+	halide_result = parseFloats( "Halide_solution.txt" );
+	printf("Printing consumer array\n");
+   for (x = 0; x < CONSUMER_WIDTH; x++) {
+            for (y = 0; y < CONSUMER_HEIGHT; y++) {
+//								printf("|%f|",consumer_arr[x][y]);
                 float error = halide_result[x][y] - consumer_arr[x][y];
                 // It's floating-point math, so we'll allow some slop:
-                if (error < -0.001f || error > 0.001f) {
+
+               if (error < -0.001f || error > 0.001f) {
                     printf("halide_result(%d, %d) = %f instead of %f\n",
-                           x, y, halide_result[x][y], consumer_arr[y][x]);
-                    return -1;
+                          x, y, halide_result[x][y], consumer_arr[x][y]);
+//                    return -1;
                 }
             }
+//					printf("\n");
         }
 
 
 
   printf("This code executed in %f seconds\n",elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0);
-
+	return 1;
 
 }
