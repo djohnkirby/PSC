@@ -55,7 +55,7 @@ int main()
   struct timeval start_time, stop_time, elapsed_time; /*setup timer*/
 	int x, y, i, j;
 	int yo, y_base, y_in, yi, py;
-	float ** halide_result, producer_buffer;
+	float ** halide_result;
 	int numPasses = CONSUMER_HEIGHT/STRIPE_SIZE;
 
 	//int correctness = 0;
