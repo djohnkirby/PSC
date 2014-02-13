@@ -9,5 +9,5 @@ ProcCom: parseFloats.o getline.o
 parseFloats.o : getline.o 
 	$(CC) $(CFLAGS) -c parseFloats.c
 
-getline.o : getline.h
+getline.o : getline.h getline.c
 	$(CC) $(CFLAGS) -c getline.c
