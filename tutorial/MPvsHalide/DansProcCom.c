@@ -9,10 +9,10 @@
 #include <sys/time.h>
 #include "parseFloats.h"
 
-#define STRIPE_SIZE 6 
+#define STRIPE_SIZE 3 
 
-#define CONSUMER_WIDTH 3
-#define CONSUMER_HEIGHT 6
+#define CONSUMER_WIDTH 6 
+#define CONSUMER_HEIGHT 60 
 
 
 #define PRODUCER_WIDTH CONSUMER_WIDTH + 1
@@ -67,8 +67,8 @@ int main()
 	{
 //		printf("Hi I'm Mr. Meseeks LOOK AT ME!\n");
 		y_base = STRIPE_SIZE * yo;
-		if (y_base > CONSUMER_WIDTH - STRIPE_SIZE)
-			y_base = CONSUMER_WIDTH - STRIPE_SIZE;
+		if (y_base > CONSUMER_HEIGHT - STRIPE_SIZE)
+			y_base = CONSUMER_HEIGHT - STRIPE_SIZE;
 		/*Precompute the entire section of the producer we need*/
 		for( y_in = 0; y_in <= STRIPE_SIZE; y_in ++ )
 		{
@@ -105,11 +105,11 @@ int main()
 	{
 		for( y = 0; y < PRODUCER_HEIGHT; y ++ )
 		{
-			printf("|%f|", producer_arr[x][y]);
+	//		printf("|%f|", producer_arr[x][y]);
 			if( producer_arr[x][y] - sqrt(x*y) > 0.001f )
 				printf("producer[%d][%d] = %f instead of %f WTF?\n", x, y, producer_arr[x][y], sqrt(x*y));
 		}
-		printf("\n");
+//		printf("\n");
 	}
 
 
@@ -117,17 +117,17 @@ int main()
 	printf("Printing consumer array\n");
    for (x = 0; x < CONSUMER_WIDTH; x++) {
             for (y = 0; y < CONSUMER_HEIGHT; y++) {
-								printf("|%f|",consumer_arr[x][y]);
+//								printf("|%f|",consumer_arr[x][y]);
                 float error = halide_result[x][y] - consumer_arr[x][y];
                 // It's floating-point math, so we'll allow some slop:
 
-               //if (error < -0.001f || error > 0.001f) {
-                 //   printf("halide_result(%d, %d) = %f instead of %f\n",
-                //          x, y, halide_result[x][y], consumer_arr[x][y]);
-                //    return -1;
-                //}
+               if (error < -0.001f || error > 0.001f) {
+                    printf("halide_result(%d, %d) = %f instead of %f\n",
+                          x, y, halide_result[x][y], consumer_arr[x][y]);
+//                    return -1;
+                }
             }
-					printf("\n");
+	//				printf("\n");
         }
 
 
