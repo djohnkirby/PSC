@@ -3,11 +3,11 @@
 CC= gcc
 CFLAGS= -fopenmp -lm
 
-ProcCom: parseFloats.o getline.o DansProcCom.c
-	$(CC) $(CFLAGS) -c DansProcCom.c -o Hai
+ProcCom: parseFloats.o getline.o
+	$(CC) $(CFLAGS) -c DansProcCom.c
 
-parseFloats.o : getline.o parseFloats.c
+parseFloats.o : getline.o 
 	$(CC) $(CFLAGS) -c parseFloats.c
 
-getline.o : getline.h getline.c
+getline.o : getline.h
 	$(CC) $(CFLAGS) -c getline.c
