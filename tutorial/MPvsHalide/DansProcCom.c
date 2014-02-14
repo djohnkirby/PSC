@@ -9,10 +9,10 @@
 #include <sys/time.h>
 #include "parseFloats.h"
 
-#define STRIPE_SIZE 2 
+#define STRIPE_SIZE 2
 
 #define CONSUMER_WIDTH 2
-#define CONSUMER_HEIGHT 4 
+#define CONSUMER_HEIGHT 4
 
 
 #define PRODUCER_WIDTH CONSUMER_WIDTH + 1
@@ -73,18 +73,6 @@ float consumer_from_buffer(int x, int y)
 	int locY = y % STRIPE_SIZE;
 	float returnMe = producer_buffer[x][locY] + producer_buffer[x+1][locY + 1]
 				+ producer_buffer[x+1][locY] + producer_buffer[x][locY + 1];
-/*	if( x == 1 && y == 0 && 0)
-	{
-		printf("Handling consumer (%d,%d) at local y %d\n", x, y, locY);
-		printf("It is %f\n", returnMe);
-		printf("The sum of %f + %f + %f + %f\n",producer_buffer[x][locY], producer_buffer[x+1][locY +1],
-						producer_buffer[x+1][locY], producer_buffer[x][locY+1]);
-		printf("producer_buffer[%d][%d] is %f\n",x+1,locY,producer_buffer[x+1][locY]);
-		printf("Current producer buffer:\n");
-		printProducerBuffer();
-		printf("Current consumer:\n");
-		printConsumer();
-	}*/
 	return returnMe;
 }
 
@@ -107,10 +95,10 @@ int main()
 	
 	/*This loop executes the producer and consumer function in parallel strips
 		of 16*/
-	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py, producer_buffer)\
-													 shared(consumer_arr)
+	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py, producer_buffer)
 	for( yo = 0; yo < numPasses; yo++ )
 	{
+		printf("Hi I'm Mr. Meseeks, look at me! My thread number is %d\n",omp_get_thread_num());
 		y_base = STRIPE_SIZE * yo;
 		if (y_base > CONSUMER_HEIGHT - STRIPE_SIZE)
 			y_base = CONSUMER_HEIGHT - STRIPE_SIZE;
@@ -127,7 +115,7 @@ int main()
 				producer_buffer[x][y_in] = producer(x,y); //Now say that five times fast
 			}
 		}
-		printProducerBuffer();
+		//printProducerBuffer();
 //		printf("Phew, made it out of the producer section\n");
 		/*Now compute this section of the consumer*/
 		for( x = 0; x < CONSUMER_WIDTH; x ++ )
@@ -140,6 +128,7 @@ int main()
 				//printf("(x, y) = (%d, %d)\n", x, y);
 			}
 		}
+		printConsumer();
 	}
 //	printf("Phew, made it out of the parallel loop\n");
 
