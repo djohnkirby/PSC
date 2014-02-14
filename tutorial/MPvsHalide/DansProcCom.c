@@ -9,10 +9,10 @@
 #include <sys/time.h>
 #include "parseFloats.h"
 
-#define STRIPE_SIZE 3 
+#define STRIPE_SIZE 2 
 
-#define CONSUMER_WIDTH 3 
-#define CONSUMER_HEIGHT 3 
+#define CONSUMER_WIDTH 2
+#define CONSUMER_HEIGHT 2 
 
 
 #define PRODUCER_WIDTH CONSUMER_WIDTH + 1
@@ -21,7 +21,7 @@
 float producer_arr[PRODUCER_WIDTH][CONSUMER_HEIGHT];
 float consumer_arr[CONSUMER_WIDTH][CONSUMER_HEIGHT];
 float halide_result[CONSUMER_WIDTH][CONSUMER_HEIGHT];
-float producer_buffer[PRODUCER_WIDTH][STRIPE_SIZE];
+float producer_buffer[PRODUCER_WIDTH][STRIPE_SIZE + 1];
 
 float producer(int x, int y)
 {
@@ -42,11 +42,49 @@ float consumer(int x, int y)
 				 producer_arr[x+1][y] + producer_arr[x][y+1];
 }
 
+void printProducerBuffer()
+{
+	int x, y;
+  for( x = 0; x < PRODUCER_WIDTH; x ++ )
+  {
+    for( y = 0; y < STRIPE_SIZE + 1; y ++ )
+    {
+      printf("|%f|", producer_buffer[x][y]);
+    }
+    printf("\n");
+  }
+}
+
+void printConsumer()
+{
+	int x, y;
+  for (x = 0; x < CONSUMER_WIDTH; x++) 
+	{
+  	for (y = 0; y < CONSUMER_HEIGHT; y++) 
+		{
+    	printf("|%f|",consumer_arr[x][y]);
+		}
+	printf("\n");
+	}
+}
+
 float consumer_from_buffer(int x, int y)
 {
 	int locY = y % STRIPE_SIZE;
 	float returnMe = producer_buffer[x][locY] + producer_buffer[x+1][locY + 1]
 				+ producer_buffer[x+1][locY] + producer_buffer[x][locY + 1];
+/*	if( x == 1 && y == 0 && 0)
+	{
+		printf("Handling consumer (%d,%d) at local y %d\n", x, y, locY);
+		printf("It is %f\n", returnMe);
+		printf("The sum of %f + %f + %f + %f\n",producer_buffer[x][locY], producer_buffer[x+1][locY +1],
+						producer_buffer[x+1][locY], producer_buffer[x][locY+1]);
+		printf("producer_buffer[%d][%d] is %f\n",x+1,locY,producer_buffer[x+1][locY]);
+		printf("Current producer buffer:\n");
+		printProducerBuffer();
+		printf("Current consumer:\n");
+		printConsumer();
+	}*/
 	return returnMe;
 }
 
@@ -89,6 +127,7 @@ int main()
 				producer_buffer[x][y_in] = producer(x,y); //Now say that five times fast
 			}
 		}
+		printProducerBuffer();
 //		printf("Phew, made it out of the producer section\n");
 		/*Now compute this section of the consumer*/
 		for( x = 0; x < CONSUMER_WIDTH; x ++ )
@@ -122,20 +161,18 @@ int main()
 */
 
 	halide_result = parseFloats( "Halide_solution.txt" );
-	printf("Printing consumer array\n");
+//	printf("Printing consumer array\n");
    for (x = 0; x < CONSUMER_WIDTH; x++) {
             for (y = 0; y < CONSUMER_HEIGHT; y++) {
-								printf("|%f|",consumer_arr[x][y]);
                 float error = halide_result[x][y] - consumer_arr[x][y];
                 // It's floating-point math, so we'll allow some slop:
 
                if (error < -0.001f || error > 0.001f) {
-   //                 printf("halide_result(%d, %d) = %f instead of %f\n",
-     //                     x, y, halide_result[x][y], consumer_arr[x][y]);
+                    printf("halide_result(%d, %d) = %f instead of %f\n",
+                        x, y, halide_result[x][y], consumer_arr[x][y]);
 //                    return -1;
                 }
             }
-					printf("\n");
         }
 
 
