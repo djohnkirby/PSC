@@ -2,19 +2,16 @@
 	 tutorial.
 
 	Written by Daniel John Kirby.*/
-float producer_arr[PRODUCER_WIDTH][CONSUMER_HEIGHT];
-float consumer_arr[CONSUMER_WIDTH][CONSUMER_HEIGHT];
-float halide_result[CONSUMER_WIDTH][CONSUMER_HEIGHT];
-float producer_buffer[PRODUCER_WIDTH][STRIPE_SIZE + 1];
 
-int storeAllCompute()
+int noStoreCompute()
 {
+  struct timeval start_time, stop_time, elapsed_time; /*setup timer*/
 	int x, y, i, j;
 	int yo, y_base, y_in, yi, py;
 	float ** halide_result;
 	int numPasses = CONSUMER_HEIGHT/STRIPE_SIZE;
 
-	int correctness = 0;
+	//int correctness = 0;
 
 	if( CONSUMER_HEIGHT % STRIPE_SIZE )
 		numPasses ++; 
@@ -28,6 +25,7 @@ int storeAllCompute()
 	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py, producer_buffer)
 	for( yo = 0; yo < numPasses; yo++ )
 	{
+		printf("Hi I'm Mr. Meseeks, look at me! My thread number is %d\n",omp_get_thread_num());
 		y_base = STRIPE_SIZE * yo;
 		if (y_base > CONSUMER_HEIGHT - STRIPE_SIZE)
 			y_base = CONSUMER_HEIGHT - STRIPE_SIZE;
@@ -74,7 +72,7 @@ int storeAllCompute()
                if (error < -0.001f || error > 0.001f) {
                     printf("halide_result(%d, %d) = %f instead of %f\n",
                         x, y, halide_result[x][y], consumer_arr[x][y]);
-                    return 0;
+//                    return -1;
                 }
             }
         }

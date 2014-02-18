@@ -31,6 +31,19 @@ int storeAllCompute()
 		y_base = STRIPE_SIZE * yo;
 		if (y_base > CONSUMER_HEIGHT - STRIPE_SIZE)
 			y_base = CONSUMER_HEIGHT - STRIPE_SIZE;
+		/*Precompute the entire section of the producer we need*/
+		for( y_in = 0; y_in <= STRIPE_SIZE; y_in ++ )
+		{
+			/*This goes up to STRIPE_SIZE + 1 because the stripe size describes how
+				big the consumer function's stripes are, which are one smaller than the
+				producer function */
+			y = y_base + y_in;
+			for( x = 0; x < PRODUCER_WIDTH; x ++)
+			{
+				/*Store this locally in producer buffer*/
+				producer_buffer[x][y_in] = producer(x,y); //Now say that five times fast
+			}
+		}
 		//printProducerBuffer();
 //		printf("Phew, made it out of the producer section\n");
 		/*Now compute this section of the consumer*/
@@ -40,10 +53,11 @@ int storeAllCompute()
 			{
 				y = y_base + y_in;
 //				consumer_arr[x][y] = consumer(x, y);
-				consumer_arr[x][y] = consumer_raw(x, y);
+				consumer_arr[x][y] = consumer_from_buffer(x, y);
 				//printf("(x, y) = (%d, %d)\n", x, y);
 			}
 		}
+		printConsumer();
 	}
 //	printf("Phew, made it out of the parallel loop\n");
 
