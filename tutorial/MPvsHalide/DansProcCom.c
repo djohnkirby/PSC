@@ -2,71 +2,10 @@
 	 tutorial.
 
 	Written by Daniel John Kirby.*/
-#include <stdlib.h>
-#include <stdio.h>
-#include <omp.h>
-#include <math.h>
-#include <sys/time.h>
-#include "parseFloats.h"
-
-#define STRIPE_SIZE 2
-
-#define CONSUMER_WIDTH 2
-#define CONSUMER_HEIGHT 4
-
-
-#define PRODUCER_WIDTH CONSUMER_WIDTH + 1
-#define PRODUCER_HEIGHT CONSUMER_HEIGHT + 1
-
 float producer_arr[PRODUCER_WIDTH][CONSUMER_HEIGHT];
 float consumer_arr[CONSUMER_WIDTH][CONSUMER_HEIGHT];
 float halide_result[CONSUMER_WIDTH][CONSUMER_HEIGHT];
 float producer_buffer[PRODUCER_WIDTH][STRIPE_SIZE + 1];
-
-float producer(int x, int y)
-{
-	return sqrt(x*y);
-}
-
-float consumer_raw(int x, int y)
-{
-	return producer(x, y) + producer(x+1, y+1) +
-			  producer(x+1, y) + producer(x, y+1);
-}
-
-/*Yo man, yo, look, you better not call this mother unless you have populated
-	the appropriate array. Don't say I didn't warn you*/
-float consumer(int x, int y)
-{
-	return producer_arr[x][y]+producer_arr[x+1][y+1] +
-				 producer_arr[x+1][y] + producer_arr[x][y+1];
-}
-
-void printProducerBuffer()
-{
-	int x, y;
-  for( x = 0; x < PRODUCER_WIDTH; x ++ )
-  {
-    for( y = 0; y < STRIPE_SIZE + 1; y ++ )
-    {
-      printf("|%f|", producer_buffer[x][y]);
-    }
-    printf("\n");
-  }
-}
-
-void printConsumer()
-{
-	int x, y;
-  for (x = 0; x < CONSUMER_WIDTH; x++) 
-	{
-  	for (y = 0; y < CONSUMER_HEIGHT; y++) 
-		{
-    	printf("|%f|",consumer_arr[x][y]);
-		}
-	printf("\n");
-	}
-}
 
 float consumer_from_buffer(int x, int y)
 {
