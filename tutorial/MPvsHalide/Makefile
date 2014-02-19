@@ -3,6 +3,9 @@
 CC= gcc
 CFLAGS= -fopenmp -lm
 
+MPvsHalide: getline.h MPvsHalide.h parseFloats.h 
+	$(CC) $(CFLAGS) parseFloats.c driver.c noStoreCompute.c storeAllCompute.c -o MPvsHalide
+
 ProcCom: parseFloats.o getline.o DansProcCom.c
 	$(CC) $(CFLAGS) -c DansProcCom.c -o Hai
 

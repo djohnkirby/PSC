@@ -2,25 +2,25 @@
 	 tutorial.
 
 	Written by Daniel John Kirby.*/
-float producer_arr[PRODUCER_WIDTH][CONSUMER_HEIGHT];
-float consumer_arr[CONSUMER_WIDTH][CONSUMER_HEIGHT];
-float halide_result[CONSUMER_WIDTH][CONSUMER_HEIGHT];
-float producer_buffer[PRODUCER_WIDTH][STRIPE_SIZE + 1];
 
-int storeAllCompute()
+#include "MPvsHalide.h"
+
+float ** storeAllCompute()
 {
 	int x, y, i, j;
 	int yo, y_base, y_in, yi, py;
-	float ** halide_result;
 	int numPasses = CONSUMER_HEIGHT/STRIPE_SIZE;
-
+	float producer_buffer[PRODUCER_WIDTH][STRIPE_SIZE + 1];
+	float ** consumer_arr;
 	int correctness = 0;
 
 	if( CONSUMER_HEIGHT % STRIPE_SIZE )
 		numPasses ++; 
 
-	gettimeofday(&start_time, NULL);
 	printf("Good morning\n");
+	consumer_arr = malloc(CONSUMER_HEIGHT*sizeof(float*));
+        for( i = 0; i < CONSUMER_HEIGHT; i ++ )
+                consumer_arr[i] = malloc(CONSUMER_WIDTH*sizeof(float));
 
 	
 	/*This loop executes the producer and consumer function in parallel strips
@@ -53,49 +53,11 @@ int storeAllCompute()
 			{
 				y = y_base + y_in;
 //				consumer_arr[x][y] = consumer(x, y);
-				consumer_arr[x][y] = consumer_from_buffer(x, y);
+				consumer_arr[x][y] = consumer_from_buffer(x, y, producer_buffer);
 				//printf("(x, y) = (%d, %d)\n", x, y);
 			}
 		}
-		printConsumer();
 	}
-//	printf("Phew, made it out of the parallel loop\n");
 
-	gettimeofday(&stop_time,NULL);
-  timersub(&stop_time, &start_time, &elapsed_time);//subtract time
-	/* Check Correctness */
-	/*Load Halide result*/
-/*	printf("Let's check whether the producer actually worked, why not?\n");
-	for( x = 0; x < PRODUCER_WIDTH; x ++ )
-	{
-		for( y = 0; y < PRODUCER_HEIGHT; y ++ )
-		{
-	//		printf("|%f|", producer_arr[x][y]);
-			if( producer_arr[x][y] - sqrt(x*y) > 0.001f )
-				printf("producer[%d][%d] = %f instead of %f WTF?\n", x, y, producer_arr[x][y], sqrt(x*y));
-		}
-//		printf("\n");
-	}
-*/
-
-	halide_result = parseFloats( "Halide_solution.txt" );
-//	printf("Printing consumer array\n");
-   for (x = 0; x < CONSUMER_WIDTH; x++) {
-            for (y = 0; y < CONSUMER_HEIGHT; y++) {
-                float error = halide_result[x][y] - consumer_arr[x][y];
-                // It's floating-point math, so we'll allow some slop:
-
-               if (error < -0.001f || error > 0.001f) {
-                    printf("halide_result(%d, %d) = %f instead of %f\n",
-                        x, y, halide_result[x][y], consumer_arr[x][y]);
-                    return 0;
-                }
-            }
-        }
-
-
-
-  printf("This code executed in %f seconds\n",elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0);
-	return 1;
-
+	return consumer_arr;
 }
