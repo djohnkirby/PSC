@@ -20,7 +20,7 @@ float consumer(int x, int y, float ** producer_arr);
 float consumer_from_buffer(int x, int y, float ** producer_buffer);
 void printProducerBuffer( float ** producer_buffer);
 void printConsumer( float ** consumer_arr);
-float consumer_from_buffer( int x, int y, float ** producer_buffer );
+float consumer_from_buffer(int x, int y, float ** producer_buffer);
 float ** noStoreCompute();
 float ** storeAllCompute();
 int checkCorrectness( float ** halide_result, float ** c_result);

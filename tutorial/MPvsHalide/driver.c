@@ -62,7 +62,7 @@ int checkCorrectness( float ** halide_result, float ** c_result )
   return 1;
 }
 
-float consumer_from_buffer(int x, int yi, float ** producer_buffer)
+float consumer_from_buffer(int x, int y, float ** producer_buffer)
 {
   int locY = y % STRIPE_SIZE;
   float returnMe = producer_buffer[x][locY] + producer_buffer[x+1][locY + 1]
