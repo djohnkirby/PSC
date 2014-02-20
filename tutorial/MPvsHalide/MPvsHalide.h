@@ -5,10 +5,10 @@
 #include "getline.h"
 #include "parseFloats.h"
 
-#define STRIPE_SIZE 2
+#define STRIPE_SIZE 16
 
-#define CONSUMER_WIDTH 2
-#define CONSUMER_HEIGHT 4
+#define CONSUMER_WIDTH 800
+#define CONSUMER_HEIGHT 600
 
 
 #define PRODUCER_WIDTH CONSUMER_WIDTH + 1
@@ -23,4 +23,5 @@ void printConsumer( float ** consumer_arr);
 float consumer_from_buffer(int x, int y, float ** producer_buffer);
 float ** noStoreCompute();
 float ** storeAllCompute();
+float ** storeBuffCompute();
 int checkCorrectness( float ** halide_result, float ** c_result);
