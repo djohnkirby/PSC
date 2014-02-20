@@ -10,7 +10,25 @@ int main()
 	float time;
   halide_result = parseFloats( "Halide_solution.txt" );
 
-	printf("Running inline C solution\n");
+	printf("Running inline C solution in series\n");
+	
+	gettimeofday(&start_time,NULL);
+  c_result = storeAllCompute();
+  gettimeofday(&stop_time, NULL);
+
+
+	timersub(&stop_time, &start_time, &elapsed_time);
+  time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
+  correctness = checkCorrectness( halide_result, c_result );
+  free(c_result);
+  if( correctness )
+    printf("C result was correct and completed in %f seconds.\n", time);
+  else
+    printf("C result was incorrect, so you actually shouldn't care how fast it ran, I can\
+            give you the wrong answer instantly, but it was %f seconds.\n", time);
+
+
+	printf("Running inline C solution in parallel\n");
 	
 	gettimeofday(&start_time,NULL);
 	c_result = noStoreCompute();
@@ -19,12 +37,29 @@ int main()
 	timersub(&stop_time, &start_time, &elapsed_time);
 	time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
 	correctness = checkCorrectness( halide_result, c_result );
+	free(c_result);
 	if( correctness )
 		printf("C result was correct and completed in %f seconds.\n", time);
 	else
 		printf("C result was incorrect, so you actually shouldn't care how fast it ran, I can\
 						give you the wrong answer instantly, but it was %f seconds.\n", time);
 
+	printf("Running split, vectorized, parallel solution in C\n");
+
+	gettimeofday(&start_time,NULL);
+  c_result = storeBuffCompute();
+  gettimeofday(&stop_time, NULL);
+
+  timersub(&stop_time, &start_time, &elapsed_time);
+  time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
+  correctness = checkCorrectness( halide_result, c_result );
+  if( correctness )
+    printf("C result was correct and completed in %f seconds.\n", time);
+  else
+    printf("C result was incorrect, so you actually shouldn't care how fast it ran, I can\
+            give you the wrong answer instantly, but it was %f seconds.\n", time);
+
+	free(c_result);
 
 	free(halide_result);
 }
