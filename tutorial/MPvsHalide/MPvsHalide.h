@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <sys/time.h>
-#include "parseFloats.h"
 #include "getline.h"
+#include "parseFloats.h"
 
 #define STRIPE_SIZE 2
 
