@@ -1,5 +1,34 @@
 #include "MPvsHalide.h"
 
+int main()
+{
+  /* I will use this timer sev'ral times. */
+  struct timeval start_time, stop_time, elapsed_time;
+  float ** halide_result;
+	float ** c_result;
+	short correctness = 0; //guilty until proven innocent
+	float time;
+  halide_result = parseFloats( "Halide_solution.txt" );
+
+	printf("Running inline C solution\n");
+	
+	gettimeofday(&start_time,NULL);
+	c_result = noStoreCompute();
+	gettimeofday(&stop_time, NULL);
+
+	timersub(&stop_time, &start_time, &elapsed_time);
+	time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
+	correctness = checkCorrectness( halide_result, c_result );
+	if( correctness )
+		printf("C result was correct and completed in %f seconds.\n", time);
+	else
+		printf("C result was incorrect, so you actually shouldn't care how fast it ran, I can\
+						give you the wrong answer instantly, but it was %f seconds.\n", time);
+
+
+	free(halide_result);
+}
+
 float producer(int x, int y)
 {
   return sqrt(x*y);
@@ -53,8 +82,8 @@ int checkCorrectness( float ** halide_result, float ** c_result )
                 // It's floating-point math, so we'll allow some slop:
 
                if (error < -0.001f || error > 0.001f) {
-                    printf("halide_result(%d, %d) = %f instead of %f\n",
-                        x, y, halide_result[x][y], c_result[x][y]);
+                    printf("c_result(%d, %d) = %f instead of %f\n",
+                        x, y, c_result[x][y], halide_result[x][y]);
                     return 0;
                 }
             }
@@ -68,12 +97,4 @@ float consumer_from_buffer(int x, int y, float ** producer_buffer)
   float returnMe = producer_buffer[x][locY] + producer_buffer[x+1][locY + 1]
         + producer_buffer[x+1][locY] + producer_buffer[x][locY + 1];
   return returnMe;
-}
-
-int main()
-{
-	/* I will use this timer sev'ral times. */
-	struct timeval start_time, stop_time, elapsed_time;
-	float ** halide_result;
-	halide_result = parseFloats( "Halide_solution.txt" );		
 }

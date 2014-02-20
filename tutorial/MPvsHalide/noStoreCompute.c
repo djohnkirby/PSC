@@ -16,8 +16,6 @@ float ** noStoreCompute()
 	if( CONSUMER_HEIGHT % STRIPE_SIZE )
 		numPasses ++; 
 
-	printf("Good morning\n");
-
 	/* Allocate conusmer_arr*/
 	consumer_arr = malloc(CONSUMER_HEIGHT*sizeof(float*));
 	for( i = 0; i < CONSUMER_HEIGHT; i ++ )
