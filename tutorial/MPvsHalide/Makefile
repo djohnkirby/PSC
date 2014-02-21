@@ -1,7 +1,7 @@
 #It's a makefile!
 
 CC= gcc
-CFLAGS= -fopenmp -lm
+CFLAGS= -fopenmp -lm -g2
 
 MPvsHalide: getline.h MPvsHalide.h parseFloats.h 
 	$(CC) getline.c parseFloats.c driver.c noStoreCompute.c storeBuffCompute.c storeAllCompute.c -o MPvsHalide $(CFLAGS)
