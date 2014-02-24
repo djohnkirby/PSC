@@ -14,3 +14,6 @@ parseFloats.o : getline.o parseFloats.c
 
 getline.o : getline.h getline.c
 	$(CC) $(CFLAGS) -c getline.c
+
+clean: MPvsHalide
+	rm MPvsHalide

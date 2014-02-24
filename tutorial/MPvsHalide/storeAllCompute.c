@@ -12,9 +12,9 @@ float ** storeAllCompute()
 	float ** consumer_arr;
 	int correctness = 0;
 
-	consumer_arr = malloc(CONSUMER_HEIGHT*sizeof(float*));
+	consumer_arr = malloc(CONSUMER_WIDTH*sizeof(float*));
         for( i = 0; i < CONSUMER_WIDTH; i ++ )
-                consumer_arr[i] = malloc(CONSUMER_WIDTH*sizeof(float));
+                consumer_arr[i] = malloc(CONSUMER_HEIGHT*sizeof(float));
 	printf("CONSUMER_HEIGHT is %d, PRODUCER_HEIGHT IS %d, PRODUCER_WIDTH\
 				  is %d\n", i, PRODUCER_HEIGHT, PRODUCER_WIDTH);
 	for( x = 0; x < PRODUCER_WIDTH; x ++ )
