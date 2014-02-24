@@ -22,13 +22,12 @@ float ** noStoreCompute()
 		consumer_arr[i] = malloc(CONSUMER_HEIGHT*sizeof(float));	
 	/*This loop executes the producer and consumer function in parallel strips
 		of 16*/
-//	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py) 
+	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py) shared(consumer_arr)
 	for( yo = 0; yo < numPasses; yo++ )
 	{
 		y_base = STRIPE_SIZE * yo;
 		if (y_base > CONSUMER_HEIGHT - STRIPE_SIZE)
 			y_base = CONSUMER_HEIGHT - STRIPE_SIZE;
-		//printProducerBuffer();
 		/*Now compute this section of the consumer*/
 		for( x = 0; x < CONSUMER_WIDTH; x ++ )
 		{
