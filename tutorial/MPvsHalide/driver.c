@@ -1,5 +1,13 @@
 #include "MPvsHalide.h"
 
+void printLine()
+{
+	int i;
+	for ( i = 0; i < 80; i ++ )
+		printf("-");
+	printf("\n");
+}
+
 int main()
 {
   /* I will use this timer sev'ral times. */
@@ -9,18 +17,17 @@ int main()
 	short correctness = 0; //guilty until proven innocent
 	float time;
   halide_result = parseFloats( "Halide_solution.txt" );
-
+	int i;
 
 	/*Run inline C solution in series. Store everything, two parter*/
 	printf("Running inline C solution in series\n");
 	
-//	gettimeofday(&start_time,NULL);
+	gettimeofday(&start_time,NULL);
   c_result = storeAllCompute();
-  //gettimeofday(&stop_time, NULL);
+  gettimeofday(&stop_time, NULL);
 
-	printf("Made it!\n");
-//	timersub(&stop_time, &start_time, &elapsed_time);
- // time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
+	timersub(&stop_time, &start_time, &elapsed_time);
+  time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
   correctness = checkCorrectness( halide_result, c_result );
   free(c_result);
   if( correctness )
@@ -28,15 +35,15 @@ int main()
   else
     printf("C result was incorrect, so you actually shouldn't care how fast it ran, I can\
             give you the wrong answer instantly, but it was %f seconds.\n", time);
-
+	
+	printLine();
 
 	printf("Running inline C solution in parallel\n");
 	
-//	gettimeofday(&start_time,NULL);
+	gettimeofday(&start_time,NULL);
 	c_result = noStoreCompute();
-	//gettimeofday(&stop_time, NULL);
-	printf("Hey, made it past nostorecompute\n");
-	//timersub(&stop_time, &start_time, &elapsed_time);
+	gettimeofday(&stop_time, NULL);
+	timersub(&stop_time, &start_time, &elapsed_time);
 	time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
 	correctness = checkCorrectness( halide_result, c_result );
 	free(c_result);
@@ -45,6 +52,8 @@ int main()
 	else
 		printf("C result was incorrect, so you actually shouldn't care how fast it ran, I can\
 						give you the wrong answer instantly, but it was %f seconds.\n", time);
+
+	printLine();
 
 	printf("Running split, vectorized, parallel solution in C\n");
 
