@@ -9,8 +9,8 @@ float ** noStoreCompute()
 	int x, y, i, j;
 	int yo, y_base, y_in, yi, py;
 	float ** consumer_arr;
+	float storeMe;
 	int numPasses = CONSUMER_HEIGHT/STRIPE_SIZE;
-
 	//int correctness = 0;
 
 	if( CONSUMER_HEIGHT % STRIPE_SIZE )
@@ -22,7 +22,7 @@ float ** noStoreCompute()
 		consumer_arr[i] = calloc(CONSUMER_HEIGHT, sizeof(float));	
 	/*This loop executes the producer and consumer function in parallel strips
 		of 16*/
-	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py) shared(consumer_arr)
+	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py)
 	for( yo = 0; yo < numPasses; yo++ )
 	{
 		y_base = STRIPE_SIZE * yo;
@@ -34,7 +34,10 @@ float ** noStoreCompute()
 			for( y_in = 0; y_in < STRIPE_SIZE; y_in ++ )
 			{
 				y = y_base + y_in;
-				consumer_arr[x][y] = consumer_raw(x, y);
+				storeMe = consumer_raw(x,y);
+				if (storeMe - (x*y + (x+1)*(y+1) + x*(y+1) + y*(x+1)) > 0.001f)
+					printf("HELP HELP I NEED AN ADULT! got producer(%d, %d) = %f\n", x, y, storeMe);
+				consumer_arr[x][y] = storeMe;
 			}
 		}
 	}
