@@ -47,7 +47,7 @@ int main()
 	time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
 	correctness = checkCorrectness( halide_result, c_result );
 
-	printConsumer( c_result );
+//	printConsumer( c_result );
 	
 	free(c_result);
 	if( correctness )
@@ -126,6 +126,7 @@ int checkCorrectness( float ** halide_result, float ** c_result )
 {
    int x, y;
    float error = 0.0f;
+   int correctness = 1; //innocent until proven guilty
    for (x = 0; x < CONSUMER_WIDTH; x++) {
             for (y = 0; y < CONSUMER_HEIGHT; y++) {
                 error = halide_result[x][y] - c_result[x][y];
@@ -134,11 +135,11 @@ int checkCorrectness( float ** halide_result, float ** c_result )
                if (error < -0.001f || error > 0.001f) {
                     printf("c_result(%d, %d) = %f instead of %f\n",
                         x, y, c_result[x][y], halide_result[x][y]);
-                    return 0;
+                    correctness = 0;
                 }
             }
         }
-  return 1;
+  return correctness;
 }
 
 float consumer_from_buffer(int x, int y, float ** producer_buffer)
