@@ -22,7 +22,7 @@ float ** noStoreCompute()
 		consumer_arr[i] = calloc(CONSUMER_HEIGHT, sizeof(float));	
 	/*This loop executes the producer and consumer function in parallel strips
 		of 16*/
-	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py)
+	#pragma omp parallel for private(yo, y_in, y_base, x, yi, py, storeMe)
 	for( yo = 0; yo < numPasses; yo++ )
 	{
 		y_base = STRIPE_SIZE * yo;

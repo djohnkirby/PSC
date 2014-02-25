@@ -47,7 +47,7 @@ int main()
 	time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
 	correctness = checkCorrectness( halide_result, c_result );
 
-//	printConsumer( c_result );
+	printConsumer( c_result );
 	
 	free(c_result);
 	if( correctness )
@@ -57,7 +57,6 @@ int main()
 						give you the wrong answer instantly, but it was %f seconds.\n", time);
 
 	printLine();
-	return 1;
 	printf("Running split, vectorized, parallel solution in C\n");
 
 	gettimeofday(&start_time,NULL);
@@ -85,8 +84,10 @@ float producer(int x, int y)
 
 float consumer_raw(int x, int y)
 {
-  return producer(x, y) + producer(x+1, y+1) +
+  float returnMe = producer(x, y) + producer(x+1, y+1) +
         producer(x+1, y) + producer(x, y+1);
+  printf("Recieved request for conumser(%d, %d)\n returning %f\n", x, y, returnMe);
+  return returnMe;
 }
 
 float consumer(int x, int y, float ** producer_arr)
