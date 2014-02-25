@@ -38,5 +38,6 @@ float ** noStoreCompute()
 			}
 		}
 	}
+	/* Just ofr the luls, let's redo the first row*/
 	return consumer_arr;
 }

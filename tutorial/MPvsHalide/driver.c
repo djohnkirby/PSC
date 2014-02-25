@@ -46,6 +46,9 @@ int main()
 	timersub(&stop_time, &start_time, &elapsed_time);
 	time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
 	correctness = checkCorrectness( halide_result, c_result );
+
+	printConsumer( c_result );
+	
 	free(c_result);
 	if( correctness )
 		printf("C result was correct and completed in %f seconds.\n", time);
@@ -54,7 +57,7 @@ int main()
 						give you the wrong answer instantly, but it was %f seconds.\n", time);
 
 	printLine();
-
+	return 1;
 	printf("Running split, vectorized, parallel solution in C\n");
 
 	gettimeofday(&start_time,NULL);
@@ -110,9 +113,10 @@ void printConsumer(float ** consumer_arr)
   int x, y;
   for (x = 0; x < CONSUMER_WIDTH; x++)
   {
+    printf("|");
     for (y = 0; y < CONSUMER_HEIGHT; y++)
     {
-      printf("|%f|",consumer_arr[x][y]);
+      printf("%f|",consumer_arr[x][y]);
     }
   printf("\n");
   }

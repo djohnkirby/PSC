@@ -5,10 +5,10 @@
 #include "getline.h"
 #include "parseFloats.h"
 
-#define STRIPE_SIZE 16
+#define STRIPE_SIZE 3
 
-#define CONSUMER_WIDTH 800
-#define CONSUMER_HEIGHT 600
+#define CONSUMER_WIDTH 2
+#define CONSUMER_HEIGHT 9
 
 
 #define PRODUCER_WIDTH CONSUMER_WIDTH + 1
