@@ -1,0 +1,308 @@
+make_images.cpp:1: error: expected unqualified-id before ‘/’ token
+In file included from make_images.cpp:14:
+../include/Halide.h: In constructor ‘Halide::Internal::BufferContents::BufferContents(Halide::Type, int, int, int, int, uint8_t*, const std::string&)’:
+../include/Halide.h:878: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In constructor ‘Halide::Internal::BufferContents::BufferContents(Halide::Type, const buffer_t*, const std::string&)’:
+../include/Halide.h:913: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void* Halide::Buffer::host_ptr() const’:
+../include/Halide.h:944: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘buffer_t* Halide::Buffer::raw_buffer() const’:
+../include/Halide.h:950: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘uint64_t Halide::Buffer::device_handle() const’:
+../include/Halide.h:958: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘bool Halide::Buffer::host_dirty() const’:
+../include/Halide.h:965: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Buffer::set_host_dirty(bool)’:
+../include/Halide.h:974: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘bool Halide::Buffer::device_dirty() const’:
+../include/Halide.h:981: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Buffer::set_device_dirty(bool)’:
+../include/Halide.h:991: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘int Halide::Buffer::extent(int) const’:
+../include/Halide.h:1007: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘int Halide::Buffer::stride(int) const’:
+../include/Halide.h:1014: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘int Halide::Buffer::min(int) const’:
+../include/Halide.h:1022: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Buffer::set_min(int, int, int, int)’:
+../include/Halide.h:1030: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Type Halide::Buffer::type() const’:
+../include/Halide.h:1039: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Buffer::set_source_module(const Halide::Internal::JITCompiledModule&)’:
+../include/Halide.h:1066: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘const Halide::Internal::JITCompiledModule& Halide::Buffer::source_module()’:
+../include/Halide.h:1074: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Type Halide::Internal::Parameter::type() const’:
+../include/Halide.h:1400: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘const std::string& Halide::Internal::Parameter::name() const’:
+../include/Halide.h:1406: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘bool Halide::Internal::Parameter::is_buffer() const’:
+../include/Halide.h:1412: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Buffer Halide::Internal::Parameter::get_buffer() const’:
+../include/Halide.h:1427: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Internal::Parameter::set_buffer(Halide::Buffer)’:
+../include/Halide.h:1442: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘const void* Halide::Internal::Parameter::get_scalar_address() const’:
+../include/Halide.h:1451: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Internal::Parameter::set_min_constraint(int, Halide::Expr)’:
+../include/Halide.h:1469: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Internal::Parameter::set_extent_constraint(int, Halide::Expr)’:
+../include/Halide.h:1473: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Internal::Parameter::set_stride_constraint(int, Halide::Expr)’:
+../include/Halide.h:1477: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::Internal::Parameter::min_constraint(int)’:
+../include/Halide.h:1481: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::Internal::Parameter::extent_constraint(int)’:
+../include/Halide.h:1485: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::Internal::Parameter::stride_constraint(int)’:
+../include/Halide.h:1489: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Internal::Parameter::set_min_value(Halide::Expr)’:
+../include/Halide.h:1497: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::Internal::Parameter::get_min_value()’:
+../include/Halide.h:1502: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::Internal::Parameter::set_max_value(Halide::Expr)’:
+../include/Halide.h:1507: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::Internal::Parameter::get_max_value()’:
+../include/Halide.h:1512: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Cast::make(Halide::Type, Halide::Expr)’:
+../include/Halide.h:1552: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Add::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1566: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Sub::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1583: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Mul::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1600: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Div::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1617: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Mod::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1636: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Min::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1653: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Max::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1670: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::EQ::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1687: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::NE::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1704: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::LT::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1721: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::LE::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1738: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::GT::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1755: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::GE::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1772: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::And::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1789: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Or::make(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1807: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Not::make(Halide::Expr)’:
+../include/Halide.h:1825: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Select::make(Halide::Expr, Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1842: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Load::make(Halide::Type, std::string, Halide::Expr, Halide::Buffer, Halide::Internal::Parameter)’:
+../include/Halide.h:1875: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Ramp::make(Halide::Expr, Halide::Expr, int)’:
+../include/Halide.h:1898: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Broadcast::make(Halide::Expr, int)’:
+../include/Halide.h:1922: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Let::make(std::string, Halide::Expr, Halide::Expr)’:
+../include/Halide.h:1942: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::LetStmt::make(std::string, Halide::Expr, Halide::Internal::Stmt)’:
+../include/Halide.h:1962: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::AssertStmt::make(Halide::Expr, std::string)’:
+../include/Halide.h:1981: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::Pipeline::make(std::string, Halide::Internal::Stmt, Halide::Internal::Stmt, Halide::Internal::Stmt)’:
+../include/Halide.h:2002: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::For::make(std::string, Halide::Expr, Halide::Expr, Halide::Internal::For::ForType, Halide::Internal::Stmt)’:
+../include/Halide.h:2035: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::Store::make(std::string, Halide::Expr, Halide::Expr)’:
+../include/Halide.h:2059: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::Provide::make(std::string, const std::vector<Halide::Expr, std::allocator<Halide::Expr> >&, const std::vector<Halide::Expr, std::allocator<Halide::Expr> >&)’:
+../include/Halide.h:2080: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::Allocate::make(std::string, Halide::Type, Halide::Expr, Halide::Internal::Stmt)’:
+../include/Halide.h:2107: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In constructor ‘Halide::Internal::Range::Range(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:2137: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::Realize::make(const std::string&, const std::vector<Halide::Type, std::allocator<Halide::Type> >&, const Halide::Internal::Region&, Halide::Internal::Stmt)’:
+../include/Halide.h:2156: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h:2161: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::Block::make(Halide::Internal::Stmt, Halide::Internal::Stmt)’:
+../include/Halide.h:2179: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::IfThenElse::make(Halide::Expr, Halide::Internal::Stmt, Halide::Internal::Stmt)’:
+../include/Halide.h:2195: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Internal::Stmt Halide::Internal::Evaluate::make(Halide::Expr)’:
+../include/Halide.h:2211: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In constructor ‘Halide::ExternFuncArgument::ExternFuncArgument(Halide::Internal::Parameter)’:
+../include/Halide.h:2445: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In constructor ‘Halide::Internal::Function::Function(const std::string&)’:
+../include/Halide.h:2519: error: ‘__assert_fail’ was not declared in this scope
+In file included from make_images.cpp:14:
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Call::make(Halide::Type, std::string, const std::vector<Halide::Expr, std::allocator<Halide::Expr> >&, Halide::Internal::Call::CallType, Halide::Internal::Function, int, Halide::Buffer, Halide::Internal::Parameter)’:
+../include/Halide.h:2744: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h:2747: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h:2756: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static Halide::Expr Halide::Internal::Call::make(Halide::Internal::Function, const std::vector<Halide::Expr, std::allocator<Halide::Expr> >&, int)’:
+../include/Halide.h:2776: error: ‘__assert_fail’ was not declared in this scope
+In file included from make_images.cpp:14:
+../include/Halide.h: In member function ‘bool Halide::OutputImageParam::add_implicit_args_if_placeholder(std::vector<Halide::Expr, std::allocator<Halide::Expr> >&, Halide::Expr, int, bool) const’:
+../include/Halide.h:4309: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::OutputImageParam::width() const’:
+../include/Halide.h:4434: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::OutputImageParam::height() const’:
+../include/Halide.h:4441: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::OutputImageParam::channels() const’:
+../include/Halide.h:4448: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘void Halide::ImageParam::set(Halide::Buffer)’:
+../include/Halide.h:4486: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::ImageParam::operator()() const’:
+../include/Halide.h:4502: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In static member function ‘static void Halide::ImageParam::check_arg_types(const std::string&, std::vector<Halide::Expr, std::allocator<Halide::Expr> >*)’:
+../include/Halide.h:4514: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::ImageParam::operator()(Halide::Expr) const’:
+../include/Halide.h:4528: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::ImageParam::operator()(Halide::Expr, Halide::Expr) const’:
+../include/Halide.h:4540: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::ImageParam::operator()(Halide::Expr, Halide::Expr, Halide::Expr) const’:
+../include/Halide.h:4553: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::ImageParam::operator()(Halide::Expr, Halide::Expr, Halide::Expr, Halide::Expr) const’:
+../include/Halide.h:4567: error: ‘__assert_fail’ was not declared in this scope
+In file included from make_images.cpp:14:
+../include/Halide.h: In function ‘Halide::Expr Halide::cast(Halide::Type, Halide::Expr)’:
+../include/Halide.h:4990: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator+(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5006: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr& Halide::operator+=(Halide::Expr&, Halide::Expr)’:
+../include/Halide.h:5015: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator-(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5023: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator-(Halide::Expr)’:
+../include/Halide.h:5034: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr& Halide::operator-=(Halide::Expr&, Halide::Expr)’:
+../include/Halide.h:5042: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator*(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5050: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr& Halide::operator*=(Halide::Expr&, Halide::Expr)’:
+../include/Halide.h:5059: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator/(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5067: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr& Halide::operator/=(Halide::Expr&, Halide::Expr)’:
+../include/Halide.h:5077: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator%(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5086: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator>(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5096: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator<(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5105: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator<=(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5114: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator>=(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5124: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator==(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5133: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator!=(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5142: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::max(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5167: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::min(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5177: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::clamp(Halide::Expr, Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5185: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::abs(Halide::Expr)’:
+../include/Halide.h:5195: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::sin(Halide::Expr)’:
+../include/Halide.h:5238: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::asin(Halide::Expr)’:
+../include/Halide.h:5250: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::cos(Halide::Expr)’:
+../include/Halide.h:5262: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::acos(Halide::Expr)’:
+../include/Halide.h:5274: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::tan(Halide::Expr)’:
+../include/Halide.h:5286: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::atan(Halide::Expr)’:
+../include/Halide.h:5298: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::atan2(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5310: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::sinh(Halide::Expr)’:
+../include/Halide.h:5326: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::asinh(Halide::Expr)’:
+../include/Halide.h:5338: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::cosh(Halide::Expr)’:
+../include/Halide.h:5350: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::acosh(Halide::Expr)’:
+../include/Halide.h:5362: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::tanh(Halide::Expr)’:
+../include/Halide.h:5374: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::atanh(Halide::Expr)’:
+../include/Halide.h:5386: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::sqrt(Halide::Expr)’:
+../include/Halide.h:5398: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::exp(Halide::Expr)’:
+../include/Halide.h:5421: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::log(Halide::Expr)’:
+../include/Halide.h:5438: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::pow(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5454: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::floor(Halide::Expr)’:
+../include/Halide.h:5500: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::ceil(Halide::Expr)’:
+../include/Halide.h:5513: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::round(Halide::Expr)’:
+../include/Halide.h:5526: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::reinterpret(Halide::Type, Halide::Expr)’:
+../include/Halide.h:5536: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator&(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5550: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator|(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5567: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator^(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5584: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator~(Halide::Expr)’:
+../include/Halide.h:5599: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator<<(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5611: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::operator>>(Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5627: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In function ‘Halide::Expr Halide::lerp(Halide::Expr, Halide::Expr, Halide::Expr)’:
+../include/Halide.h:5701: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr& Halide::Tuple::operator[](size_t)’:
+../include/Halide.h:5760: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Expr Halide::Tuple::operator[](size_t) const’:
+../include/Halide.h:5766: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In constructor ‘Halide::Tuple::Tuple(const std::vector<Halide::Expr, std::allocator<Halide::Expr> >&)’:
+../include/Halide.h:5795: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Buffer& Halide::Realization::operator[](size_t)’:
+../include/Halide.h:5821: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Buffer Halide::Realization::operator[](size_t) const’:
+../include/Halide.h:5827: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘Halide::Realization::operator Halide::Buffer() const’:
+../include/Halide.h:5833: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In constructor ‘Halide::Realization::Realization(const std::vector<Halide::Buffer, std::allocator<Halide::Buffer> >&)’:
+../include/Halide.h:5857: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In constructor ‘Halide::Image<T>::Image(const Halide::Realization&) [with T = unsigned char]’:
+make_images.cpp:63:   instantiated from here
+../include/Halide.h:6027: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘int Halide::Image<T>::stride(int) const [with T = unsigned char]’:
+/home/dkirby/Halide-current/apps/support/image_io.h:216:   instantiated from ‘void save_png(Halide::Image<T>, std::string) [with T = unsigned char]’
+/home/dkirby/Halide-current/apps/support/image_io.h:397:   instantiated from ‘void save(Halide::Image<T>, std::string) [with T = unsigned char]’
+make_images.cpp:67:   instantiated from here
+../include/Halide.h:6094: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘T* Halide::Image<T>::data() const [with T = unsigned char]’:
+/home/dkirby/Halide-current/apps/support/image_io.h:217:   instantiated from ‘void save_png(Halide::Image<T>, std::string) [with T = unsigned char]’
+/home/dkirby/Halide-current/apps/support/image_io.h:397:   instantiated from ‘void save(Halide::Image<T>, std::string) [with T = unsigned char]’
+make_images.cpp:67:   instantiated from here
+../include/Halide.h:6125: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘int Halide::Image<T>::extent(int) const [with T = unsigned char]’:
+../include/Halide.h:6120:   instantiated from ‘int Halide::Image<T>::channels() const [with T = unsigned char]’
+/home/dkirby/Halide-current/apps/support/image_io.h:175:   instantiated from ‘void save_png(Halide::Image<T>, std::string) [with T = unsigned char]’
+/home/dkirby/Halide-current/apps/support/image_io.h:397:   instantiated from ‘void save(Halide::Image<T>, std::string) [with T = unsigned char]’
+make_images.cpp:67:   instantiated from here
+../include/Halide.h:6066: error: ‘__assert_fail’ was not declared in this scope
+../include/Halide.h: In member function ‘int Halide::Image<T>::min(int) const [with T = unsigned char]’:
+../include/Halide.h:6128:   instantiated from ‘T* Halide::Image<T>::data() const [with T = unsigned char]’
+/home/dkirby/Halide-current/apps/support/image_io.h:217:   instantiated from ‘void save_png(Halide::Image<T>, std::string) [with T = unsigned char]’
+/home/dkirby/Halide-current/apps/support/image_io.h:397:   instantiated from ‘void save(Halide::Image<T>, std::string) [with T = unsigned char]’
+make_images.cpp:67:   instantiated from here
+../include/Halide.h:6075: error: ‘__assert_fail’ was not declared in this scope
+make: *** [make_images] Error 1

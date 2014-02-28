@@ -41,7 +41,7 @@ int main()
 	printf("Running inline C solution in parallel\n");
 	
 	gettimeofday(&start_time,NULL);
-	c_result = noStoreCompute();
+	c_result = noStoreComputeNoChunk();
 	gettimeofday(&stop_time, NULL);
 	timersub(&stop_time, &start_time, &elapsed_time);
 	time = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
