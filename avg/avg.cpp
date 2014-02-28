@@ -1,6 +1,6 @@
 #include <Halide.h>
 #include <stdio.h>
-#include "../apps/support/image_io.h"
+#include "/home/dkirby/Halide-master/apps/support/image_io.h"
 
 using namespace Halide;
 
