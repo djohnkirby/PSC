@@ -1,3 +1,5 @@
+all: avg make_images
+
 avg: avg.cpp
 	 g++ avg.cpp -I /home/dkirby/Halide-current/include -L /home/dkirby/Halide-current/bin -lHalide -lpthread -ldl -lpng -o avg
 
