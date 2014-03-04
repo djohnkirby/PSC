@@ -16,26 +16,31 @@ int main( int argc, char ** argv )
 	Halide::Func average;
 //	Halide::Var x("x"), y("y"), c("c"),c1("c1"), c2("c2");
 	Halide:: Var x, y, c, c1, c2;
-        Halide::Image<uint8_t> input1 = load<uint8_t>("input1.png");
-	Halide::Image<uint8_t> input2 = load<uint8_t>("input2.png");
+//  Halide::Image<uint8_t> input1 = load<uint8_t>("/home/dkirby/Halide-master/avg/input1.png");
+//	Halide::Image<uint8_t> input2 = load<uint8_t>("/home/dkirby/Halide-master/avg/input2.png");
+/*	Halide::Image<uint8_t> input1 = load<uint8_t>(argv[1]);
+	Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);*/
+	/*Maybe this is a thing?*/	
+	ImageParam input1(Int(8), 3);
+	ImageParam input2(Int(8), 3);
 	
 //	Halide::Expr av = (input1(x, y, c1) + input2(x, y, c2))/2;
 //	average = av;
 	Halide::Expr val1 = input1(x, y, c);
 	Halide::Expr val2 = input2(x, y, c);
+	
 //	average(x, y, c) = Halide::cast<uint8_t>(1.0f*val1+1.0f*val2)/2;
-	average(x, y, c) = Halide::cast<uint8_t>(((input1(x,y,c))*1.0f + (input2(x,y,c))*1.0f)*0.5f);
-//	Halide::Image<uint8_t> output = average.realize(min(input1.width(),input2.width()), min(input1.height(), input2.height()), input1.channels(), input2.channels()); 
-//	save(output, "result.png");
-	/*int w1 = input1.width();
-	int w2 = input2.width();
-	int h1 = input1.height();
-	int h2 = input2.height();
+	average(x, y, c) = (input1(x,y,c))/2 + (input2(x,y,c))/2;
 
-	int w = min(w1, w2);
-	int h = min(h1, h2);*/
+	/* This clamps us at the dimensions of the smallest image. Broadly assumes
+	 * that all images are the same number of color channels */
 
-	Halide::Image<uint8_t> output = average.realize(input1.width(), input2.height(), input1.channels(), input2.channels());
+	Image<uint8_t> in_png1 = load<uint8_t>(argv[1]);
+	Image<uint8_t> in_png2 = load<uint8_t>(argv[2]);
+	input1.set(in_png1);
+	input2.set(in_png2);
+
+	Halide::Image<uint8_t> output = average.realize(min(input1.width(), input2.width()), min(input1.height(), input2.height()), input1.channels());
 
 /*	for( int j = 0; j < output.height(); j ++ )
 		for ( int i = 0; i < output.width(); i ++ )
