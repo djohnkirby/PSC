@@ -48,10 +48,10 @@ int main(int argc, char **argv) {
     // Multiply it by 1.5 to brighten it. Halide represents real
     // numbers as floats, not doubles, so we stick an 'f' on the end
     // of our constant.
-    value = value/2 + value2/2;
+    value = value/2.0f + value2/2.0f;
 
     // Define the function.
-    average(x, y, c) = value;
+    average(x, y, c) = Halide::cast<uint8_t>(value);
 
     // The equivalent one-liner to all of the above is:
     //
@@ -76,6 +76,16 @@ int main(int argc, char **argv) {
     // error at runtime telling us we're trying to read out of bounds
     // on the input image.
     Halide::Image<uint8_t> output = average.realize(input.width(), input.height(), input.channels());
+
+/*	for( int j = 0; j < output.height(); j ++ )
+		for ( int i = 0; i < output.width(); i ++ )
+			if ( output(i,j) != (input(i,j) + input2(i,j))/2 )
+				{
+		 			printf("Something went wrong!\n"
+               "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
+                       i, j, (input(i,j)+input2(i,j))/2, output(i, j));
+				}*/
+
 
     // Save the output for inspection. It should look like a bright parrot.
     save(output, "output.png");
