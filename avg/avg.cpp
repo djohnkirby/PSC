@@ -1,51 +1,85 @@
-/* This is a program that simply averages two images.
- * The output image is guarunteed to be the size of the smaller (in both dimensions)
- * of the two images. So for instance if the inputs are (800 x 600) and (600 x 800)
- * the output image will be (600 x 600)*/
+// Halide tutorial lesson 2.
 
+// This lesson demonstrates how to pass in input images.
+
+// On linux, you can compile and run it like so:
+// g++ lesson_02*.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
+// LD_LIBRARY_PATH=../bin ./lesson_02
+
+// On os x:
+// g++ lesson_02*.cpp -I ../include -L ../bin -lHalide `libpng-config --cflags --ldflags` -o lesson_02
+// DYLD_LIBRARY_PATH=../bin ./lesson_02
+
+// The only Halide header file you need is Halide.h. It includes all of Halide.
 #include <Halide.h>
-#include <stdio.h>
 
-using namespace Halide;
+// Include some support code for loading pngs. It assumes there's an
+// Image type, so we'll pull the one from Halide namespace;
+using Halide::Image;
+#include "../apps/support/image_io.h"
 
-#include "/home/dkirby/Halide-current/apps/support/image_io.h"
+int main(int argc, char **argv) {
 
+    // This program defines a single-stage imaging pipeline that
+    // brightens an image.
 
-int main( int argc, char ** argv )
-{
-	Halide::Func average;
-//	Halide::Var x("x"), y("y"), c("c"),c1("c1"), c2("c2");
-	Halide:: Var x, y, c, c1, c2;
-        Halide::Image<uint8_t> input1 = load<uint8_t>("input1.png");
-	Halide::Image<uint8_t> input2 = load<uint8_t>("input2.png");
-	
-//	Halide::Expr av = (input1(x, y, c1) + input2(x, y, c2))/2;
-//	average = av;
-	Halide::Expr val1 = input1(x, y, c);
-	Halide::Expr val2 = input2(x, y, c);
-//	average(x, y, c) = Halide::cast<uint8_t>(1.0f*val1+1.0f*val2)/2;
-	average(x, y, c1, c2) = Halide::cast<uint8_t>((Halide::cast<uint32_t>(input1(x,y,c1))*1.0f + Halide::cast<uint32_t>(input2(x,y,c2))*1.0f)*0.5f);
-//	Halide::Image<uint8_t> output = average.realize(min(input1.width(),input2.width()), min(input1.height(), input2.height()), input1.channels(), input2.channels()); 
-//	save(output, "result.png");
-	/*int w1 = input1.width();
-	int w2 = input2.width();
-	int h1 = input1.height();
-	int h2 = input2.height();
+    // First we'll load the input image we wish to brighten.
+    Halide::Image<uint8_t> input = load<uint8_t>("../apps/images/rgb.png");
+		Halide::Image<uint8_t> input2 = load<uint8_t>("../apps/images/rgb.png");
+    // Next we define our Func object that represents our one pipeline
+    // stage.
+    Halide::Func average;
 
-	int w = min(w1, w2);
-	int h = min(h1, h2);*/
+    // Our Func will have three arguments, representing the position
+    // in the image and the color channel. Halide treats color
+    // channels as an extra dimension of the image.
+    Halide::Var x, y, c;
 
-	Halide::Image<uint8_t> output = average.realize(input1.width(), input2.height(), input1.channels(), input2.channels());
+    // Normally we'd probably write the whole function definition on
+    // one line. Here we'll break it apart so we can explain what
+    // we're doing at every step.
 
-/*	for( int j = 0; j < output.height(); j ++ )
-		for ( int i = 0; i < output.width(); i ++ )
-			if ( output(i,j) != (input1(i,j) + input2(i,j))/2 )
-				{
-		 			printf("Something went wrong!\n"
-               "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
-                       i, j, (input1(i,j)+input2(i,j))/2, output(i, j));
-				}
+    // For each pixel of the input image.
+    Halide::Expr value = input(x, y, c);
+		Halide::Expr value2 = input2(x, y, c);
 
-*/	
-	return 0;
+    // Cast it to a floating point value.
+
+    // Multiply it by 1.5 to brighten it. Halide represents real
+    // numbers as floats, not doubles, so we stick an 'f' on the end
+    // of our constant.
+    value = value/2 + value2/2;
+
+    // Define the function.
+    average(x, y, c) = value;
+
+    // The equivalent one-liner to all of the above is:
+    //
+    // brighter(x, y, c) = Halide::cast<uint8_t>(min(input(x, y, c) * 1.5f, 255));
+    //
+    // In the shorter version:
+    // - I skipped the cast to float, because multiplying by 1.5f does
+    //   that automatically.
+    // - I also used integer constants in clamp, because they get cast
+    //   to match the type of the first argument.
+    // - I left the Halide:: off clamp. It's unnecessary due to Koenig
+    //   lookup.
+
+    // Remember. All we've done so far is build a representation of a
+    // Halide program in memory. We haven't actually processed any
+    // pixels yet. We haven't even compiled that Halide program yet.
+
+    // So now we'll realize the Func. The size of the output image
+    // should match the size of the input image. If we just wanted to
+    // brighten a portion of the input image we could request a
+    // smaller size. If we request a larger size Halide will throw an
+    // error at runtime telling us we're trying to read out of bounds
+    // on the input image.
+    Halide::Image<uint8_t> output = average.realize(input.width(), input.height(), input.channels());
+
+    // Save the output for inspection. It should look like a bright parrot.
+    save(output, "output.png");
+
+    printf("Success!\n");
+    return 0;
 }
