@@ -15,6 +15,7 @@
 // Image type, so we'll pull the one from Halide namespace;
 using Halide::Image;
 #include "../apps/support/image_io.h"
+int debug = 0;
 
 int main(int argc, char **argv) 
 {
@@ -23,6 +24,8 @@ int main(int argc, char **argv)
 			printf("Usage: ./avg png1.png png2.png\n");
 			return 0;
 		}
+		if( argc > 2 && *(argv[3]) == 'd')
+			debug = 1;
 		Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
 		Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);
     Halide::Func average;
@@ -39,14 +42,17 @@ int main(int argc, char **argv)
 
 
 		/*Tester code*/
-/*	for( int j = 0; j < output.height(); j ++ )
-		for ( int i = 0; i < output.width(); i ++ )
-			if ( output(i,j) != (input(i,j) + input2(i,j))/2 )
-				{
-		 			printf("Something went wrong!\n"
-               "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
-                       i, j, (input(i,j)+input2(i,j))/2, output(i, j));
-				}*/
+	if(debug)
+	{
+		for( int j = 0; j < output.height(); j ++ )
+			for ( int i = 0; i < output.width(); i ++ )
+				if ( output(i,j) != (input(i,j) + input2(i,j))/2 )
+					{
+			 			printf("Something went wrong!\n"
+   	            "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
+   	                    i, j, (input(i,j)+input2(i,j))/2, output(i, j));
+					}
+	}
 
 
     // Save the output for inspection. It should look like a bright parrot.
