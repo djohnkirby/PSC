@@ -1,7 +1,7 @@
 //This program takes two images and averages them.
 
 // On linux, you can compile and run it like so:
-// g++ avg.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o avg
+// g++ avg.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -ltiff -o avg
 // LD_LIBRARY_PATH=../bin ./avg png1.png png2.png
 
 // On os x:
@@ -15,7 +15,25 @@
 // Image type, so we'll pull the one from Halide namespace;
 using Halide::Image;
 #include "../apps/support/image_io.h"
+#include <tiffio.h>
 int debug = 0;
+
+readTiff(TIFF * input)
+{
+	uint32 imagelength;
+	tdata_t buf;
+	uint32 row;
+	TIFFGetField(input, TIFFTAG_IMAGELENGTH, &imagelength);
+	buf = _TIFFmalloc(TIFFScanlineSize(input));
+  
+	for (row = 0; row < imagelength; row++)
+	{
+   tiffreadscanline(input, buf, row);
+	 /* This is where we have the buf, load into Halide here? */
+	_tifffree(buf);
+	}
+
+}
 
 int main(int argc, char **argv) 
 {
@@ -27,10 +45,18 @@ int main(int argc, char **argv)
 		printf("About to check the thing.\n");
 		if( argc > 2 && strcmp(argv[2],"d") == 0)	
 			debug = 1;
-		printf("About to load images\n");
-		Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
+		/*Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
 		Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);
-		printf("Made it\n");
+		*/
+		TIFF *tiff1 = TIFFOpen(argv[1], "r");
+		TIFF *tiff2 = TIFFOpen(argv[2], "r");
+		
+		Halide<uint8_t> input = readTiff(tiff1);
+		Halide<uint8_t> input2 = readTiff(tiff2);		
+
+		TIFFClose(tiff1);
+		TIFFClose(tiff2);
+
     Halide::Func average;
     Halide::Var x, y, c;
 
