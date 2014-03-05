@@ -3,6 +3,7 @@ target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f3
 target triple = "x86_64-unknown-linux-gnu"
 
 %struct.CUctx_st = type opaque
+%struct._module_state_ = type { %struct.CUmod_st*, %struct._module_state_* }
 %struct.CUmod_st = type opaque
 %struct.CUevent_st = type opaque
 %struct.buffer_t = type { i64, i8*, [4 x i32], [4 x i32], [4 x i32], i32, i8, i8 }
@@ -11,6 +12,7 @@ target triple = "x86_64-unknown-linux-gnu"
 
 @weak_cuda_ctx = weak global %struct.CUctx_st* null, align 8
 @cuda_ctx_ptr = weak global %struct.CUctx_st** null, align 8
+@state_list = weak global %struct._module_state_* null, align 8
 @.str = private unnamed_addr constant [58 x i8] c"Bad device pointer %p: cuPointerGetAttribute returned %d\0A\00", align 1
 @.str1 = private unnamed_addr constant [31 x i8] c"In dev_free of %p - dev: 0x%p\0A\00", align 1
 @.str2 = private unnamed_addr constant [47 x i8] c"halide_validate_dev_pointer(user_context, buf)\00", align 1
@@ -25,7 +27,6 @@ target triple = "x86_64-unknown-linux-gnu"
 @.str11 = private unnamed_addr constant [51 x i8] c"status == CUDA_SUCCESS && \22Failed to get device\5Cn\22\00", align 1
 @.str12 = private unnamed_addr constant [49 x i8] c"Got device %d, about to create context (t=%lld)\0A\00", align 1
 @.str13 = private unnamed_addr constant [12 x i8] c"cuCtxCreate\00", align 1
-@_Z5__mod = internal global %struct.CUmod_st* null, align 8
 @.str14 = private unnamed_addr constant [17 x i8] c"cuModuleLoadData\00", align 1
 @.str15 = private unnamed_addr constant [36 x i8] c"-------\0ACompiling PTX:\0A%s\0A--------\0A\00", align 1
 @_Z7__start = internal global %struct.CUevent_st* null, align 8
@@ -42,9 +43,11 @@ target triple = "x86_64-unknown-linux-gnu"
 @.str25 = private unnamed_addr constant [42 x i8] c"copy_to_dev (%zu bytes) %p -> %p (t=%lld)\00", align 1
 @.str26 = private unnamed_addr constant [10 x i8] c"buf->host\00", align 1
 @.str27 = private unnamed_addr constant [34 x i8] c"copy_to_host (%zu bytes) %p -> %p\00", align 1
-@.str28 = private unnamed_addr constant [71 x i8] c"dev_run %s with (%dx%dx%d) blks, (%dx%dx%d) threads, %d shmem (t=%lld)\00", align 1
-@.str29 = private unnamed_addr constant [23 x i8] c"get_kernel %s (t=%lld)\00", align 1
-@.str30 = private unnamed_addr constant [5 x i8] c"size\00", align 1
+@.str28 = private unnamed_addr constant [10 x i8] c"state_ptr\00", align 1
+@.str29 = private unnamed_addr constant [4 x i8] c"mod\00", align 1
+@.str30 = private unnamed_addr constant [71 x i8] c"dev_run %s with (%dx%dx%d) blks, (%dx%dx%d) threads, %d shmem (t=%lld)\00", align 1
+@.str31 = private unnamed_addr constant [23 x i8] c"get_kernel %s (t=%lld)\00", align 1
+@.str32 = private unnamed_addr constant [5 x i8] c"size\00", align 1
 
 ; Function Attrs: uwtable
 define weak void @halide_set_cuda_context(%struct.CUctx_st** %ctx_ptr) #0 {
@@ -126,7 +129,7 @@ declare void @halide_error(i8*, i8*) #1
 declare i32 @cuMemFree_v2(i64) #1
 
 ; Function Attrs: uwtable
-define weak void @halide_init_kernels(i8* %user_context, i8* %ptx_src, i32 %size) #0 {
+define weak i8* @halide_init_kernels(i8* %user_context, i8* %state_ptr, i8* %ptx_src, i32 %size) #0 {
 entry:
   %deviceCount = alloca i32, align 4
   %dev = alloca i32, align 4
@@ -159,8 +162,8 @@ do.end:                                           ; preds = %do.body, %if.then5
   store i32 0, i32* %deviceCount, align 4, !tbaa !10
   %call12 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* getelementptr inbounds ([17 x i8]* @.str8, i64 0, i64 0))
   %call14 = call i32 @cuDeviceGetCount(i32* %deviceCount)
-  %cond109 = icmp eq i32 %call14, 0
-  br i1 %cond109, label %do.end22, label %if.then16
+  %cond121 = icmp eq i32 %call14, 0
+  br i1 %cond121, label %do.end22, label %if.then16
 
 if.then16:                                        ; preds = %do.end
   %call17 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* getelementptr inbounds ([17 x i8]* @.str8, i64 0, i64 0), i32 %call14)
@@ -219,8 +222,8 @@ if.end42:                                         ; preds = %for.body, %if.then4
   %6 = load %struct.CUctx_st*** @cuda_ctx_ptr, align 8, !tbaa !1
   %7 = load i32* %dev, align 4, !tbaa !10
   %call48 = call i32 @cuCtxCreate_v2(%struct.CUctx_st** %6, i32 0, i32 %7)
-  %cond110 = icmp eq i32 %call48, 0
-  br i1 %cond110, label %if.end58, label %if.then50
+  %cond122 = icmp eq i32 %call48, 0
+  br i1 %cond122, label %if.end58, label %if.then50
 
 if.then50:                                        ; preds = %if.end42
   %call51 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* getelementptr inbounds ([12 x i8]* @.str13, i64 0, i64 0), i32 %call48)
@@ -228,37 +231,57 @@ if.then50:                                        ; preds = %if.end42
   br label %if.end58
 
 if.end58:                                         ; preds = %if.end42, %if.end, %if.then50
-  %8 = load %struct.CUmod_st** @_Z5__mod, align 8, !tbaa !1
-  %tobool59 = icmp eq %struct.CUmod_st* %8, null
-  br i1 %tobool59, label %do.body61, label %if.end74
+  %8 = bitcast i8* %state_ptr to %struct._module_state_*
+  %tobool59 = icmp eq i8* %state_ptr, null
+  br i1 %tobool59, label %if.then60, label %if.end62
 
-do.body61:                                        ; preds = %if.end58
-  %call62 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* getelementptr inbounds ([17 x i8]* @.str14, i64 0, i64 0))
-  %call64 = call i32 @cuModuleLoadData(%struct.CUmod_st** @_Z5__mod, i8* %ptx_src)
-  %cond111 = icmp eq i32 %call64, 0
-  br i1 %cond111, label %do.end72, label %if.then66
+if.then60:                                        ; preds = %if.end58
+  %call61 = call i8* @malloc(i64 16)
+  %9 = bitcast i8* %call61 to %struct._module_state_*
+  %module = bitcast i8* %call61 to %struct.CUmod_st**
+  store %struct.CUmod_st* null, %struct.CUmod_st** %module, align 8, !tbaa !11
+  %10 = load %struct._module_state_** @state_list, align 8, !tbaa !1
+  %next = getelementptr inbounds i8* %call61, i64 8
+  %11 = bitcast i8* %next to %struct._module_state_**
+  store %struct._module_state_* %10, %struct._module_state_** %11, align 8, !tbaa !13
+  store %struct._module_state_* %9, %struct._module_state_** @state_list, align 8, !tbaa !1
+  br label %if.end62
 
-if.then66:                                        ; preds = %do.body61
-  %call67 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* getelementptr inbounds ([17 x i8]* @.str14, i64 0, i64 0), i32 %call64)
+if.end62:                                         ; preds = %if.end58, %if.then60
+  %state.0 = phi %struct._module_state_* [ %8, %if.end58 ], [ %9, %if.then60 ]
+  %module63 = getelementptr inbounds %struct._module_state_* %state.0, i64 0, i32 0
+  %12 = load %struct.CUmod_st** %module63, align 8, !tbaa !11
+  %tobool64 = icmp eq %struct.CUmod_st* %12, null
+  br i1 %tobool64, label %do.body66, label %if.end80
+
+do.body66:                                        ; preds = %if.end62
+  %call67 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* getelementptr inbounds ([17 x i8]* @.str14, i64 0, i64 0))
+  %call70 = call i32 @cuModuleLoadData(%struct.CUmod_st** %module63, i8* %ptx_src)
+  %cond123 = icmp eq i32 %call70, 0
+  br i1 %cond123, label %do.end78, label %if.then72
+
+if.then72:                                        ; preds = %do.body66
+  %call73 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* getelementptr inbounds ([17 x i8]* @.str14, i64 0, i64 0), i32 %call70)
   call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([23 x i8]* @.str6, i64 0, i64 0))
-  br label %do.end72
+  br label %do.end78
 
-do.end72:                                         ; preds = %do.body61, %if.then66
-  %call73 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([36 x i8]* @.str15, i64 0, i64 0), i8* %ptx_src)
-  br label %if.end74
+do.end78:                                         ; preds = %do.body66, %if.then72
+  %call79 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([36 x i8]* @.str15, i64 0, i64 0), i8* %ptx_src)
+  br label %if.end80
 
-if.end74:                                         ; preds = %if.end58, %do.end72
-  %9 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
-  %tobool75 = icmp eq %struct.CUevent_st* %9, null
-  br i1 %tobool75, label %if.then76, label %if.end79
+if.end80:                                         ; preds = %if.end62, %do.end78
+  %13 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
+  %tobool81 = icmp eq %struct.CUevent_st* %13, null
+  br i1 %tobool81, label %if.then82, label %if.end85
 
-if.then76:                                        ; preds = %if.end74
-  %call77 = call i32 @cuEventCreate(%struct.CUevent_st** @_Z7__start, i32 0)
-  %call78 = call i32 @cuEventCreate(%struct.CUevent_st** @_Z5__end, i32 0)
-  br label %if.end79
+if.then82:                                        ; preds = %if.end80
+  %call83 = call i32 @cuEventCreate(%struct.CUevent_st** @_Z7__start, i32 0)
+  %call84 = call i32 @cuEventCreate(%struct.CUevent_st** @_Z5__end, i32 0)
+  br label %if.end85
 
-if.end79:                                         ; preds = %if.end74, %if.then76
-  ret void
+if.end85:                                         ; preds = %if.end80, %if.then82
+  %14 = bitcast %struct._module_state_* %state.0 to i8*
+  ret i8* %14
 }
 
 declare i32 @cuInit(i32) #1
@@ -277,6 +300,9 @@ declare i64 @halide_current_time_ns(i8*) #1
 
 declare i32 @cuCtxCreate_v2(%struct.CUctx_st**, i32, i32) #1
 
+; Function Attrs: nounwind
+declare noalias i8* @malloc(i64) #3
+
 declare i32 @cuModuleLoadData(%struct.CUmod_st**, i8*) #1
 
 declare i32 @cuEventCreate(%struct.CUevent_st**, i32) #1
@@ -286,7 +312,7 @@ define weak void @halide_release(i8* %user_context) #0 {
 entry:
   %0 = load %struct.CUctx_st*** @cuda_ctx_ptr, align 8, !tbaa !1
   %cmp = icmp eq %struct.CUctx_st** %0, null
-  br i1 %cmp, label %if.end52, label %do.body
+  br i1 %cmp, label %if.end55, label %do.body
 
 do.body:                                          ; preds = %entry
   %call = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* getelementptr inbounds ([25 x i8]* @.str16, i64 0, i64 0))
@@ -312,7 +338,7 @@ if.then8:                                         ; preds = %if.end
 do.end:                                           ; preds = %if.end, %if.then8
   %3 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
   %tobool = icmp eq %struct.CUevent_st* %3, null
-  br i1 %tobool, label %if.end13, label %if.then10
+  br i1 %tobool, label %while.cond.preheader, label %if.then10
 
 if.then10:                                        ; preds = %do.end
   %call11 = tail call i32 @cuEventDestroy_v2(%struct.CUevent_st* %3)
@@ -320,75 +346,88 @@ if.then10:                                        ; preds = %do.end
   %call12 = tail call i32 @cuEventDestroy_v2(%struct.CUevent_st* %4)
   store %struct.CUevent_st* null, %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
   store %struct.CUevent_st* null, %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
-  br label %if.end13
+  br label %while.cond.preheader
 
-if.end13:                                         ; preds = %do.end, %if.then10
-  %5 = load %struct.CUmod_st** @_Z5__mod, align 8, !tbaa !1
-  %tobool14 = icmp eq %struct.CUmod_st* %5, null
-  br i1 %tobool14, label %if.end32, label %do.body16
+while.cond.preheader:                             ; preds = %do.end, %if.then10
+  %state.085 = load %struct._module_state_** @state_list, align 8
+  %tobool1486 = icmp eq %struct._module_state_* %state.085, null
+  br i1 %tobool1486, label %while.end, label %while.body
 
-do.body16:                                        ; preds = %if.end13
-  %call17 = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* getelementptr inbounds ([15 x i8]* @.str18, i64 0, i64 0))
-  %6 = load %struct.CUmod_st** @_Z5__mod, align 8, !tbaa !1
-  %call19 = tail call i32 @cuModuleUnload(%struct.CUmod_st* %6)
-  switch i32 %call19, label %if.then23 [
-    i32 4, label %if.end25
-    i32 0, label %if.end25
+while.body:                                       ; preds = %while.cond.preheader, %if.end35
+  %state.087 = phi %struct._module_state_* [ %state.0, %if.end35 ], [ %state.085, %while.cond.preheader ]
+  %module = getelementptr inbounds %struct._module_state_* %state.087, i64 0, i32 0
+  %5 = load %struct.CUmod_st** %module, align 8, !tbaa !11
+  %tobool15 = icmp eq %struct.CUmod_st* %5, null
+  br i1 %tobool15, label %if.end35, label %do.body17
+
+do.body17:                                        ; preds = %while.body
+  %call18 = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* getelementptr inbounds ([15 x i8]* @.str18, i64 0, i64 0))
+  %6 = load %struct.CUmod_st** %module, align 8, !tbaa !11
+  %call21 = tail call i32 @cuModuleUnload(%struct.CUmod_st* %6)
+  switch i32 %call21, label %if.then25 [
+    i32 4, label %if.end27
+    i32 0, label %if.end27
   ]
 
-if.then23:                                        ; preds = %do.body16
-  %call24 = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* getelementptr inbounds ([15 x i8]* @.str18, i64 0, i64 0), i32 %call19)
-  br label %if.end25
+if.then25:                                        ; preds = %do.body17
+  %call26 = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* getelementptr inbounds ([15 x i8]* @.str18, i64 0, i64 0), i32 %call21)
+  br label %if.end27
 
-if.end25:                                         ; preds = %do.body16, %do.body16, %if.then23
-  %7 = and i32 %call19, -5
+if.end27:                                         ; preds = %do.body17, %do.body17, %if.then25
+  %7 = and i32 %call21, -5
   %8 = icmp eq i32 %7, 0
-  br i1 %8, label %do.end31, label %if.then29
+  br i1 %8, label %do.end33, label %if.then31
 
-if.then29:                                        ; preds = %if.end25
+if.then31:                                        ; preds = %if.end27
   tail call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([61 x i8]* @.str17, i64 0, i64 0))
-  br label %do.end31
+  br label %do.end33
 
-do.end31:                                         ; preds = %if.end25, %if.then29
-  store %struct.CUmod_st* null, %struct.CUmod_st** @_Z5__mod, align 8, !tbaa !1
-  br label %if.end32
+do.end33:                                         ; preds = %if.end27, %if.then31
+  store %struct.CUmod_st* null, %struct.CUmod_st** %module, align 8, !tbaa !11
+  br label %if.end35
 
-if.end32:                                         ; preds = %if.end13, %do.end31
+if.end35:                                         ; preds = %while.body, %do.end33
+  %next = getelementptr inbounds %struct._module_state_* %state.087, i64 0, i32 1
+  %state.0 = load %struct._module_state_** %next, align 8
+  %tobool14 = icmp eq %struct._module_state_* %state.0, null
+  br i1 %tobool14, label %while.end, label %while.body
+
+while.end:                                        ; preds = %if.end35, %while.cond.preheader
   %9 = load %struct.CUctx_st** @weak_cuda_ctx, align 8, !tbaa !1
-  %tobool33 = icmp eq %struct.CUctx_st* %9, null
-  br i1 %tobool33, label %if.end51, label %do.body35
+  %tobool36 = icmp eq %struct.CUctx_st* %9, null
+  br i1 %tobool36, label %if.end54, label %do.body38
 
-do.body35:                                        ; preds = %if.end32
-  %call36 = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* getelementptr inbounds ([21 x i8]* @.str19, i64 0, i64 0))
+do.body38:                                        ; preds = %while.end
+  %call39 = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* getelementptr inbounds ([21 x i8]* @.str19, i64 0, i64 0))
   %10 = load %struct.CUctx_st** @weak_cuda_ctx, align 8, !tbaa !1
-  %call38 = tail call i32 @cuCtxDestroy_v2(%struct.CUctx_st* %10)
-  switch i32 %call38, label %if.then42 [
-    i32 4, label %if.end44
-    i32 0, label %if.end44
+  %call41 = tail call i32 @cuCtxDestroy_v2(%struct.CUctx_st* %10)
+  switch i32 %call41, label %if.then45 [
+    i32 4, label %if.end47
+    i32 0, label %if.end47
   ]
 
-if.then42:                                        ; preds = %do.body35
-  %call43 = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* getelementptr inbounds ([21 x i8]* @.str19, i64 0, i64 0), i32 %call38)
-  br label %if.end44
+if.then45:                                        ; preds = %do.body38
+  %call46 = tail call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* getelementptr inbounds ([21 x i8]* @.str19, i64 0, i64 0), i32 %call41)
+  br label %if.end47
 
-if.end44:                                         ; preds = %do.body35, %do.body35, %if.then42
-  %11 = and i32 %call38, -5
+if.end47:                                         ; preds = %do.body38, %do.body38, %if.then45
+  %11 = and i32 %call41, -5
   %12 = icmp eq i32 %11, 0
-  br i1 %12, label %do.end50, label %if.then48
+  br i1 %12, label %do.end53, label %if.then51
 
-if.then48:                                        ; preds = %if.end44
+if.then51:                                        ; preds = %if.end47
   tail call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([61 x i8]* @.str17, i64 0, i64 0))
-  br label %do.end50
+  br label %do.end53
 
-do.end50:                                         ; preds = %if.end44, %if.then48
+do.end53:                                         ; preds = %if.end47, %if.then51
   store %struct.CUctx_st* null, %struct.CUctx_st** @weak_cuda_ctx, align 8, !tbaa !1
-  br label %if.end51
+  br label %if.end54
 
-if.end51:                                         ; preds = %if.end32, %do.end50
+if.end54:                                         ; preds = %while.end, %do.end53
   store %struct.CUctx_st** null, %struct.CUctx_st*** @cuda_ctx_ptr, align 8, !tbaa !1
-  br label %if.end52
+  br label %if.end55
 
-if.end52:                                         ; preds = %entry, %if.end51
+if.end55:                                         ; preds = %entry, %if.end54
   ret void
 }
 
@@ -412,7 +451,7 @@ entry:
 
 if.end:                                           ; preds = %entry
   %elem_size.i = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 5
-  %1 = load i32* %elem_size.i, align 4, !tbaa !11
+  %1 = load i32* %elem_size.i, align 4, !tbaa !14
   %arrayidx.i = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 2, i64 0
   %2 = load i32* %arrayidx.i, align 4, !tbaa !10
   %mul.i = mul nsw i32 %2, %1
@@ -451,7 +490,7 @@ if.end:                                           ; preds = %entry
   br i1 %tobool.i, label %if.then6.i, label %_Z10__buf_sizePvP8buffer_t.exit
 
 if.then6.i:                                       ; preds = %if.end
-  call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([5 x i8]* @.str30, i64 0, i64 0))
+  call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([5 x i8]* @.str32, i64 0, i64 0))
   %.pre = load i32* %arrayidx.i, align 4, !tbaa !10
   %.pre64 = load i32* %arrayidx.1.i, align 4, !tbaa !10
   %.pre65 = load i32* %arrayidx.2.i, align 4, !tbaa !10
@@ -460,7 +499,7 @@ if.then6.i:                                       ; preds = %if.end
   %.pre68 = load i32* %arrayidx2.1.i, align 4, !tbaa !10
   %.pre69 = load i32* %arrayidx2.2.i, align 4, !tbaa !10
   %.pre70 = load i32* %arrayidx2.3.i, align 4, !tbaa !10
-  %.pre71 = load i32* %elem_size.i, align 4, !tbaa !11
+  %.pre71 = load i32* %elem_size.i, align 4, !tbaa !14
   br label %_Z10__buf_sizePvP8buffer_t.exit
 
 _Z10__buf_sizePvP8buffer_t.exit:                  ; preds = %if.end, %if.then6.i
@@ -494,11 +533,11 @@ do.end:                                           ; preds = %_Z10__buf_sizePvP8b
   %22 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
   %23 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
   %call27 = call i32 @cuEventElapsedTime(float* %msec, %struct.CUevent_st* %22, %struct.CUevent_st* %23)
-  %24 = load float* %msec, align 4, !tbaa !12
+  %24 = load float* %msec, align 4, !tbaa !15
   %conv = fpext float %24 to double
   %call28 = call i64 @halide_current_time_ns(i8* %user_context)
   %call29 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([24 x i8]* @.str22, i64 0, i64 0), double %conv, i64 %call28)
-  %25 = load i64* %p, align 8, !tbaa !14
+  %25 = load i64* %p, align 8, !tbaa !17
   store i64 %25, i64* %dev, align 8, !tbaa !5
   %tobool33 = icmp eq i64 %25, 0
   br i1 %tobool33, label %if.then34, label %if.end35
@@ -533,13 +572,13 @@ entry:
   %msg = alloca [256 x i8], align 16
   %msec = alloca float, align 4
   %host_dirty = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 6
-  %0 = load i8* %host_dirty, align 1, !tbaa !16, !range !17
+  %0 = load i8* %host_dirty, align 1, !tbaa !18, !range !19
   %tobool = icmp eq i8 %0, 0
   br i1 %tobool, label %if.end32, label %if.then
 
 if.then:                                          ; preds = %entry
   %host = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 1
-  %1 = load i8** %host, align 8, !tbaa !18
+  %1 = load i8** %host, align 8, !tbaa !20
   %tobool1 = icmp eq i8* %1, null
   br i1 %tobool1, label %if.then3, label %land.lhs.true
 
@@ -555,7 +594,7 @@ if.then3:                                         ; preds = %land.lhs.true, %if.
 
 if.end:                                           ; preds = %land.lhs.true, %if.then3
   %elem_size.i = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 5
-  %3 = load i32* %elem_size.i, align 4, !tbaa !11
+  %3 = load i32* %elem_size.i, align 4, !tbaa !14
   %arrayidx.i = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 2, i64 0
   %4 = load i32* %arrayidx.i, align 4, !tbaa !10
   %mul.i = mul nsw i32 %4, %3
@@ -594,13 +633,13 @@ if.end:                                           ; preds = %land.lhs.true, %if.
   br i1 %tobool.i, label %if.then6.i, label %_Z10__buf_sizePvP8buffer_t.exit
 
 if.then6.i:                                       ; preds = %if.end
-  call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([5 x i8]* @.str30, i64 0, i64 0))
+  call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([5 x i8]* @.str32, i64 0, i64 0))
   br label %_Z10__buf_sizePvP8buffer_t.exit
 
 _Z10__buf_sizePvP8buffer_t.exit:                  ; preds = %if.end, %if.then6.i
   %12 = getelementptr inbounds [256 x i8]* %msg, i64 0, i64 0
-  call void @llvm.lifetime.start(i64 256, i8* %12) #3
-  %13 = load i8** %host, align 8, !tbaa !18
+  call void @llvm.lifetime.start(i64 256, i8* %12) #4
+  %13 = load i8** %host, align 8, !tbaa !20
   %dev5 = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 0
   %14 = load i64* %dev5, align 8, !tbaa !5
   %15 = inttoptr i64 %14 to i8*
@@ -618,7 +657,7 @@ do.body:                                          ; preds = %_Z10__buf_sizePvP8b
   %call11 = call i32 @cuEventRecord(%struct.CUevent_st* %16, %struct.CUstream_st* null)
   %call14 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* %12)
   %17 = load i64* %dev5, align 8, !tbaa !5
-  %18 = load i8** %host, align 8, !tbaa !18
+  %18 = load i8** %host, align 8, !tbaa !20
   %call17 = call i32 @cuMemcpyHtoD_v2(i64 %17, i8* %18, i64 %conv4.size.0.3.i)
   %cond = icmp eq i32 %call17, 0
   br i1 %cond, label %do.end, label %if.then18
@@ -636,28 +675,28 @@ do.end:                                           ; preds = %do.body, %if.then18
   %21 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
   %22 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
   %call27 = call i32 @cuEventElapsedTime(float* %msec, %struct.CUevent_st* %21, %struct.CUevent_st* %22)
-  %23 = load float* %msec, align 4, !tbaa !12
+  %23 = load float* %msec, align 4, !tbaa !15
   %conv = fpext float %23 to double
   %call28 = call i64 @halide_current_time_ns(i8* %user_context)
   %call29 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([24 x i8]* @.str22, i64 0, i64 0), double %conv, i64 %call28)
-  call void @llvm.lifetime.end(i64 256, i8* %12) #3
+  call void @llvm.lifetime.end(i64 256, i8* %12) #4
   br label %if.end32
 
 if.end32:                                         ; preds = %entry, %do.end
-  store i8 0, i8* %host_dirty, align 1, !tbaa !16
+  store i8 0, i8* %host_dirty, align 1, !tbaa !18
   ret void
 }
 
 ; Function Attrs: nounwind
-declare void @llvm.lifetime.start(i64, i8* nocapture) #3
+declare void @llvm.lifetime.start(i64, i8* nocapture) #4
 
 ; Function Attrs: nounwind
-declare i32 @snprintf(i8* nocapture, i64, i8* nocapture readonly, ...) #4
+declare i32 @snprintf(i8* nocapture, i64, i8* nocapture readonly, ...) #3
 
 declare i32 @cuMemcpyHtoD_v2(i64, i8*, i64) #1
 
 ; Function Attrs: nounwind
-declare void @llvm.lifetime.end(i64, i8* nocapture) #3
+declare void @llvm.lifetime.end(i64, i8* nocapture) #4
 
 ; Function Attrs: uwtable
 define weak void @halide_copy_to_host(i8* %user_context, %struct.buffer_t* %buf) #0 {
@@ -665,7 +704,7 @@ entry:
   %msg = alloca [256 x i8], align 16
   %msec = alloca float, align 4
   %dev_dirty = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 7
-  %0 = load i8* %dev_dirty, align 1, !tbaa !19, !range !17
+  %0 = load i8* %dev_dirty, align 1, !tbaa !21, !range !19
   %tobool = icmp eq i8 %0, 0
   br i1 %tobool, label %if.end33, label %if.then
 
@@ -681,7 +720,7 @@ if.then2:                                         ; preds = %if.then
 
 if.end:                                           ; preds = %if.then, %if.then2
   %host = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 1
-  %2 = load i8** %host, align 8, !tbaa !18
+  %2 = load i8** %host, align 8, !tbaa !20
   %tobool3 = icmp eq i8* %2, null
   br i1 %tobool3, label %if.then4, label %if.end5
 
@@ -691,7 +730,7 @@ if.then4:                                         ; preds = %if.end
 
 if.end5:                                          ; preds = %if.end, %if.then4
   %elem_size.i = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 5
-  %3 = load i32* %elem_size.i, align 4, !tbaa !11
+  %3 = load i32* %elem_size.i, align 4, !tbaa !14
   %arrayidx.i = getelementptr inbounds %struct.buffer_t* %buf, i64 0, i32 2, i64 0
   %4 = load i32* %arrayidx.i, align 4, !tbaa !10
   %mul.i = mul nsw i32 %4, %3
@@ -730,15 +769,15 @@ if.end5:                                          ; preds = %if.end, %if.then4
   br i1 %tobool.i, label %if.then6.i, label %_Z10__buf_sizePvP8buffer_t.exit
 
 if.then6.i:                                       ; preds = %if.end5
-  call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([5 x i8]* @.str30, i64 0, i64 0))
+  call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([5 x i8]* @.str32, i64 0, i64 0))
   br label %_Z10__buf_sizePvP8buffer_t.exit
 
 _Z10__buf_sizePvP8buffer_t.exit:                  ; preds = %if.end5, %if.then6.i
   %12 = getelementptr inbounds [256 x i8]* %msg, i64 0, i64 0
-  call void @llvm.lifetime.start(i64 256, i8* %12) #3
+  call void @llvm.lifetime.start(i64 256, i8* %12) #4
   %13 = load i64* %dev, align 8, !tbaa !5
   %14 = inttoptr i64 %13 to i8*
-  %15 = load i8** %host, align 8, !tbaa !18
+  %15 = load i8** %host, align 8, !tbaa !20
   %call8 = call i32 (i8*, i64, i8*, ...)* @snprintf(i8* %12, i64 256, i8* getelementptr inbounds ([34 x i8]* @.str27, i64 0, i64 0), i64 %conv4.size.0.3.i, i8* %14, i8* %15)
   %call9 = call zeroext i1 @halide_validate_dev_pointer(i8* %user_context, %struct.buffer_t* %buf)
   br i1 %call9, label %do.body, label %if.then10
@@ -751,7 +790,7 @@ do.body:                                          ; preds = %_Z10__buf_sizePvP8b
   %16 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
   %call12 = call i32 @cuEventRecord(%struct.CUevent_st* %16, %struct.CUstream_st* null)
   %call15 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* %12)
-  %17 = load i8** %host, align 8, !tbaa !18
+  %17 = load i8** %host, align 8, !tbaa !20
   %18 = load i64* %dev, align 8, !tbaa !5
   %call18 = call i32 @cuMemcpyDtoH_v2(i8* %17, i64 %18, i64 %conv4.size.0.3.i)
   %cond = icmp eq i32 %call18, 0
@@ -770,15 +809,15 @@ do.end:                                           ; preds = %do.body, %if.then19
   %21 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
   %22 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
   %call28 = call i32 @cuEventElapsedTime(float* %msec, %struct.CUevent_st* %21, %struct.CUevent_st* %22)
-  %23 = load float* %msec, align 4, !tbaa !12
+  %23 = load float* %msec, align 4, !tbaa !15
   %conv = fpext float %23 to double
   %call29 = call i64 @halide_current_time_ns(i8* %user_context)
   %call30 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([24 x i8]* @.str22, i64 0, i64 0), double %conv, i64 %call29)
-  call void @llvm.lifetime.end(i64 256, i8* %12) #3
+  call void @llvm.lifetime.end(i64 256, i8* %12) #4
   br label %if.end33
 
 if.end33:                                         ; preds = %entry, %do.end
-  store i8 0, i8* %dev_dirty, align 1, !tbaa !19
+  store i8 0, i8* %dev_dirty, align 1, !tbaa !21
   ret void
 }
 
@@ -792,35 +831,52 @@ entry:
 }
 
 ; Function Attrs: uwtable
-define weak void @halide_dev_run(i8* %user_context, i8* %entry_name, i32 %blocksX, i32 %blocksY, i32 %blocksZ, i32 %threadsX, i32 %threadsY, i32 %threadsZ, i32 %shared_mem_bytes, i64* %arg_sizes, i8** %args) #0 {
+define weak void @halide_dev_run(i8* %user_context, i8* %state_ptr, i8* %entry_name, i32 %blocksX, i32 %blocksY, i32 %blocksZ, i32 %threadsX, i32 %threadsY, i32 %threadsZ, i32 %shared_mem_bytes, i64* %arg_sizes, i8** %args) #0 {
 entry:
   %f.i = alloca %struct.CUfunc_st*, align 8
   %msg.i = alloca [256 x i8], align 16
   %msec.i = alloca float, align 4
   %msg = alloca [256 x i8], align 16
   %msec = alloca float, align 4
-  %0 = bitcast %struct.CUfunc_st** %f.i to i8*
-  call void @llvm.lifetime.start(i64 8, i8* %0)
-  %1 = bitcast float* %msec.i to i8*
-  call void @llvm.lifetime.start(i64 4, i8* %1)
-  %2 = getelementptr inbounds [256 x i8]* %msg.i, i64 0, i64 0
-  call void @llvm.lifetime.start(i64 256, i8* %2) #3
+  %tobool = icmp eq i8* %state_ptr, null
+  br i1 %tobool, label %if.then, label %if.end
+
+if.then:                                          ; preds = %entry
+  call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([10 x i8]* @.str28, i64 0, i64 0))
+  br label %if.end
+
+if.end:                                           ; preds = %entry, %if.then
+  %module = bitcast i8* %state_ptr to %struct.CUmod_st**
+  %0 = load %struct.CUmod_st** %module, align 8, !tbaa !11
+  %tobool1 = icmp eq %struct.CUmod_st* %0, null
+  br i1 %tobool1, label %if.then2, label %if.end3
+
+if.then2:                                         ; preds = %if.end
+  call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([4 x i8]* @.str29, i64 0, i64 0))
+  br label %if.end3
+
+if.end3:                                          ; preds = %if.end, %if.then2
+  %1 = bitcast %struct.CUfunc_st** %f.i to i8*
+  call void @llvm.lifetime.start(i64 8, i8* %1)
+  %2 = bitcast float* %msec.i to i8*
+  call void @llvm.lifetime.start(i64 4, i8* %2)
+  %3 = getelementptr inbounds [256 x i8]* %msg.i, i64 0, i64 0
+  call void @llvm.lifetime.start(i64 256, i8* %3) #4
   %call.i = call i64 @halide_current_time_ns(i8* %user_context)
-  %call1.i = call i32 (i8*, i64, i8*, ...)* @snprintf(i8* %2, i64 256, i8* getelementptr inbounds ([23 x i8]* @.str29, i64 0, i64 0), i8* %entry_name, i64 %call.i)
-  %3 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
-  %call2.i = call i32 @cuEventRecord(%struct.CUevent_st* %3, %struct.CUstream_st* null)
-  %call5.i = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* %2)
-  %4 = load %struct.CUmod_st** @_Z5__mod, align 8, !tbaa !1
-  %call6.i = call i32 @cuModuleGetFunction(%struct.CUfunc_st** %f.i, %struct.CUmod_st* %4, i8* %entry_name)
+  %call1.i = call i32 (i8*, i64, i8*, ...)* @snprintf(i8* %3, i64 256, i8* getelementptr inbounds ([23 x i8]* @.str31, i64 0, i64 0), i8* %entry_name, i64 %call.i)
+  %4 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
+  %call2.i = call i32 @cuEventRecord(%struct.CUevent_st* %4, %struct.CUstream_st* null)
+  %call5.i = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* %3)
+  %call6.i = call i32 @cuModuleGetFunction(%struct.CUfunc_st** %f.i, %struct.CUmod_st* %0, i8* %entry_name)
   %cond.i = icmp eq i32 %call6.i, 0
-  br i1 %cond.i, label %_Z12__get_kernelPvPKc.exit, label %if.then.i
+  br i1 %cond.i, label %_Z12__get_kernelPvP8CUmod_stPKc.exit, label %if.then.i
 
-if.then.i:                                        ; preds = %entry
-  %call8.i = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* %2, i32 %call6.i)
+if.then.i:                                        ; preds = %if.end3
+  %call8.i = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* %3, i32 %call6.i)
   call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([23 x i8]* @.str6, i64 0, i64 0))
-  br label %_Z12__get_kernelPvPKc.exit
+  br label %_Z12__get_kernelPvP8CUmod_stPKc.exit
 
-_Z12__get_kernelPvPKc.exit:                       ; preds = %entry, %if.then.i
+_Z12__get_kernelPvP8CUmod_stPKc.exit:             ; preds = %if.end3, %if.then.i
   %5 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
   %call12.i = call i32 @cuEventRecord(%struct.CUevent_st* %5, %struct.CUstream_st* null)
   %6 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
@@ -828,43 +884,43 @@ _Z12__get_kernelPvPKc.exit:                       ; preds = %entry, %if.then.i
   %7 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
   %8 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
   %call14.i = call i32 @cuEventElapsedTime(float* %msec.i, %struct.CUevent_st* %7, %struct.CUevent_st* %8)
-  %9 = load float* %msec.i, align 4, !tbaa !12
+  %9 = load float* %msec.i, align 4, !tbaa !15
   %conv.i = fpext float %9 to double
   %call15.i = call i64 @halide_current_time_ns(i8* %user_context)
   %call16.i = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([24 x i8]* @.str22, i64 0, i64 0), double %conv.i, i64 %call15.i)
   %10 = load %struct.CUfunc_st** %f.i, align 8, !tbaa !1
-  call void @llvm.lifetime.end(i64 256, i8* %2) #3
-  call void @llvm.lifetime.end(i64 8, i8* %0)
-  call void @llvm.lifetime.end(i64 4, i8* %1)
+  call void @llvm.lifetime.end(i64 256, i8* %3) #4
+  call void @llvm.lifetime.end(i64 8, i8* %1)
+  call void @llvm.lifetime.end(i64 4, i8* %2)
   %11 = getelementptr inbounds [256 x i8]* %msg, i64 0, i64 0
-  call void @llvm.lifetime.start(i64 256, i8* %11) #3
-  %call1 = call i64 @halide_current_time_ns(i8* %user_context)
-  %call2 = call i32 (i8*, i64, i8*, ...)* @snprintf(i8* %11, i64 256, i8* getelementptr inbounds ([71 x i8]* @.str28, i64 0, i64 0), i8* %entry_name, i32 %blocksX, i32 %blocksY, i32 %blocksZ, i32 %threadsX, i32 %threadsY, i32 %threadsZ, i32 %shared_mem_bytes, i64 %call1)
+  call void @llvm.lifetime.start(i64 256, i8* %11) #4
+  %call4 = call i64 @halide_current_time_ns(i8* %user_context)
+  %call5 = call i32 (i8*, i64, i8*, ...)* @snprintf(i8* %11, i64 256, i8* getelementptr inbounds ([71 x i8]* @.str30, i64 0, i64 0), i8* %entry_name, i32 %blocksX, i32 %blocksY, i32 %blocksZ, i32 %threadsX, i32 %threadsY, i32 %threadsZ, i32 %shared_mem_bytes, i64 %call4)
   %12 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
-  %call3 = call i32 @cuEventRecord(%struct.CUevent_st* %12, %struct.CUstream_st* null)
-  %call6 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* %11)
-  %call7 = call i32 @cuLaunchKernel(%struct.CUfunc_st* %10, i32 %blocksX, i32 %blocksY, i32 %blocksZ, i32 %threadsX, i32 %threadsY, i32 %threadsZ, i32 %shared_mem_bytes, %struct.CUstream_st* null, i8** %args, i8** null)
-  %cond = icmp eq i32 %call7, 0
-  br i1 %cond, label %do.end, label %if.then
+  %call6 = call i32 @cuEventRecord(%struct.CUevent_st* %12, %struct.CUstream_st* null)
+  %call9 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([7 x i8]* @.str3, i64 0, i64 0), i8* %11)
+  %call10 = call i32 @cuLaunchKernel(%struct.CUfunc_st* %10, i32 %blocksX, i32 %blocksY, i32 %blocksZ, i32 %threadsX, i32 %threadsY, i32 %threadsZ, i32 %shared_mem_bytes, %struct.CUstream_st* null, i8** %args, i8** null)
+  %cond = icmp eq i32 %call10, 0
+  br i1 %cond, label %do.end, label %if.then11
 
-if.then:                                          ; preds = %_Z12__get_kernelPvPKc.exit
-  %call9 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* %11, i32 %call7)
+if.then11:                                        ; preds = %_Z12__get_kernelPvP8CUmod_stPKc.exit
+  %call13 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([35 x i8]* @.str5, i64 0, i64 0), i8* %11, i32 %call10)
   call void @halide_error(i8* %user_context, i8* getelementptr inbounds ([23 x i8]* @.str6, i64 0, i64 0))
   br label %do.end
 
-do.end:                                           ; preds = %_Z12__get_kernelPvPKc.exit, %if.then
+do.end:                                           ; preds = %_Z12__get_kernelPvP8CUmod_stPKc.exit, %if.then11
   %13 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
-  %call13 = call i32 @cuEventRecord(%struct.CUevent_st* %13, %struct.CUstream_st* null)
+  %call18 = call i32 @cuEventRecord(%struct.CUevent_st* %13, %struct.CUstream_st* null)
   %14 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
-  %call14 = call i32 @cuEventSynchronize(%struct.CUevent_st* %14)
+  %call19 = call i32 @cuEventSynchronize(%struct.CUevent_st* %14)
   %15 = load %struct.CUevent_st** @_Z7__start, align 8, !tbaa !1
   %16 = load %struct.CUevent_st** @_Z5__end, align 8, !tbaa !1
-  %call15 = call i32 @cuEventElapsedTime(float* %msec, %struct.CUevent_st* %15, %struct.CUevent_st* %16)
-  %17 = load float* %msec, align 4, !tbaa !12
+  %call20 = call i32 @cuEventElapsedTime(float* %msec, %struct.CUevent_st* %15, %struct.CUevent_st* %16)
+  %17 = load float* %msec, align 4, !tbaa !15
   %conv = fpext float %17 to double
-  %call16 = call i64 @halide_current_time_ns(i8* %user_context)
-  %call17 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([24 x i8]* @.str22, i64 0, i64 0), double %conv, i64 %call16)
-  call void @llvm.lifetime.end(i64 256, i8* %11) #3
+  %call21 = call i64 @halide_current_time_ns(i8* %user_context)
+  %call22 = call i32 (i8*, i8*, ...)* @halide_printf(i8* %user_context, i8* getelementptr inbounds ([24 x i8]* @.str22, i64 0, i64 0), double %conv, i64 %call21)
+  call void @llvm.lifetime.end(i64 256, i8* %11) #4
   ret void
 }
 
@@ -875,8 +931,8 @@ declare i32 @cuModuleGetFunction(%struct.CUfunc_st**, %struct.CUmod_st*, i8*) #1
 attributes #0 = { uwtable "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #2 = { nounwind readonly "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #3 = { nounwind }
-attributes #4 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #3 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #4 = { nounwind }
 
 !llvm.ident = !{!0}
 
@@ -887,16 +943,18 @@ attributes #4 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"=
 !4 = metadata !{metadata !"Simple C/C++ TBAA"}
 !5 = metadata !{metadata !6, metadata !7, i64 0}
 !6 = metadata !{metadata !"_ZTS8buffer_t", metadata !7, i64 0, metadata !2, i64 8, metadata !3, i64 16, metadata !3, i64 32, metadata !3, i64 48, metadata !8, i64 64, metadata !9, i64 68, metadata !9, i64 69}
-!7 = metadata !{metadata !"long", metadata !3, i64 0}
+!7 = metadata !{metadata !"long long", metadata !3, i64 0}
 !8 = metadata !{metadata !"int", metadata !3, i64 0}
 !9 = metadata !{metadata !"bool", metadata !3, i64 0}
 !10 = metadata !{metadata !8, metadata !8, i64 0}
-!11 = metadata !{metadata !6, metadata !8, i64 64}
-!12 = metadata !{metadata !13, metadata !13, i64 0}
-!13 = metadata !{metadata !"float", metadata !3, i64 0}
-!14 = metadata !{metadata !15, metadata !15, i64 0}
-!15 = metadata !{metadata !"long long", metadata !3, i64 0}
-!16 = metadata !{metadata !6, metadata !9, i64 68}
-!17 = metadata !{i8 0, i8 2}
-!18 = metadata !{metadata !6, metadata !2, i64 8}
-!19 = metadata !{metadata !6, metadata !9, i64 69}
+!11 = metadata !{metadata !12, metadata !2, i64 0}
+!12 = metadata !{metadata !"_ZTS14_module_state_", metadata !2, i64 0, metadata !2, i64 8}
+!13 = metadata !{metadata !12, metadata !2, i64 8}
+!14 = metadata !{metadata !6, metadata !8, i64 64}
+!15 = metadata !{metadata !16, metadata !16, i64 0}
+!16 = metadata !{metadata !"float", metadata !3, i64 0}
+!17 = metadata !{metadata !7, metadata !7, i64 0}
+!18 = metadata !{metadata !6, metadata !9, i64 68}
+!19 = metadata !{i8 0, i8 2}
+!20 = metadata !{metadata !6, metadata !2, i64 8}
+!21 = metadata !{metadata !6, metadata !9, i64 69}

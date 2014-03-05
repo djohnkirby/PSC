@@ -58,5 +58,5 @@ attributes #1 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"=
 !5 = metadata !{i8 0, i8 2}
 !6 = metadata !{metadata !7, metadata !8, i64 0}
 !7 = metadata !{metadata !"_ZTS7timeval", metadata !8, i64 0, metadata !8, i64 8}
-!8 = metadata !{metadata !"long", metadata !3, i64 0}
+!8 = metadata !{metadata !"long long", metadata !3, i64 0}
 !9 = metadata !{metadata !7, metadata !8, i64 8}

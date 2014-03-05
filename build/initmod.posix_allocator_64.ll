@@ -25,7 +25,7 @@ if.then:                                          ; preds = %entry
   br label %return
 
 if.else:                                          ; preds = %entry
-  %add = add i64 %x, 32
+  %add = add i64 %x, 40
   %call1 = tail call i8* @malloc(i64 %add)
   %cmp = icmp eq i8* %call1, null
   br i1 %cmp, label %return, label %if.end

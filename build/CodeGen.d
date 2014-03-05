@@ -1,10 +1,10 @@
-build/CodeGen.o: src/CodeGen.cpp src/IRPrinter.h src/IRVisitor.h \
- src/Type.h src/IR.h src/Buffer.h src/buffer_t.h src/JITCompiledModule.h \
- src/IntrusivePtr.h src/Util.h src/Argument.h src/Parameter.h \
- src/Function.h src/Reduction.h src/Schedule.h src/CodeGen.h src/Scope.h \
- src/Debug.h src/ModulusRemainder.h src/IROperator.h src/CodeGen_C.h \
- src/Deinterleave.h src/Simplify.h src/CodeGen_Internal.h \
- src/LLVM_Headers.h \
+build/CodeGen.o: src/CodeGen.cpp src/IRPrinter.h src/IR.h src/IRVisitor.h \
+ src/Buffer.h src/buffer_t.h src/JITCompiledModule.h src/IntrusivePtr.h \
+ src/Util.h src/runtime/HalideRuntime.h src/Type.h src/Argument.h \
+ src/Parameter.h src/Function.h src/Reduction.h src/Schedule.h \
+ src/CodeGen.h src/Scope.h src/Debug.h src/ModulusRemainder.h \
+ src/IROperator.h src/Deinterleave.h src/Simplify.h \
+ src/CodeGen_Internal.h src/LLVM_Headers.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/MCJIT.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/ExecutionEngine.h \
  /home/dkirby/llvm/include/llvm-c/ExecutionEngine.h \
@@ -120,11 +120,9 @@ build/CodeGen.o: src/CodeGen.cpp src/IRPrinter.h src/IRVisitor.h \
 
 src/IRPrinter.h:
 
-src/IRVisitor.h:
-
-src/Type.h:
-
 src/IR.h:
+
+src/IRVisitor.h:
 
 src/Buffer.h:
 
@@ -135,6 +133,10 @@ src/JITCompiledModule.h:
 src/IntrusivePtr.h:
 
 src/Util.h:
+
+src/runtime/HalideRuntime.h:
+
+src/Type.h:
 
 src/Argument.h:
 
@@ -155,8 +157,6 @@ src/Debug.h:
 src/ModulusRemainder.h:
 
 src/IROperator.h:
-
-src/CodeGen_C.h:
 
 src/Deinterleave.h:
 

@@ -28,6 +28,37 @@ declare i32 @halide_printf(i8*, i8*, ...) #0
 
 declare void @exit(i32) #0
 
+define weak void @halide_error_varargs(i8* %user_context, i8* %msg, ...) #0 {
+entry:
+  %buf = alloca [4096 x i8], align 1
+  %args = alloca i8*, align 4
+  %0 = getelementptr inbounds [4096 x i8]* %buf, i32 0, i32 0
+  call void @llvm.lifetime.start(i64 4096, i8* %0) #1
+  %args1 = bitcast i8** %args to i8*
+  call void @llvm.va_start(i8* %args1)
+  %1 = load i8** %args, align 4, !tbaa !1
+  %call = call i32 @vsnprintf(i8* %0, i32 4096, i8* %msg, i8* %1)
+  call void @llvm.va_end(i8* %args1)
+  call void @halide_error(i8* %user_context, i8* %0)
+  call void @llvm.lifetime.end(i64 4096, i8* %0) #1
+  ret void
+}
+
+; Function Attrs: nounwind
+declare void @llvm.lifetime.start(i64, i8* nocapture) #1
+
+; Function Attrs: nounwind
+declare void @llvm.va_start(i8*) #1
+
+; Function Attrs: nounwind
+declare i32 @vsnprintf(i8* nocapture, i32, i8* nocapture readonly, i8*) #2
+
+; Function Attrs: nounwind
+declare void @llvm.va_end(i8*) #1
+
+; Function Attrs: nounwind
+declare void @llvm.lifetime.end(i64, i8* nocapture) #1
+
 define weak void @halide_set_error_handler(void (i8*, i8*)* %handler) #0 {
 entry:
   store void (i8*, i8*)* %handler, void (i8*, i8*)** @halide_error_handler, align 4, !tbaa !1
@@ -35,6 +66,8 @@ entry:
 }
 
 attributes #0 = { "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { nounwind }
+attributes #2 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
 
 !llvm.ident = !{!0}
 

@@ -1,13 +1,13 @@
 build/CodeGen_GPU_Host.o: src/CodeGen_GPU_Host.cpp src/CodeGen_GPU_Host.h \
- src/CodeGen_X86.h src/CodeGen_Posix.h src/CodeGen.h src/IRVisitor.h \
+ src/CodeGen_ARM.h src/CodeGen_Posix.h src/CodeGen.h src/IRVisitor.h \
  src/Argument.h src/Type.h src/IR.h src/Buffer.h src/buffer_t.h \
- src/JITCompiledModule.h src/IntrusivePtr.h src/Util.h src/Parameter.h \
- src/Function.h src/Reduction.h src/Schedule.h src/Scope.h src/Debug.h \
- src/ModulusRemainder.h src/Target.h src/CodeGen_GPU_Dev.h src/Func.h \
- src/Var.h src/Param.h src/IRPrinter.h src/RDom.h src/Image.h src/Tuple.h \
- src/IROperator.h src/CodeGen_PTX_Dev.h src/CodeGen_OpenCL_Dev.h \
- src/CodeGen_C.h src/CodeGen_SPIR_Dev.h src/IRMatch.h \
- src/integer_division_table.h src/CodeGen_Internal.h src/LLVM_Headers.h \
+ src/JITCompiledModule.h src/IntrusivePtr.h src/Util.h \
+ src/runtime/HalideRuntime.h src/Parameter.h src/Function.h \
+ src/Reduction.h src/Schedule.h src/Scope.h src/Debug.h \
+ src/ModulusRemainder.h src/Target.h src/CodeGen_X86.h \
+ src/CodeGen_PTX_Dev.h src/CodeGen_GPU_Dev.h src/CodeGen_OpenCL_Dev.h \
+ src/CodeGen_C.h src/IRPrinter.h src/CodeGen_SPIR_Dev.h src/IROperator.h \
+ src/CodeGen_Internal.h src/LLVM_Headers.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/MCJIT.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/ExecutionEngine.h \
  /home/dkirby/llvm/include/llvm-c/ExecutionEngine.h \
@@ -120,11 +120,11 @@ build/CodeGen_GPU_Host.o: src/CodeGen_GPU_Host.cpp src/CodeGen_GPU_Host.h \
  /home/dkirby/llvm/include/llvm/IR/Intrinsics.h \
  /home/dkirby/llvm/include/llvm/IR/Intrinsics.gen \
  /home/dkirby/llvm/include/llvm/Analysis/TargetTransformInfo.h \
- src/Bounds.h src/Simplify.h src/Tracing.h
+ src/Bounds.h src/Simplify.h
 
 src/CodeGen_GPU_Host.h:
 
-src/CodeGen_X86.h:
+src/CodeGen_ARM.h:
 
 src/CodeGen_Posix.h:
 
@@ -148,6 +148,8 @@ src/IntrusivePtr.h:
 
 src/Util.h:
 
+src/runtime/HalideRuntime.h:
+
 src/Parameter.h:
 
 src/Function.h:
@@ -164,35 +166,21 @@ src/ModulusRemainder.h:
 
 src/Target.h:
 
-src/CodeGen_GPU_Dev.h:
-
-src/Func.h:
-
-src/Var.h:
-
-src/Param.h:
-
-src/IRPrinter.h:
-
-src/RDom.h:
-
-src/Image.h:
-
-src/Tuple.h:
-
-src/IROperator.h:
+src/CodeGen_X86.h:
 
 src/CodeGen_PTX_Dev.h:
+
+src/CodeGen_GPU_Dev.h:
 
 src/CodeGen_OpenCL_Dev.h:
 
 src/CodeGen_C.h:
 
+src/IRPrinter.h:
+
 src/CodeGen_SPIR_Dev.h:
 
-src/IRMatch.h:
-
-src/integer_division_table.h:
+src/IROperator.h:
 
 src/CodeGen_Internal.h:
 
@@ -425,5 +413,3 @@ src/LLVM_Headers.h:
 src/Bounds.h:
 
 src/Simplify.h:
-
-src/Tracing.h:

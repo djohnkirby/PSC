@@ -19,6 +19,7 @@ target triple = "x86_64-unknown-linux-gnu"
 define weak void @halide_shutdown_thread_pool() #0 {
 entry:
   %retval = alloca i8*, align 8
+  %uninitialized_mutex.sroa.0 = alloca [40 x i8], align 1
   %0 = load i8* @halide_thread_pool_initialized, align 1, !tbaa !1, !range !5
   %tobool = icmp eq i8 %0, 0
   br i1 %tobool, label %return, label %if.end
@@ -29,9 +30,9 @@ if.end:                                           ; preds = %entry
   %call1 = call i32 @pthread_cond_broadcast(%struct.pthread_cond_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 2))
   %call2 = call i32 @pthread_mutex_unlock(%struct.pthread_mutex_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 0))
   %1 = load i32* @halide_threads, align 4, !tbaa !11
-  %sub8 = add nsw i32 %1, -1
-  %cmp9 = icmp sgt i32 %sub8, 0
-  br i1 %cmp9, label %for.body, label %for.end
+  %sub16 = add nsw i32 %1, -1
+  %cmp17 = icmp sgt i32 %sub16, 0
+  br i1 %cmp17, label %for.body, label %for.end
 
 for.body:                                         ; preds = %if.end, %for.body
   %indvars.iv = phi i64 [ %indvars.iv.next, %for.body ], [ 0, %if.end ]
@@ -47,8 +48,13 @@ for.body:                                         ; preds = %if.end, %for.body
 
 for.end:                                          ; preds = %for.body, %if.end
   %call4 = call i32 @pthread_mutex_destroy(%struct.pthread_mutex_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 0))
+  %uninitialized_mutex.sroa.0.0.idx9 = getelementptr inbounds [40 x i8]* %uninitialized_mutex.sroa.0, i64 0, i64 0
+  call void @llvm.lifetime.start(i64 40, i8* %uninitialized_mutex.sroa.0.0.idx9)
+  call void @llvm.memset.p0i8.i64(i8* %uninitialized_mutex.sroa.0.0.idx9, i8 0, i64 40, i32 1, i1 false)
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 0, i32 0, i64 0), i8* %uninitialized_mutex.sroa.0.0.idx9, i64 40, i32 1, i1 false)
   %call5 = call i32 @pthread_cond_destroy(%struct.pthread_cond_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 2))
   store i8 0, i8* @halide_thread_pool_initialized, align 1, !tbaa !1
+  call void @llvm.lifetime.end(i64 40, i8* %uninitialized_mutex.sroa.0.0.idx9)
   br label %return
 
 return:                                           ; preds = %entry, %for.end
@@ -65,7 +71,19 @@ declare i32 @pthread_join(i64, i8**) #1
 
 declare i32 @pthread_mutex_destroy(%struct.pthread_mutex_t*) #1
 
+; Function Attrs: nounwind
+declare void @llvm.lifetime.start(i64, i8* nocapture) #2
+
+; Function Attrs: nounwind
+declare void @llvm.memset.p0i8.i64(i8* nocapture, i8, i64, i32, i1) #2
+
+; Function Attrs: nounwind
+declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1) #2
+
 declare i32 @pthread_cond_destroy(%struct.pthread_cond_t*) #1
+
+; Function Attrs: nounwind
+declare void @llvm.lifetime.end(i64, i8* nocapture) #2
 
 ; Function Attrs: uwtable
 define weak void @halide_set_custom_do_task(i32 (i8*, i32 (i8*, i32, i8*)*, i32, i8*)* %f) #0 {
@@ -276,12 +294,6 @@ while.end:                                        ; preds = %cond.end, %cond.fal
 
 declare i32 @pthread_cond_wait(%struct.pthread_cond_t*, %struct.pthread_mutex_t*) #1
 
-; Function Attrs: nounwind
-declare void @llvm.lifetime.start(i64, i8* nocapture) #2
-
-; Function Attrs: nounwind
-declare void @llvm.lifetime.end(i64, i8* nocapture) #2
-
 ; Function Attrs: uwtable
 define weak i32 @halide_do_par_for(i8* %user_context, i32 (i8*, i32, i8*)* %f, i32 %min, i32 %size, i8* %closure) #0 {
 entry:
@@ -295,24 +307,24 @@ if.then:                                          ; preds = %entry
   br label %return
 
 if.end:                                           ; preds = %entry
+  %call1 = call i32 @pthread_mutex_lock(%struct.pthread_mutex_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 0))
   %1 = load i8* @halide_thread_pool_initialized, align 1, !tbaa !1, !range !5
-  %tobool1 = icmp eq i8 %1, 0
-  br i1 %tobool1, label %if.then2, label %if.end19
+  %tobool2 = icmp eq i8 %1, 0
+  br i1 %tobool2, label %if.then3, label %if.end19
 
-if.then2:                                         ; preds = %if.end
+if.then3:                                         ; preds = %if.end
   store i8 0, i8* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 4), align 8, !tbaa !6
-  %call3 = call i32 @pthread_mutex_init(%struct.pthread_mutex_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 0), i64* null)
   %call4 = call i32 @pthread_cond_init(%struct.pthread_cond_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 2), i64* null)
   store %struct.work* null, %struct.work** getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 1), align 8, !tbaa !16
   %call5 = call i8* @getenv(i8* getelementptr inbounds ([14 x i8]* @.str, i64 0, i64 0))
   %tobool6 = icmp eq i8* %call5, null
   br i1 %tobool6, label %if.else, label %if.then7
 
-if.then7:                                         ; preds = %if.then2
+if.then7:                                         ; preds = %if.then3
   %call8 = call i32 @atoi(i8* %call5)
   br label %if.end10
 
-if.else:                                          ; preds = %if.then2
+if.else:                                          ; preds = %if.then3
   %call9 = call i32 @halide_host_cpu_count()
   br label %if.end10
 
@@ -328,16 +340,16 @@ for.cond.preheader.thread:                        ; preds = %if.end10
 
 if.else12:                                        ; preds = %if.end10
   %cmp13 = icmp slt i32 %storemerge, 1
-  br i1 %cmp13, label %for.cond.preheader.thread42, label %for.cond.preheader
+  br i1 %cmp13, label %for.cond.preheader.thread41, label %for.cond.preheader
 
-for.cond.preheader.thread42:                      ; preds = %if.else12
+for.cond.preheader.thread41:                      ; preds = %if.else12
   store i32 1, i32* @halide_threads, align 4, !tbaa !11
   br label %for.end
 
 for.cond.preheader:                               ; preds = %if.else12
-  %sub37 = add nsw i32 %storemerge, -1
-  %cmp1738 = icmp sgt i32 %sub37, 0
-  br i1 %cmp1738, label %for.body, label %for.end
+  %sub36 = add nsw i32 %storemerge, -1
+  %cmp1737 = icmp sgt i32 %sub36, 0
+  br i1 %cmp1737, label %for.body, label %for.end
 
 for.body:                                         ; preds = %for.cond.preheader, %for.cond.preheader.thread, %for.body
   %indvars.iv = phi i64 [ %indvars.iv.next, %for.body ], [ 0, %for.cond.preheader.thread ], [ 0, %for.cond.preheader ]
@@ -350,7 +362,7 @@ for.body:                                         ; preds = %for.cond.preheader,
   %cmp17 = icmp slt i32 %3, %sub
   br i1 %cmp17, label %for.body, label %for.end
 
-for.end:                                          ; preds = %for.body, %for.cond.preheader.thread42, %for.cond.preheader
+for.end:                                          ; preds = %for.body, %for.cond.preheader.thread41, %for.cond.preheader
   store i8 1, i8* @halide_thread_pool_initialized, align 1, !tbaa !1
   br label %if.end19
 
@@ -372,14 +384,13 @@ if.end19:                                         ; preds = %if.end, %for.end
   store i32 0, i32* %exit_status, align 4, !tbaa !21
   %active_workers = getelementptr inbounds %struct.work* %job, i64 0, i32 6
   store i32 0, i32* %active_workers, align 8, !tbaa !20
-  %call23 = call i32 @pthread_mutex_lock(%struct.pthread_mutex_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 0))
   %5 = load %struct.work** getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 1), align 8, !tbaa !16
   %next_job = getelementptr inbounds %struct.work* %job, i64 0, i32 0
   store %struct.work* %5, %struct.work** %next_job, align 8, !tbaa !19
   store %struct.work* %job, %struct.work** getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 1), align 8, !tbaa !16
-  %call24 = call i32 @pthread_mutex_unlock(%struct.pthread_mutex_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 0))
-  %call25 = call i32 @pthread_cond_broadcast(%struct.pthread_cond_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 2))
-  %call26 = call i8* @halide_worker_thread(i8* %4)
+  %call23 = call i32 @pthread_mutex_unlock(%struct.pthread_mutex_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 0))
+  %call24 = call i32 @pthread_cond_broadcast(%struct.pthread_cond_t* getelementptr inbounds (%struct.anon* @halide_work_queue, i64 0, i32 2))
+  %call25 = call i8* @halide_worker_thread(i8* %4)
   %6 = load i32* %exit_status, align 4, !tbaa !21
   call void @llvm.lifetime.end(i64 48, i8* %4) #2
   br label %return
@@ -388,8 +399,6 @@ return:                                           ; preds = %if.end19, %if.then
   %retval.0 = phi i32 [ %call, %if.then ], [ %6, %if.end19 ]
   ret i32 %retval.0
 }
-
-declare i32 @pthread_mutex_init(%struct.pthread_mutex_t*, i64*) #1
 
 declare i32 @pthread_cond_init(%struct.pthread_cond_t*, i64*) #1
 

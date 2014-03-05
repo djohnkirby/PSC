@@ -56,4 +56,4 @@ attributes #1 = { "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "
 !4 = metadata !{metadata !"Simple C/C++ TBAA"}
 !5 = metadata !{i8 0, i8 2}
 !6 = metadata !{metadata !7, metadata !7, i64 0}
-!7 = metadata !{metadata !"long", metadata !3, i64 0}
+!7 = metadata !{metadata !"long long", metadata !3, i64 0}

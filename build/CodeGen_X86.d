@@ -1,11 +1,11 @@
 build/CodeGen_X86.o: src/CodeGen_X86.cpp src/CodeGen_X86.h \
  src/CodeGen_Posix.h src/CodeGen.h src/IRVisitor.h src/Argument.h \
  src/Type.h src/IR.h src/Buffer.h src/buffer_t.h src/JITCompiledModule.h \
- src/IntrusivePtr.h src/Util.h src/Parameter.h src/Function.h \
- src/Reduction.h src/Schedule.h src/Scope.h src/Debug.h \
- src/ModulusRemainder.h src/Target.h src/IROperator.h src/IRMutator.h \
- src/IRMatch.h src/Simplify.h src/Var.h src/Param.h src/IRPrinter.h \
- src/integer_division_table.h src/LLVM_Headers.h \
+ src/IntrusivePtr.h src/Util.h src/runtime/HalideRuntime.h \
+ src/Parameter.h src/Function.h src/Reduction.h src/Schedule.h \
+ src/Scope.h src/Debug.h src/ModulusRemainder.h src/Target.h \
+ src/IROperator.h src/IRMatch.h src/Var.h src/Param.h src/IRPrinter.h \
+ src/IntegerDivisionTable.h src/LLVM_Headers.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/MCJIT.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/ExecutionEngine.h \
  /home/dkirby/llvm/include/llvm-c/ExecutionEngine.h \
@@ -143,6 +143,8 @@ src/IntrusivePtr.h:
 
 src/Util.h:
 
+src/runtime/HalideRuntime.h:
+
 src/Parameter.h:
 
 src/Function.h:
@@ -161,11 +163,7 @@ src/Target.h:
 
 src/IROperator.h:
 
-src/IRMutator.h:
-
 src/IRMatch.h:
-
-src/Simplify.h:
 
 src/Var.h:
 
@@ -173,7 +171,7 @@ src/Param.h:
 
 src/IRPrinter.h:
 
-src/integer_division_table.h:
+src/IntegerDivisionTable.h:
 
 src/LLVM_Headers.h:
 

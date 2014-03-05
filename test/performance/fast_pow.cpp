@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
     Image<float> fast_result(2048, 768);
     Image<float> faster_result(2048, 768);
 
-    const int iterations = 200;
+    const int iterations = 20;
 
     double t1 = currentTime();
     for (int i = 0; i < iterations; i++) {

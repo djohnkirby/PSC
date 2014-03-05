@@ -1,4 +1,8 @@
-build/Target.o: src/Target.cpp src/Target.h src/Util.h src/LLVM_Headers.h \
+build/Target.o: src/Target.cpp src/Target.h src/Util.h src/Debug.h \
+ src/IR.h src/IRVisitor.h src/Buffer.h src/buffer_t.h \
+ src/JITCompiledModule.h src/IntrusivePtr.h src/runtime/HalideRuntime.h \
+ src/Type.h src/Argument.h src/Parameter.h src/Function.h src/Reduction.h \
+ src/Schedule.h src/LLVM_Headers.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/MCJIT.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/ExecutionEngine.h \
  /home/dkirby/llvm/include/llvm-c/ExecutionEngine.h \
@@ -110,14 +114,39 @@ build/Target.o: src/Target.cpp src/Target.h src/Util.h src/LLVM_Headers.h \
  /home/dkirby/llvm/include/llvm/Support/ConstantFolder.h \
  /home/dkirby/llvm/include/llvm/IR/Intrinsics.h \
  /home/dkirby/llvm/include/llvm/IR/Intrinsics.gen \
- /home/dkirby/llvm/include/llvm/Analysis/TargetTransformInfo.h \
- src/Debug.h src/IR.h src/IRVisitor.h src/Buffer.h src/buffer_t.h \
- src/JITCompiledModule.h src/IntrusivePtr.h src/Type.h src/Argument.h \
- src/Parameter.h src/Function.h src/Reduction.h src/Schedule.h
+ /home/dkirby/llvm/include/llvm/Analysis/TargetTransformInfo.h
 
 src/Target.h:
 
 src/Util.h:
+
+src/Debug.h:
+
+src/IR.h:
+
+src/IRVisitor.h:
+
+src/Buffer.h:
+
+src/buffer_t.h:
+
+src/JITCompiledModule.h:
+
+src/IntrusivePtr.h:
+
+src/runtime/HalideRuntime.h:
+
+src/Type.h:
+
+src/Argument.h:
+
+src/Parameter.h:
+
+src/Function.h:
+
+src/Reduction.h:
+
+src/Schedule.h:
 
 src/LLVM_Headers.h:
 
@@ -344,29 +373,3 @@ src/LLVM_Headers.h:
 /home/dkirby/llvm/include/llvm/IR/Intrinsics.gen:
 
 /home/dkirby/llvm/include/llvm/Analysis/TargetTransformInfo.h:
-
-src/Debug.h:
-
-src/IR.h:
-
-src/IRVisitor.h:
-
-src/Buffer.h:
-
-src/buffer_t.h:
-
-src/JITCompiledModule.h:
-
-src/IntrusivePtr.h:
-
-src/Type.h:
-
-src/Argument.h:
-
-src/Parameter.h:
-
-src/Function.h:
-
-src/Reduction.h:
-
-src/Schedule.h:

@@ -113,8 +113,9 @@ build/CodeGen_Internal.o: src/CodeGen_Internal.cpp src/CodeGen_Internal.h \
  /home/dkirby/llvm/include/llvm/IR/Intrinsics.gen \
  /home/dkirby/llvm/include/llvm/Analysis/TargetTransformInfo.h \
  src/Scope.h src/Util.h src/Debug.h src/IR.h src/Buffer.h src/buffer_t.h \
- src/JITCompiledModule.h src/IntrusivePtr.h src/Type.h src/Argument.h \
- src/Parameter.h src/Function.h src/Reduction.h src/Schedule.h
+ src/JITCompiledModule.h src/IntrusivePtr.h src/runtime/HalideRuntime.h \
+ src/Type.h src/Argument.h src/Parameter.h src/Function.h src/Reduction.h \
+ src/Schedule.h
 
 src/CodeGen_Internal.h:
 
@@ -361,6 +362,8 @@ src/buffer_t.h:
 src/JITCompiledModule.h:
 
 src/IntrusivePtr.h:
+
+src/runtime/HalideRuntime.h:
 
 src/Type.h:
 

@@ -1,8 +1,9 @@
 build/JITCompiledModule.o: src/JITCompiledModule.cpp src/buffer_t.h \
- src/JITCompiledModule.h src/IntrusivePtr.h src/Util.h src/CodeGen.h \
- src/IRVisitor.h src/Argument.h src/Type.h src/IR.h src/Buffer.h \
- src/Parameter.h src/Function.h src/Reduction.h src/Schedule.h \
- src/Scope.h src/Debug.h src/ModulusRemainder.h src/LLVM_Headers.h \
+ src/JITCompiledModule.h src/IntrusivePtr.h src/Util.h \
+ src/runtime/HalideRuntime.h src/CodeGen.h src/IRVisitor.h src/Argument.h \
+ src/Type.h src/IR.h src/Buffer.h src/Parameter.h src/Function.h \
+ src/Reduction.h src/Schedule.h src/Scope.h src/Debug.h \
+ src/ModulusRemainder.h src/LLVM_Headers.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/MCJIT.h \
  /home/dkirby/llvm/include/llvm/ExecutionEngine/ExecutionEngine.h \
  /home/dkirby/llvm/include/llvm-c/ExecutionEngine.h \
@@ -123,6 +124,8 @@ src/JITCompiledModule.h:
 src/IntrusivePtr.h:
 
 src/Util.h:
+
+src/runtime/HalideRuntime.h:
 
 src/CodeGen.h:
 

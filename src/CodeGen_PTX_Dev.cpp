@@ -1,15 +1,8 @@
 #include "CodeGen_PTX_Dev.h"
 #include "IROperator.h"
-#include <iostream>
-#include "buffer_t.h"
 #include "IRPrinter.h"
-#include "IRMatch.h"
 #include "Debug.h"
-#include "Util.h"
-#include "Var.h"
-#include "Param.h"
 #include "Target.h"
-#include "integer_division_table.h"
 #include "LLVM_Headers.h"
 
 // This is declared in NVPTX.h, which is not exported. Ugly, but seems better than
@@ -348,10 +341,19 @@ vector<char> CodeGen_PTX_Dev::compile_to_src() {
     }
 
     // Add the target data from the target machine, if it exists, or the module.
-    if (const DataLayout *TD = Target.getDataLayout())
+    #if LLVM_VERSION < 35
+    if (const DataLayout *TD = Target.getDataLayout()) {
         PM.add(new DataLayout(*TD));
-    else
+    } else {
         PM.add(new DataLayout(module));
+    }
+    #else
+    if (const DataLayout *TD = Target.getDataLayout()) {
+        PM.add(new DataLayoutPass(*TD));
+    } else {
+        PM.add(new DataLayoutPass(module));
+    }
+    #endif
 
     // NVidia's libdevice library uses a __nvvm_reflect to choose
     // how to handle denormalized numbers. (The pass replaces calls
