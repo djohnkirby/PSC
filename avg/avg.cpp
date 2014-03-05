@@ -24,10 +24,13 @@ int main(int argc, char **argv)
 			printf("Usage: ./avg png1.png png2.png\n");
 			return 0;
 		}
-		if( argc > 2 && *(argv[3]) == 'd')
+		printf("About to check the thing.\n");
+		if( argc > 2 && strcmp(argv[2],"d") == 0)	
 			debug = 1;
+		printf("About to load images\n");
 		Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
 		Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);
+		printf("Made it\n");
     Halide::Func average;
     Halide::Var x, y, c;
 
