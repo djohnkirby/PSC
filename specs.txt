@@ -1,0 +1,3 @@
+cmist:
+	Eight cores, 3GhZ
+	6.1 MB cache
