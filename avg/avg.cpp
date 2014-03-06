@@ -10,30 +10,15 @@
 
 // The only Halide header file you need is Halide.h. It includes all of Halide.
 #include <Halide.h>
-
+#include <halide_load_tiff.h>
 // Include some support code for loading pngs. It assumes there's an
 // Image type, so we'll pull the one from Halide namespace;
 using Halide::Image;
 #include "../apps/support/image_io.h"
 #include <tiffio.h>
+#include "halide_load_tiff.h"
 int debug = 0;
 
-readTiff(TIFF * input)
-{
-	uint32 imagelength;
-	tdata_t buf;
-	uint32 row;
-	TIFFGetField(input, TIFFTAG_IMAGELENGTH, &imagelength);
-	buf = _TIFFmalloc(TIFFScanlineSize(input));
-  
-	for (row = 0; row < imagelength; row++)
-	{
-   tiffreadscanline(input, buf, row);
-	 /* This is where we have the buf, load into Halide here? */
-	_tifffree(buf);
-	}
-
-}
 
 int main(int argc, char **argv) 
 {
@@ -48,15 +33,8 @@ int main(int argc, char **argv)
 		/*Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
 		Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);
 		*/
-		TIFF *tiff1 = TIFFOpen(argv[1], "r");
-		TIFF *tiff2 = TIFFOpen(argv[2], "r");
-		
-		Halide<uint8_t> input = readTiff(tiff1);
-		Halide<uint8_t> input2 = readTiff(tiff2);		
-
-		TIFFClose(tiff1);
-		TIFFClose(tiff2);
-
+		Halide::Image<uint8_t> input = load_tiff(argv[0]);
+		Halide::Image<uint8_t> input2 = load_tiff(argv[1]);
     Halide::Func average;
     Halide::Var x, y, c;
 
