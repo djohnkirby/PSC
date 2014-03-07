@@ -16,6 +16,10 @@
 // We'll also include stdio for printf.
 #include <stdio.h>
 
+using Halide::Image;
+#include "../apps/support/image_io.h"
+
+
 int main(int argc, char **argv) {
 
     // This program defines a single-stage imaging pipeline that
@@ -88,6 +92,8 @@ int main(int argc, char **argv) {
         }
     }
 
+		//Dan added this
+		save(output, "gradient.png");
     // Everything worked! We defined a Func, then called 'realize' on
     // it to generate and run machine code that produced an Image.
     printf("Success!\n");

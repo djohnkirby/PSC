@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Bounds.h"
 #include "IRVisitor.h"
 #include "IR.h"
@@ -8,8 +10,6 @@
 #include "Util.h"
 #include "Var.h"
 #include "Debug.h"
-#include "CSE.h"
-#include <iostream>
 
 namespace Halide {
 namespace Internal {
@@ -18,13 +18,38 @@ using std::make_pair;
 using std::map;
 using std::vector;
 using std::string;
+using std::pair;
 
 class Bounds : public IRVisitor {
 public:
     Expr min, max;
-    Scope<Interval> scope;
+    const Scope<Interval> &scope;
+    Scope<Interval> inner_scope;
+    const FuncValueBounds &func_bounds;
 
+    Bounds(const Scope<Interval> &s, const FuncValueBounds &fb) :
+        scope(s), func_bounds(fb) {}
 private:
+
+    // Compute the intrinsic bounds of a function.
+    void bounds_of_func(Function f, int value_index) {
+        // if we can't get a good bound from the function, fall back to the bounds of the type.
+        bounds_of_type(f.output_types()[value_index]);
+
+        pair<string, int> key = make_pair(f.name(), value_index);
+
+        FuncValueBounds::const_iterator iter = func_bounds.find(key);
+
+        if (iter != func_bounds.end()) {
+            if (iter->second.min.defined()) {
+                min = iter->second.min;
+            }
+            if (iter->second.max.defined()) {
+                max = iter->second.max;
+            }
+        }
+    }
+
     void bounds_of_type(Type t) {
         if (t.is_uint() && t.bits <= 16) {
             max = cast(t, (1 << t.bits) - 1);
@@ -141,6 +166,10 @@ private:
     void visit(const Variable *op) {
         if (scope.contains(op->name)) {
             Interval bounds = scope.get(op->name);
+            min = bounds.min;
+            max = bounds.max;
+        } else if (inner_scope.contains(op->name)) {
+            Interval bounds = inner_scope.get(op->name);
             min = bounds.min;
             max = bounds.max;
         } else {
@@ -626,6 +655,22 @@ private:
                 // If the argument is unbounded on one side, then the max is unbounded.
                 max = Expr();
             }
+        } else if (op->args.size() == 1 && min.defined() && max.defined() &&
+                   (op->name == "ceil_f32" || op->name == "ceil_f64" ||
+                    op->name == "floor_f32" || op->name == "floor_f64" ||
+                    op->name == "round_f32" || op->name == "round_f64" ||
+                    op->name == "exp_f32" || op->name == "exp_f64" ||
+                    op->name == "log_f32" || op->name == "log_f64")) {
+            // For monotonic, pure, single-argument functions, we can
+            // make two calls for the min and the max.
+            Expr min_a = min, max_a = max;
+            min = Call::make(op->type, op->name, vec<Expr>(min_a), op->call_type,
+                             op->func, op->value_index, op->image, op->param);
+            max = Call::make(op->type, op->name, vec<Expr>(max_a), op->call_type,
+                             op->func, op->value_index, op->image, op->param);
+
+        } else if (op->func.has_pure_definition()) {
+            bounds_of_func(op->func, op->value_index);
         } else {
             // Just use the bounds of the type
             bounds_of_type(op->type);
@@ -634,9 +679,9 @@ private:
 
     void visit(const Let *op) {
         op->value.accept(this);
-        scope.push(op->name, Interval(min, max));
+        inner_scope.push(op->name, Interval(min, max));
         op->body.accept(this);
-        scope.pop(op->name);
+        inner_scope.pop(op->name);
     }
 
     void visit(const LetStmt *) {
@@ -676,10 +721,9 @@ private:
     }
 };
 
-Interval bounds_of_expr_in_scope(Expr expr, const Scope<Interval> &scope) {
+Interval bounds_of_expr_in_scope(Expr expr, const Scope<Interval> &scope, const FuncValueBounds &fb) {
     //debug(3) << "computing bounds_of_expr_in_scope " << expr << "\n";
-    Bounds b;
-    b.scope = scope;
+    Bounds b(scope, fb);
     expr.accept(&b);
     //debug(3) << "bounds_of_expr_in_scope " << expr << " = " << simplify(b.min) << ", " << simplify(b.max) << "\n";
     return Interval(b.min, b.max);
@@ -708,214 +752,279 @@ Region region_union(const Region &a, const Region &b) {
     return result;
 }
 
-class RegionTouched : public IRVisitor {
-public:
-    // The bounds of things in scope
-    Scope<Interval> scope;
 
-    // If this is non-empty, we only care about this one function
-    string func;
 
-    // Min, Max per dimension of each function found. Used if func is empty
-    map<string, vector<Interval> > regions;
-
-    // Min, Max per dimension of func, if it is non-empty
-    vector<Interval> region;
-
-    // Take into account call nodes
-    bool consider_calls;
-
-    // Take into account provide nodes
-    bool consider_provides;
-
-    // Which buffers are we inside the update step of? We ignore
-    // recursive calls from a function to itself to avoid recursive
-    // bounds expressions. These bounds are handled during lowering
-    // instead.
-    Scope<int> inside_update;
-private:
-    using IRVisitor::visit;
-
-    void visit(const LetStmt *op) {
-        Interval value_bounds = bounds_of_expr_in_scope(op->value, scope);
-        scope.push(op->name, value_bounds);
-        debug(3) << "Adding " << op->name << " = " << op->value << " to scope: " << simplify(value_bounds.min) << ", " << simplify(value_bounds.max) << "\n";
-
-        op->body.accept(this);
-        debug(3) << "Removing " << op->name << " from scope\n";
-        scope.pop(op->name);
+void merge_boxes(Box &a, const Box &b) {
+    if (b.empty()) {
+        return;
     }
+
+    if (a.empty()) {
+        a = b;
+        return;
+    }
+
+    assert(a.size() == b.size());
+
+    for (size_t i = 0; i < a.size(); i++) {
+        if (!a[i].min.same_as(b[i].min)) {
+            if (a[i].min.defined() && b[i].min.defined()) {
+                a[i].min = min(a[i].min, b[i].min);
+            } else {
+                a[i].min = Expr();
+            }
+        }
+        if (!a[i].max.same_as(b[i].max)) {
+            if (a[i].max.defined() && b[i].max.defined()) {
+                a[i].max = max(a[i].max, b[i].max);
+            } else {
+                a[i].max = Expr();
+            }
+        }
+    }
+}
+
+// Compute the box produced by a statement
+class BoxesTouched : public IRGraphVisitor {
+
+public:
+    BoxesTouched(bool calls, bool provides, string fn, const Scope<Interval> &s, const FuncValueBounds &fb) :
+        func(fn), consider_calls(calls), consider_provides(provides), scope(s), func_bounds(fb) {}
+
+    map<string, Box> boxes;
+
+private:
+
+    string func;
+    bool consider_calls, consider_provides;
+    Scope<Interval> scope;
+    const FuncValueBounds &func_bounds;
+
+    using IRGraphVisitor::visit;
 
     void visit(const Let *op) {
+        if (!consider_calls) return;
+
         op->value.accept(this);
-        Interval value_bounds = bounds_of_expr_in_scope(op->value, scope);
+        Interval value_bounds = bounds_of_expr_in_scope(op->value, scope, func_bounds);
         scope.push(op->name, value_bounds);
         op->body.accept(this);
-        scope.pop(op->name);
-    }
-
-    void visit(const For *op) {
-        op->min.accept(this);
-        op->extent.accept(this);
-        Interval min_bounds = bounds_of_expr_in_scope(op->min, scope);
-        Interval extent_bounds = bounds_of_expr_in_scope(op->extent, scope);
-        Expr min = min_bounds.min;
-        Expr max;
-        if (min_bounds.max.defined() && extent_bounds.max.defined()) {
-            max = (min_bounds.max + extent_bounds.max) - 1;
-        }
-        scope.push(op->name, Interval(min, max));
-        debug(3) << "Adding " << op->name << " to scope: " << min << ", " << max << "\n";
-        op->body.accept(this);
-        debug(3) << "Removing " << op->name << " from scope\n";
         scope.pop(op->name);
     }
 
     void visit(const Call *op) {
-        IRVisitor::visit(op);
-        // Ignore calls to a function from within it's own update step
-        // (i.e. recursive calls from a function to itself). Including
-        // these gives recursive definitions of the bounds (f requires
-        // as much as f requires!). We make sure we cover the bounds
-        // required by the update step of a reduction elsewhere (in
-        // InjectRealization in Lower.cpp)
+        if (!consider_calls) return;
 
-        // Don't consider calls to intrinsics, because they're
-        // polymorphic, so different calls with have bounds of
-        // different types, so they can't be unified.
-        if (op->call_type == Call::Intrinsic) {
+        // Calls inside of an address_of aren't touched, because no
+        // actual memory access takes place.
+        if (op->call_type == Call::Intrinsic && op->name == Call::address_of) {
+            // Visit the args of the inner call
+            assert(op->args.size() == 1);
+            const Call *c = op->args[0].as<Call>();
+            assert(c);
+            for (size_t i = 0; i < c->args.size(); i++) {
+                c->args[i].accept(this);
+            }
             return;
         }
 
-        if (consider_calls && !inside_update.contains(op->name) &&
-            (func.empty() || func == op->name)) {
-            debug(3) << "Found call to " << op->name << ": " << Expr(op) << "\n";
+        IRVisitor::visit(op);
 
-            vector<Interval> &r = func.empty() ? regions[op->name] : region;
-            for (size_t i = 0; i < op->args.size(); i++) {
-                Interval bounds;
-                if (!op->args[i].type().is_handle()) {
-                    bounds = bounds_of_expr_in_scope(op->args[i], scope);
-                    debug(3) << "Bounds of call to " << op->name << " in dimension " << i << ": "
-                             << bounds.min << ", " << bounds.max << "\n";
-                }
+        if (op->call_type == Call::Intrinsic ||
+            op->call_type == Call::Extern) {
+            return;
+        }
 
-                if (r.size() > i) {
-                    r[i] = interval_union(r[i], bounds);
-                } else {
-                    r.push_back(bounds);
+        string name = op->name;
+
+        Box b(op->args.size());
+        for (size_t i = 0; i < op->args.size(); i++) {
+            op->args[i].accept(this);
+            b[i] = bounds_of_expr_in_scope(op->args[i], scope, func_bounds);
+        }
+        merge_boxes(boxes[op->name], b);
+    }
+
+    class CountVars : public IRVisitor {
+        using IRVisitor::visit;
+
+        void visit(const Variable *var) {
+            count++;
+        }
+    public:
+        int count;
+        CountVars() : count(0) {}
+    };
+
+    // We get better simplification if we directly substitute mins
+    // and maxes in, but this can also cause combinatorial code
+    // explosion. Here we manage this by only substituting in
+    // reasonably-sized expressions. We determine the size by
+    // counting the number of var nodes.
+    bool is_small_enough_to_substitute(Expr e) {
+        if (!e.defined()) {
+            return true;
+        }
+        CountVars c;
+        e.accept(&c);
+        return c.count < 10;
+    }
+
+    void visit(const LetStmt *op) {
+        if (consider_calls) {
+            op->value.accept(this);
+        }
+        Interval value_bounds = bounds_of_expr_in_scope(op->value, scope, func_bounds);
+        value_bounds.min = simplify(value_bounds.min);
+        value_bounds.max = simplify(value_bounds.max);
+
+        if (is_small_enough_to_substitute(value_bounds.min) &&
+            is_small_enough_to_substitute(value_bounds.max)) {
+            scope.push(op->name, value_bounds);
+            op->body.accept(this);
+            scope.pop(op->name);
+        } else {
+            string max_name = unique_name('t');
+            string min_name = unique_name('t');
+
+            scope.push(op->name, Interval(Variable::make(op->value.type(), min_name),
+                                          Variable::make(op->value.type(), max_name)));
+            op->body.accept(this);
+            scope.pop(op->name);
+
+            for (map<string, Box>::iterator iter = boxes.begin();
+                 iter != boxes.end(); ++iter) {
+                Box &box = iter->second;
+                for (size_t i = 0; i < box.size(); i++) {
+                    if (box[i].min.defined()) {
+                        box[i].min = Let::make(max_name, value_bounds.max, box[i].min);
+                        box[i].min = Let::make(min_name, value_bounds.min, box[i].min);
+                    }
+                    if (box[i].max.defined()) {
+                        box[i].max = Let::make(max_name, value_bounds.max, box[i].max);
+                        box[i].max = Let::make(min_name, value_bounds.min, box[i].max);
+                    }
                 }
             }
         }
+    }
+
+    void visit(const For *op) {
+        if (consider_calls) {
+            op->min.accept(this);
+            op->extent.accept(this);
+        }
+
+        Expr min_val, max_val;
+        if (scope.contains(op->name + ".loop_min")) {
+            min_val = scope.get(op->name + ".loop_min").min;
+        } else {
+            min_val = bounds_of_expr_in_scope(op->min, scope, func_bounds).min;
+        }
+
+        if (scope.contains(op->name + ".loop_max")) {
+            max_val = scope.get(op->name + ".loop_max").max;
+        } else {
+            max_val = bounds_of_expr_in_scope(op->extent, scope, func_bounds).max;
+            max_val += bounds_of_expr_in_scope(op->min, scope, func_bounds).max;
+            max_val -= 1;
+        }
+
+        scope.push(op->name, Interval(min_val, max_val));
+        op->body.accept(this);
+        scope.pop(op->name);
     }
 
     void visit(const Provide *op) {
-        IRVisitor::visit(op);
-        if (consider_provides && (func.empty() || func == op->name)) {
-            vector<Interval> &r = func.empty() ? regions[op->name] : region;
-            for (size_t i = 0; i < op->args.size(); i++) {
-                Interval bounds = bounds_of_expr_in_scope(op->args[i], scope);
-                if (r.size() > i) {
-                    r[i] = interval_union(r[i], bounds);
-                } else {
-                    r.push_back(bounds);
+        if (consider_provides) {
+            if (op->name == func || func.empty()) {
+                Box b(op->args.size());
+                for (size_t i = 0; i < op->args.size(); i++) {
+                    b[i] = bounds_of_expr_in_scope(op->args[i], scope, func_bounds);
                 }
+                merge_boxes(boxes[op->name], b);
+            }
+        }
+
+        if (consider_calls) {
+            for (size_t i = 0; i < op->args.size(); i++) {
+                op->args[i].accept(this);
+            }
+            for (size_t i = 0; i < op->values.size(); i++) {
+                op->values[i].accept(this);
             }
         }
     }
-
-    void visit(const Pipeline *op) {
-        // If we're considering only this function, and we're not
-        // considering provides, there's no point descending here.
-        if (func != op->name || consider_provides) {
-            op->produce.accept(this);
-        }
-
-        if (op->update.defined()) {
-            inside_update.push(op->name, 0);
-            op->update.accept(this);
-            inside_update.pop(op->name);
-        }
-
-        // If we're considering only this function, and we're not
-        // considering calls, there's no point descending here.
-        if (func != op->name || consider_calls) {
-            op->consume.accept(this);
-        }
-
-    }
 };
 
-// Convert from (min, max) to (min, extent)
-Range interval_to_range(const Interval &i) {
-    if (!i.min.defined() || !i.max.defined()) {
-        return Range();
-    } else {
-        return Range(simplify(i.min),
-                     simplify((i.max + 1) - i.min));
+map<string, Box> boxes_touched(Expr e, Stmt s, bool consider_calls, bool consider_provides,
+                               string fn, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    BoxesTouched b(consider_calls, consider_provides, fn, scope, fb);
+    if (e.defined()) {
+        e.accept(&b);
     }
-}
-
-Region compute_region_touched(Stmt s, bool consider_calls, bool consider_provides, const string &func) {
-    RegionTouched r;
-    r.consider_calls = consider_calls;
-    r.consider_provides = consider_provides;
-    r.func = func;
-    s.accept(&r);
-    const vector<Interval> &box = r.region;
-    Region region;
-    for (size_t i = 0; i < box.size(); i++) {
-        region.push_back(interval_to_range(box[i]));
+    if (s.defined()) {
+        s.accept(&b);
     }
-    return region;
+    return b.boxes;
 }
 
-map<string, Region> compute_regions_touched(Stmt s, bool consider_calls, bool consider_provides) {
-    RegionTouched r;
-    r.consider_calls = consider_calls;
-    r.consider_provides = consider_provides;
-    r.func = "";
-    s.accept(&r);
-    map<string, Region> regions;
-    for (map<string, vector<Interval> >::iterator iter = r.regions.begin();
-         iter != r.regions.end(); ++iter) {
-        Region region;
-        const vector<Interval> &box = iter->second;
-        for (size_t i = 0; i < box.size(); i++) {
-            region.push_back(interval_to_range(box[i]));
-        }
-        regions[iter->first] = region;
-    }
-    return regions;
+Box box_touched(Expr e, Stmt s, bool consider_calls, bool consider_provides,
+                string fn, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return boxes_touched(e, s, consider_calls, consider_provides, fn, scope, fb)[fn];
 }
 
-map<string, Region> regions_provided(Stmt s) {
-    return compute_regions_touched(s, false, true);
+map<string, Box> boxes_required(Expr e, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return boxes_touched(e, Stmt(), true, false, "", scope, fb);
 }
 
-map<string, Region> regions_called(Stmt s) {
-    return compute_regions_touched(s, true, false);
+Box box_required(Expr e, string fn, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return box_touched(e, Stmt(), true, false, fn, scope, fb);
 }
 
-map<string, Region> regions_touched(Stmt s) {
-    return compute_regions_touched(s, true, true);
+map<string, Box> boxes_required(Stmt s, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return boxes_touched(Expr(), s, true, false, "", scope, fb);
 }
 
-Region region_provided(Stmt s, const string &func) {
-    return compute_region_touched(s, false, true, func);
+Box box_required(Stmt s, string fn, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return box_touched(Expr(), s, true, false, fn, scope, fb);
 }
 
-Region region_called(Stmt s, const string &func) {
-    return compute_region_touched(s, true, false, func);
+map<string, Box> boxes_provided(Expr e, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return boxes_touched(e, Stmt(), false, true, "", scope, fb);
 }
 
-Region region_touched(Stmt s, const string &func) {
-    return compute_region_touched(s, true, true, func);
+Box box_provided(Expr e, string fn, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return box_touched(e, Stmt(), false, true, fn, scope, fb);
 }
 
+map<string, Box> boxes_provided(Stmt s, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return boxes_touched(Expr(), s, false, true, "", scope, fb);
+}
+
+Box box_provided(Stmt s, string fn, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return box_touched(Expr(), s, false, true, fn, scope, fb);
+}
+
+map<string, Box> boxes_touched(Expr e, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return boxes_touched(e, Stmt(), true, true, "", scope, fb);
+}
+
+Box box_touched(Expr e, string fn, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return box_touched(e, Stmt(), true, true, fn, scope, fb);
+}
+
+map<string, Box> boxes_touched(Stmt s, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return boxes_touched(Expr(), s, true, true, "", scope, fb);
+}
+
+Box box_touched(Stmt s, string fn, const Scope<Interval> &scope, const FuncValueBounds &fb) {
+    return box_touched(Expr(), s, true, true, fn, scope, fb);
+}
 
 void check(const Scope<Interval> &scope, Expr e, Expr correct_min, Expr correct_max) {
-    Interval result = bounds_of_expr_in_scope(e, scope);
+    FuncValueBounds fb;
+    Interval result = bounds_of_expr_in_scope(e, scope, fb);
     if (result.min.defined()) result.min = simplify(result.min);
     if (result.max.defined()) result.max = simplify(result.max);
     bool success = true;
@@ -935,6 +1044,50 @@ void check(const Scope<Interval> &scope, Expr e, Expr correct_min, Expr correct_
         std::cout << "Bounds test failed\n";
         assert(false);
     }
+}
+
+FuncValueBounds compute_function_value_bounds(const vector<string> &order,
+                                              const map<string, Function> &env) {
+    FuncValueBounds fb;
+
+    for (size_t i = 0; i < order.size(); i++) {
+        Function f = env.find(order[i])->second;
+        for (int j = 0; j < f.outputs(); j++) {
+            pair<string, int> key = make_pair(f.name(), j);
+
+            Interval result;
+
+            if (f.has_pure_definition() &&
+                !f.has_reduction_definition() &&
+                !f.has_extern_definition()) {
+
+                // Make a scope that says the args could be anything.
+                Scope<Interval> arg_scope;
+                for (size_t k = 0; k < f.args().size(); k++) {
+                    arg_scope.push(f.args()[k], Interval(Expr(), Expr()));
+                }
+
+                result = bounds_of_expr_in_scope(f.values()[j], arg_scope, fb);
+
+                if (result.min.defined()) {
+                    result.min = simplify(result.min);
+                }
+
+                if (result.max.defined()) {
+                    result.max = simplify(result.max);
+                }
+
+                fb[key] = result;
+
+            }
+
+            debug(2) << "Bounds on value " << j
+                     << " for func " << order[i]
+                     << " are: " << result.min << ", " << result.max << "\n";
+        }
+    }
+
+    return fb;
 }
 
 void bounds_test() {
@@ -973,28 +1126,30 @@ void bounds_test() {
     vector<Expr> input_site_2 = vec(2*x+1);
     vector<Expr> output_site = vec(x+1);
 
+    Buffer in(Int(32), vec(10), NULL, "input");
+
     Stmt loop = For::make("x", 3, 10, For::Serial,
                           Provide::make("output",
                                         vec(Add::make(
-                                                Call::make(Int(32), "input", input_site_1, Call::Extern),
-                                                Call::make(Int(32), "input", input_site_2, Call::Extern))),
+                                                Call::make(in, input_site_1),
+                                                Call::make(in, input_site_2))),
                                         output_site));
 
-    map<string, Region> r;
-    r = regions_called(loop);
+    map<string, Box> r;
+    r = boxes_required(loop);
     assert(r.find("output") == r.end());
     assert(r.find("input") != r.end());
-    assert(equal(r["input"][0].min, 6));
-    assert(equal(r["input"][0].extent, 20));
-    r = regions_provided(loop);
+    assert(equal(simplify(r["input"][0].min), 6));
+    assert(equal(simplify(r["input"][0].max), 25));
+    r = boxes_provided(loop);
     assert(r.find("output") != r.end());
-    assert(equal(r["output"][0].min, 4));
-    assert(equal(r["output"][0].extent, 10));
+    assert(equal(simplify(r["output"][0].min), 4));
+    assert(equal(simplify(r["output"][0].max), 13));
 
-    Region r2 = vec(Range(Expr(5), Expr(15)));
-    r2 = region_union(r["output"], r2);
-    assert(equal(r2[0].min, 4));
-    assert(equal(r2[0].extent, 16));
+    Box r2 = vec(Interval(Expr(5), Expr(19)));
+    merge_boxes(r2, r["output"]);
+    assert(equal(simplify(r2[0].min), 4));
+    assert(equal(simplify(r2[0].max), 19));
 
     std::cout << "Bounds test passed" << std::endl;
 }

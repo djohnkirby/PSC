@@ -118,8 +118,9 @@ struct IRHandle : public IntrusivePtr<const IRNode> {
      * }
      */
     template<typename T> const T *as() const {
-        if (ptr->type_info() == &T::_type_info)
+        if (ptr->type_info() == &T::_type_info) {
             return (const T *)ptr;
+        }
         return NULL;
     }
 };
@@ -129,7 +130,10 @@ struct IntImm : public ExprNode<IntImm> {
     int value;
 
     static IntImm *make(int value) {
-        if (value >= -8 && value <= 8) return small_int_cache + value + 8;
+        if (value >= -8 && value <= 8 && 
+            !small_int_cache[value + 8].ref_count.is_zero()) {
+            return &small_int_cache[value + 8];
+        }
         IntImm *node = new IntImm;
         node->type = Int(32);
         node->value = value;
@@ -665,13 +669,15 @@ struct AssertStmt : public StmtNode<AssertStmt> {
     // if condition then val else error out with message
     Expr condition;
     std::string message;
+    std::vector<Expr> args;
 
-    static Stmt make(Expr condition, std::string message) {
+    static Stmt make(Expr condition, std::string message, const std::vector<Expr> &args) {
         assert(condition.defined() && "AssertStmt of undefined");
 
         AssertStmt *node = new AssertStmt;
         node->condition = condition;
         node->message = message;
+        node->args = args;
         return node;
     }
 };
@@ -951,7 +957,12 @@ struct Call : public ExprNode<Call> {
         count_leading_zeros,
         count_trailing_zeros,
         undef,
-        trace, trace_expr;
+        null_handle,
+        address_of,
+        return_second,
+        if_then_else,
+        trace,
+        trace_expr;
 
     // If it's a call to another halide function, this call node
     // holds onto a pointer to that function.

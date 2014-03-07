@@ -1,95 +1,153 @@
-// Halide tutorial lesson 2.
-
-// This lesson demonstrates how to pass in input images.
+//This program takes two images and averages them.
 
 // On linux, you can compile and run it like so:
-// g++ lesson_02*.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
-// LD_LIBRARY_PATH=../bin ./lesson_02
+// g++ avg.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -ltiff -o avg
+// LD_LIBRARY_PATH=../bin ./avg png1.png png2.png
 
 // On os x:
-// g++ lesson_02*.cpp -I ../include -L ../bin -lHalide `libpng-config --cflags --ldflags` -o lesson_02
-// DYLD_LIBRARY_PATH=../bin ./lesson_02
+// g++ avg.cpp -I ../include -L ../bin -lHalide `libpng-config --cflags --ldflags` -o avg
+// DYLD_LIBRARY_PATH=../bin ./avg png1.png png2.png
 
 // The only Halide header file you need is Halide.h. It includes all of Halide.
 #include <Halide.h>
-
+//#include <halide_load_tiff.h>
 // Include some support code for loading pngs. It assumes there's an
 // Image type, so we'll pull the one from Halide namespace;
+using namespace Halide;
 using Halide::Image;
 #include "../apps/support/image_io.h"
+#include <tiffio.h>
+//#include "halide_load_tiff.h"
+int debug = 0;
 
-int main(int argc, char **argv) {
+template <typename U,typename T>
+void scan_line(TIFF* tif, Image<T> im)
+{
+        uint32 imagelength;
+        TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &imagelength);
+        tsize_t scanline = TIFFScanlineSize(tif);
+        T *ptr = (T*)im.data();
+        U* buf = (U*)_TIFFmalloc(scanline);
+        for (uint32 row = 0; row < imagelength; row++) {
+                TIFFReadScanline(tif, buf, row);
+                for (uint32 col = 0; col < scanline / sizeof(U); col++){
+                        convert(buf[col], *(ptr++));
+                }
+        }
+        _TIFFfree(buf);
+}
 
-    // This program defines a single-stage imaging pipeline that
-    // brightens an image.
+template <typename T>
+Image<T> load_tiff(const char* filename) {
+        Func gray,gray2;
+        Var x,y,c;
 
-    // First we'll load the input image we wish to brighten.
-    Halide::Image<uint8_t> input = load<uint8_t>("../apps/images/rgb.png");
-		Halide::Image<uint8_t> input2 = load<uint8_t>("../apps/images/rgb.png");
-    // Next we define our Func object that represents our one pipeline
-    // stage.
+        TIFF* tif = TIFFOpen(filename,"r");
+        if (tif) {
+                uint32 w, h, ch, bits;
+                printf("Whoo! Entered the if statement\n");
+
+                TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
+                TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
+                /* THis is a hack fix, but a fix nonetheless, this can now
+                 * only do grayscale, maybe one day let's like not do this*/
+                //TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &ch);
+                ch = 1;
+                TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bits);
+                printf("%d x %d x %d, %d bits\n", w, h, ch, bits);
+                Image<T> im(w,h,ch);
+                printf("%d x %d x %d, %d bits\n",w,h,ch,bits);
+
+                size_t npixels = w * h;
+
+
+                T *ptr = (T*)im.data();
+                int c_stride = im.stride(2);
+
+                _assert((ch == 3 && bits == 8) || (ch == 1 && (bits == 8 || bits == 16)),
+                                "Not supported format.\n");
+
+                if(ch == 3 && bits == 8){
+                        uint32* raster = (uint32*) _TIFFmalloc(npixels * sizeof (uint32));
+                        if (raster != NULL && TIFFReadRGBAImage(tif, w, h, raster, 0)) {
+                                for (int y = h - 1; y >= 0; y--) {
+                                        uint8_t* srcPtr = (uint8_t*)&(raster[w * y]);
+                                        for (int x = 0; x < w; x++) {
+                                                for (int c = 0; c < ch; c++) {
+                                                        convert(*srcPtr++, ptr[c*c_stride]);
+                                                }
+                                                srcPtr++;
+                                                ptr++;
+                                        }
+                                }
+                                _TIFFfree(raster);
+                        }
+                } else if (ch == 1){
+                        if (bits == 8) {
+                                scan_line<uint8_t,T>(tif,im);
+                        }else if (bits == 16) {
+                                scan_line<uint16_t,T>(tif,im);
+                        }
+                }else{
+                        _assert(false, "Not supported format.\n");
+                        return Image<T>(0,0,1);
+                }
+                TIFFClose(tif);
+
+                im.set_host_dirty();
+                return im;
+
+        }else{
+                return Image<T>(0,0,1);
+        }
+}
+
+
+int main(int argc, char **argv) 
+{
+		if( argc < 2 )
+		{	
+			printf("Usage: ./avg png1.png png2.png\n");
+			return 0;
+		}
+		printf("About to check the thing.\n");
+		if( argc > 2 && strcmp(argv[2],"d") == 0)	
+			debug = 1;
+		/*Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
+		Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);
+		*/
+	  Halide::Image<uint8_t> input = load_tiff(argv[0]);
+		Halide::Image<uint8_t> input2 = load_tiff(argv[1]);
     Halide::Func average;
-
-    // Our Func will have three arguments, representing the position
-    // in the image and the color channel. Halide treats color
-    // channels as an extra dimension of the image.
     Halide::Var x, y, c;
 
-    // Normally we'd probably write the whole function definition on
-    // one line. Here we'll break it apart so we can explain what
-    // we're doing at every step.
-
-    // For each pixel of the input image.
     Halide::Expr value = input(x, y, c);
 		Halide::Expr value2 = input2(x, y, c);
 
-    // Cast it to a floating point value.
-
-    // Multiply it by 1.5 to brighten it. Halide represents real
-    // numbers as floats, not doubles, so we stick an 'f' on the end
-    // of our constant.
     value = value/2.0f + value2/2.0f;
 
-    // Define the function.
     average(x, y, c) = Halide::cast<uint8_t>(value);
 
-    // The equivalent one-liner to all of the above is:
-    //
-    // brighter(x, y, c) = Halide::cast<uint8_t>(min(input(x, y, c) * 1.5f, 255));
-    //
-    // In the shorter version:
-    // - I skipped the cast to float, because multiplying by 1.5f does
-    //   that automatically.
-    // - I also used integer constants in clamp, because they get cast
-    //   to match the type of the first argument.
-    // - I left the Halide:: off clamp. It's unnecessary due to Koenig
-    //   lookup.
-
-    // Remember. All we've done so far is build a representation of a
-    // Halide program in memory. We haven't actually processed any
-    // pixels yet. We haven't even compiled that Halide program yet.
-
-    // So now we'll realize the Func. The size of the output image
-    // should match the size of the input image. If we just wanted to
-    // brighten a portion of the input image we could request a
-    // smaller size. If we request a larger size Halide will throw an
-    // error at runtime telling us we're trying to read out of bounds
-    // on the input image.
     Halide::Image<uint8_t> output = average.realize(input.width(), input.height(), input.channels());
 
-/*	for( int j = 0; j < output.height(); j ++ )
-		for ( int i = 0; i < output.width(); i ++ )
-			if ( output(i,j) != (input(i,j) + input2(i,j))/2 )
-				{
-		 			printf("Something went wrong!\n"
-               "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
-                       i, j, (input(i,j)+input2(i,j))/2, output(i, j));
-				}*/
+
+		/*Tester code*/
+	if(debug)
+	{
+		for( int j = 0; j < output.height(); j ++ )
+			for ( int i = 0; i < output.width(); i ++ )
+				if ( output(i,j) != (input(i,j) + input2(i,j))/2 )
+					{
+			 			printf("Something went wrong!\n"
+   	            "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
+   	                    i, j, (input(i,j)+input2(i,j))/2, output(i, j));
+					}
+	}
 
 
     // Save the output for inspection. It should look like a bright parrot.
     save(output, "output.png");
 
     printf("Success!\n");
-    return 0;
+    return 1;
 }
