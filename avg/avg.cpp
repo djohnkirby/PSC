@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
 
 
     // Save the output for inspection. It should look like a bright parrot.
-    save(output, "output.png");
+    save(output, "output1.png");
 
     printf("Success!\n");
     return 0;
