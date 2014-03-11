@@ -1,6 +1,6 @@
 all: avg make_images
 
-avg: avg.cpp halide_load_tiff.o
+avg: avg.cpp
 	 g++ avg.cpp halide_load_tiff.o -I /home/dkirby/Halide-master/include -L /home/dkirby/Halide-master/bin -lHalide -lpthread -ldl -lpng -o avg
 
 make_images: make_images.cpp

@@ -5,13 +5,13 @@
 #include <string.h>
 #include <stdint.h>
 
-extern "C" void *halide_malloc(size_t);
-extern "C" void halide_free(void *);
-extern "C" int halide_debug_to_file(const char *filename, void *data, int, int, int, int, int, int);
-extern "C" int halide_start_clock();
-extern "C" int64_t halide_current_time_ns();
-extern "C" uint64_t halide_profiling_timer();
-extern "C" int halide_printf(const char *fmt, ...);
+extern "C" void *halide_malloc(void *ctx, size_t);
+extern "C" void halide_free(void *ctx, void *ptr);
+extern "C" int halide_debug_to_file(void *ctx, const char *filename, void *data, int, int, int, int, int, int);
+extern "C" int halide_start_clock(void *ctx);
+extern "C" int64_t halide_current_time_ns(void *ctx);
+extern "C" uint64_t halide_profiling_timer(void *ctx);
+extern "C" int halide_printf(void *ctx, const char *fmt, ...);
 
 #ifdef _WIN32
 extern "C" float roundf(float);
@@ -91,6 +91,14 @@ inline double abs_f64(double a) {return fabs(a);}
 inline float nan_f32() {return NAN;}
 inline float neg_inf_f32() {return -INFINITY;}
 inline float inf_f32() {return INFINITY;}
+inline float float_from_bits(uint32_t bits) {
+ union {
+  uint32_t as_uint;
+  float as_float;
+ } u;
+ u.as_uint = bits;
+ return u.as_float;
+}
 
 template<typename T> T max(T a, T b) {if (a > b) return a; return b;}
 template<typename T> T min(T a, T b) {if (a < b) return a; return b;}
@@ -131,6 +139,8 @@ bool halide_rewrite_buffer(buffer_t *b, int32_t elem_size,
  b->stride[3] = stride3;
  return true;
 }
+
+
 extern "C" int gradient(buffer_t *_gradient) {
 int32_t *gradient = (int32_t *)(_gradient->host);
 const bool gradient_host_and_dev_are_null = (_gradient->host == NULL) && (_gradient->dev == 0);
@@ -170,26 +180,33 @@ if (V1)
 {
  bool V2 = gradient_elem_size == 4;
  if (!V2) {
-  halide_printf("Output buffer gradient has type int32, but elem_size of the buffer_t passed in is not 4\n");
+  halide_printf(NULL, "Output buffer gradient has type int32, but elem_size of the buffer_t passed in is %d instead of 4\n", gradient_elem_size);
   return -1;
  }
  bool V3 = gradient_stride_0 == 1;
  if (!V3) {
-  halide_printf("Static constraint violated: gradient.stride.0 == 1\n");
+  halide_printf(NULL, "Static constraint violated: gradient.stride.0 == 1\n");
   return -1;
  }
- for (int gradient_y = gradient_min_1; gradient_y < gradient_min_1 + gradient_extent_1; gradient_y++)
+ // produce gradient
+ for (int gradient_s0_y = gradient_min_1; gradient_s0_y < gradient_min_1 + gradient_extent_1; gradient_s0_y++)
  {
-  for (int gradient_x = gradient_min_0; gradient_x < gradient_min_0 + gradient_extent_0; gradient_x++)
+  for (int gradient_s0_x = gradient_min_0; gradient_s0_x < gradient_min_0 + gradient_extent_0; gradient_s0_x++)
   {
-   int32_t V4 = gradient_y - gradient_min_1;
-   int32_t V5 = V4 * gradient_stride_1;
-   int32_t V6 = gradient_x - gradient_min_0;
-   int32_t V7 = V6 + V5;
-   int32_t V8 = gradient_x + gradient_y;
+   int32_t V4 = gradient_s0_x - gradient_min_0;
+   int32_t V5 = gradient_s0_y - gradient_min_1;
+   int32_t V6 = V5 * gradient_stride_1;
+   int32_t V7 = V4 + V6;
+   int32_t V8 = gradient_s0_x + gradient_s0_y;
    gradient[V7] = V8;
-  } // for gradient_x
- } // for gradient_y
+  } // for gradient_s0_x
+ } // for gradient_s0_y
+ // consume gradient
+ bool V9 = (bool)(1);
+ if (!V9) {
+  halide_printf(NULL, "Dummy consume step\n");
+  return -1;
+ }
 } // if V1
 return 0;
 }
