@@ -1,0 +1,6 @@
+/antonfs/scratch/awetzel/newjosh/LGNs1/rawMontages/W30/001
+
+W - wafer
+raw data is the .tifs
+
+
