@@ -18,14 +18,22 @@
 using Halide::Image;
 #include "../apps/support/image_io.h"
 
+template <class T> const T& min (const T& a, const T& b) {
+  return !(b<a)?a:b;     // or: return !comp(b,a)?a:b; for version (2)
+}
+
 int main(int argc, char **argv) {
 
     // This program defines a single-stage imaging pipeline that
     // brightens an image.
 
+		if( argc < 2 )
+			exit(EXIT_FAILURE);
     // First we'll load the input image we wish to brighten.
-    Halide::Image<uint8_t> input = load<uint8_t>("../apps/images/rgb.png");
-		Halide::Image<uint8_t> input2 = load<uint8_t>("../apps/images/rgb.png");
+    Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
+		printf("INput.channels() = %d\n", input.channels());
+		Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);
+		printf("Input2.channels() = %d\n", input2.channels());
     // Next we define our Func object that represents our one pipeline
     // stage.
     Halide::Func average;
@@ -75,7 +83,17 @@ int main(int argc, char **argv) {
     // smaller size. If we request a larger size Halide will throw an
     // error at runtime telling us we're trying to read out of bounds
     // on the input image.
-    Halide::Image<uint8_t> output = average.realize(input.width(), input.height(), input.channels());
+		int w1 = input.width();
+		int w2 = input2.width();
+		int w = min(w1, w2);
+		int h1 = input.height();
+		int h2 = input2.height();
+		int h = min(h1,h2);
+		int c1 = input.channels();
+		int c2 = input2.channels();
+		int ch = min(c1, c2);
+
+    Halide::Image<uint8_t> output = average.realize(w, h, ch);
 
 /*	for( int j = 0; j < output.height(); j ++ )
 		for ( int i = 0; i < output.width(); i ++ )
