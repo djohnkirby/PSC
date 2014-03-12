@@ -82,8 +82,8 @@ int main(int argc, char **argv) {
     // smaller size. If we request a larger size Halide will throw an
     // error at runtime telling us we're trying to read out of bounds
     // on the input image.
-    Halide::Image<uint8_t> output = brighter.realize(input.width(), input.height(), input.channels());
-
+    Halide::Image<uint8_t> output = brighter.realize(input.width(), input.height(), 2);
+		printf("%d\n", input.width());
     // Save the output for inspection. It should look like a bright parrot.
     save(output, "brighter.png");
 

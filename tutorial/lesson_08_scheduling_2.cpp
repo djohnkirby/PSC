@@ -262,9 +262,11 @@ int main(int argc, char **argv) {
         // consumer, but after that it only computes a 5x1 box of the
         // output for each new scanline of the consumer!
         //
+        // Halide has detected that for all scanlines except for the
+        // first, it can reuse the values already sitting in the
         // buffer we've allocated for producer. Let's look at the
         // equivalent C:
-//				consumer.compile_to_c("scanning.cpp",std::vector<Argument>(),"consumer");
+
         float result[4][4];
 
         // producer.store_root() implies that storage goes here:
@@ -540,13 +542,13 @@ int main(int argc, char **argv) {
         for (int yo = 0; yo < 600/16 + 1; yo++) { // (this loop is parallel in the Halide version)
 
             // 16 doesn't divide 600, so push the last slice upwards to fit within [0, 599] (see lesson 05).
-            int y_base = yo * 16;//y_base is the first y coord in this group of 16
+            int y_base = yo * 16;
             if (y_base > 600-16) y_base = 600-16;
 
             // Allocate a two-scanline circular buffer for the producer
             float producer_storage[2][801];
 
-            // For every scanline in the strip of 16 this is what each thread would be doing):
+            // For every scanline in the strip of 16:
             for (int yi = 0; yi < 16; yi++) {
                 int y = y_base + yi;
 

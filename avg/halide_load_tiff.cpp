@@ -5,7 +5,11 @@
 
 #include <Halide.h>
 #include <cstdio>
+<<<<<<< HEAD
+#include "halide_load_tiff.h"
+=======
 //#include "halide_load_tiff.h"
+>>>>>>> f5be0629648059fdb8a0557afc63f9f2589472ad
 using namespace Halide;
 #include "../apps/support/image_io.h"
 
@@ -103,10 +107,18 @@ Image<T> load_tiff(const char* filename) {
 				}
 }
 
+<<<<<<< HEAD
+/*int main(int argc, char **argv) {
+=======
 int main(int argc, char **argv) {
+>>>>>>> f5be0629648059fdb8a0557afc63f9f2589472ad
 				Image<uint16_t> im = load_tiff<uint16_t>(argv[1]);
 				printf("%d x %d x %d\n",im.width(),im.height(),im.channels());
 				save(im,"out_tiffread.png");
 				return 0;
 }
+<<<<<<< HEAD
+*/
+=======
 
+>>>>>>> f5be0629648059fdb8a0557afc63f9f2589472ad

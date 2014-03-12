@@ -1,16 +1,14 @@
+#include <iostream>
+#include <sstream>
+
 #include "CodeGen_ARM.h"
 #include "IROperator.h"
-#include <iostream>
-#include "buffer_t.h"
-#include "IRPrinter.h"
 #include "IRMatch.h"
 #include "IREquality.h"
 #include "Debug.h"
 #include "Util.h"
-#include "Var.h"
-#include "Param.h"
 #include "Simplify.h"
-#include "integer_division_table.h"
+#include "IntegerDivisionTable.h"
 #include "LLVM_Headers.h"
 
 // Native client llvm relies on global flags to control sandboxing on
@@ -235,12 +233,24 @@ CodeGen_ARM::CodeGen_ARM(Target t) : CodeGen_Posix(),
         }
     }
 
+    // At some point llvm started recognising narrowing shifts
+    // directly and these intrinsics went away.
+    #if LLVM_VERSION < 35
     casts.push_back(Pattern("vshiftn.v8i8", _i8(wild_i16x8/wild_i16x8), Pattern::RightShift));
     casts.push_back(Pattern("vshiftn.v4i16", _i16(wild_i32x4/wild_i32x4), Pattern::RightShift));
     casts.push_back(Pattern("vshiftn.v2i32", _i32(wild_i64x2/wild_i64x2), Pattern::RightShift));
     casts.push_back(Pattern("vshiftn.v8i8", _u8(wild_u16x8/wild_u16x8), Pattern::RightShift));
     casts.push_back(Pattern("vshiftn.v4i16", _u16(wild_u32x4/wild_u32x4), Pattern::RightShift));
     casts.push_back(Pattern("vshiftn.v2i32", _u32(wild_u64x2/wild_u64x2), Pattern::RightShift));
+
+    // Widening left shifts
+    left_shifts.push_back(Pattern("vshiftls.v8i16", _i16(wild_i8x8)*wild_i16x8, Pattern::LeftShift));
+    left_shifts.push_back(Pattern("vshiftls.v4i32", _i32(wild_i16x4)*wild_i32x4, Pattern::LeftShift));
+    left_shifts.push_back(Pattern("vshiftls.v2i64", _i64(wild_i32x2)*wild_i64x2, Pattern::LeftShift));
+    left_shifts.push_back(Pattern("vshiftlu.v8i16", _u16(wild_u8x8)*wild_u16x8, Pattern::LeftShift));
+    left_shifts.push_back(Pattern("vshiftlu.v4i32", _u32(wild_u16x4)*wild_u32x4, Pattern::LeftShift));
+    left_shifts.push_back(Pattern("vshiftlu.v2i64", _u64(wild_u32x2)*wild_u64x2, Pattern::LeftShift));
+    #endif
 
     casts.push_back(Pattern("vqshiftns.v8i8", _i8q(wild_i16x8/wild_i16x8), Pattern::RightShift));
     casts.push_back(Pattern("vqshiftns.v4i16", _i16q(wild_i32x4/wild_i32x4), Pattern::RightShift));
@@ -280,14 +290,6 @@ CodeGen_ARM::CodeGen_ARM(Target t) : CodeGen_Posix(),
     casts.push_back(Pattern("vqmovnsu.v8i8", _u8q(wild_i16x8)));
     casts.push_back(Pattern("vqmovnsu.v4i16", _u16q(wild_i32x4)));
     casts.push_back(Pattern("vqmovnsu.v2i32", _u32q(wild_i64x2)));
-
-    // Widening left shifts
-    left_shifts.push_back(Pattern("vshiftls.v8i16", _i16(wild_i8x8)*wild_i16x8, Pattern::LeftShift));
-    left_shifts.push_back(Pattern("vshiftls.v4i32", _i32(wild_i16x4)*wild_i32x4, Pattern::LeftShift));
-    left_shifts.push_back(Pattern("vshiftls.v2i64", _i64(wild_i32x2)*wild_i64x2, Pattern::LeftShift));
-    left_shifts.push_back(Pattern("vshiftlu.v8i16", _u16(wild_u8x8)*wild_u16x8, Pattern::LeftShift));
-    left_shifts.push_back(Pattern("vshiftlu.v4i32", _u32(wild_u16x4)*wild_u32x4, Pattern::LeftShift));
-    left_shifts.push_back(Pattern("vshiftlu.v2i64", _u64(wild_u32x2)*wild_u64x2, Pattern::LeftShift));
 
     // Non-widening left shifts
     left_shifts.push_back(Pattern("vshifts.v16i8", wild_i8x16*wild_i8x16, Pattern::LeftShift));
@@ -339,22 +341,13 @@ CodeGen_ARM::CodeGen_ARM(Target t) : CodeGen_Posix(),
 
 }
 
+llvm::Triple CodeGen_ARM::get_target_triple() const {
+    llvm::Triple triple;
 
-void CodeGen_ARM::compile(Stmt stmt, string name,
-                          const vector<Argument> &args,
-                          const vector<Buffer> &images_to_embed) {
-
-    init_module();
-
-    module = get_initial_module_for_target(target, context);
-
-    // Fix the target triple.
     if (target.bits == 64) {
 
     }
 
-    debug(1) << "Target triple of initial module: " << module->getTargetTriple() << "\n";
-    llvm::Triple triple;
     if (target.bits == 32) {
         triple.setArch(llvm::Triple::arm);
     } else {
@@ -364,7 +357,7 @@ void CodeGen_ARM::compile(Stmt stmt, string name,
         #else
         assert(false && "AArch64 llvm target not enabled in this build of Halide");
         #endif
-        std::cerr << "WARNING: 64-bit arm builds are completely untested\n";
+        std::cerr << "Warning: 64-bit arm builds are completely untested\n";
     }
 
     if (target.os == Target::Android) {
@@ -398,7 +391,24 @@ void CodeGen_ARM::compile(Stmt stmt, string name,
     } else {
         assert(false && "No arm support for this OS");
     }
+
+    return triple;
+}
+
+void CodeGen_ARM::compile(Stmt stmt, string name,
+                          const vector<Argument> &args,
+                          const vector<Buffer> &images_to_embed) {
+
+    init_module();
+
+    module = get_initial_module_for_target(target, context);
+
+    // Fix the target triple.
+    debug(1) << "Target triple of initial module: " << module->getTargetTriple() << "\n";
+
+    llvm::Triple triple = get_target_triple();
     module->setTargetTriple(triple.str());
+
     debug(1) << "Target triple of initial module: " << module->getTargetTriple() << "\n";
 
     // Pass to the generic codegen
@@ -903,12 +913,22 @@ void CodeGen_ARM::visit(const LT *op) {
         if (va.type() == Float(32, 4) &&
             a->name == Call::abs &&
             b->name == Call::abs) {
-            value = call_intrin(Int(32, 4), "vacgtq", vec(vb, va));
+            #if LLVM_VERSION < 35
+            string name = "vacgtq";
+            #else
+            string name = "vacgt.v4i32";
+            #endif
+            value = call_intrin(Int(32, 4), name, vec(vb, va));
             value = builder->CreateICmpNE(value, zero);
         } else if (va.type() == Float(32, 2) &&
             a->name == Call::abs &&
             b->name == Call::abs) {
-            value = call_intrin(Int(32, 2), "vacgtd", vec(vb, va));
+            #if LLVM_VERSION < 35
+            string name = "vacgtd";
+            #else
+            string name = "vacgt.v2i32";
+            #endif
+            value = call_intrin(Int(32, 2), name, vec(vb, va));
             value = builder->CreateICmpNE(value, zero);
         } else {
             CodeGen::visit(op);
@@ -940,12 +960,22 @@ void CodeGen_ARM::visit(const LE *op) {
         if (va.type() == Float(32, 4) &&
             a->name == Call::abs &&
             b->name == Call::abs) {
-            value = call_intrin(Int(32, 4), "vacgeq", vec(vb, va));
+            #if LLVM_VERSION < 35
+            string name = "vacgeq";
+            #else
+            string name = "vacge.v4i32";
+            #endif
+            value = call_intrin(Int(32, 4), name, vec(vb, va));
             value = builder->CreateICmpNE(value, zero);
         } else if (va.type() == Float(32, 2) &&
             a->name == Call::abs &&
             b->name == Call::abs) {
-            value = call_intrin(Int(32, 2), "vacged", vec(vb, va));
+            #if LLVM_VERSION < 35
+            string name = "vacged";
+            #else
+            string name = "vacge.v4i32";
+            #endif
+            value = call_intrin(Int(32, 2), name, vec(vb, va));
             value = builder->CreateICmpNE(value, zero);
         } else {
             CodeGen::visit(op);
@@ -1115,23 +1145,25 @@ void CodeGen_ARM::visit(const Store *op) {
         return;
     }
 
-    // We have builtins for strided stores with fixed but unknown stride
-    ostringstream builtin;
-    builtin << "strided_store_"
-            << (op->value.type().is_float() ? 'f' : 'i')
-            << op->value.type().bits
-            << 'x' << op->value.type().width;
+    // We have builtins for strided stores with fixed but unknown stride, but they use inline assembly
+    if (target.os != Target::NaCl) {
+        ostringstream builtin;
+        builtin << "strided_store_"
+                << (op->value.type().is_float() ? 'f' : 'i')
+                << op->value.type().bits
+                << 'x' << op->value.type().width;
 
-    llvm::Function *fn = module->getFunction(builtin.str());
-    if (fn) {
-        Value *base = codegen_buffer_pointer(op->name, op->value.type().element_of(), ramp->base);
-        Value *stride = codegen(ramp->stride * op->value.type().bytes());
-        Value *val = codegen(op->value);
-        debug(4) << "Creating call to " << builtin.str() << "\n";
-        Instruction *store = builder->CreateCall(fn, vec(base, stride, val));
-        (void)store;
-        add_tbaa_metadata(store, op->name);
-        return;
+        llvm::Function *fn = module->getFunction(builtin.str());
+        if (fn) {
+            Value *base = codegen_buffer_pointer(op->name, op->value.type().element_of(), ramp->base);
+            Value *stride = codegen(ramp->stride * op->value.type().bytes());
+            Value *val = codegen(op->value);
+            debug(4) << "Creating call to " << builtin.str() << "\n";
+            Instruction *store = builder->CreateCall(fn, vec(base, stride, val));
+            (void)store;
+            add_tbaa_metadata(store, op->name);
+            return;
+        }
     }
 
     CodeGen::visit(op);
@@ -1222,22 +1254,24 @@ void CodeGen_ARM::visit(const Load *op) {
         }
     }
 
-    // We have builtins for strided loads with fixed but unknown stride
-    ostringstream builtin;
-    builtin << "strided_load_"
-            << (op->type.is_float() ? 'f' : 'i')
-            << op->type.bits
-            << 'x' << op->type.width;
+    // We have builtins for strided loads with fixed but unknown stride, but they use inline assembly.
+    if (target.os != Target::NaCl) {
+        ostringstream builtin;
+        builtin << "strided_load_"
+                << (op->type.is_float() ? 'f' : 'i')
+                << op->type.bits
+                << 'x' << op->type.width;
 
-    llvm::Function *fn = module->getFunction(builtin.str());
-    if (fn) {
-        Value *base = codegen_buffer_pointer(op->name, op->type.element_of(), ramp->base);
-        Value *stride = codegen(ramp->stride * op->type.bytes());
-        debug(4) << "Creating call to " << builtin.str() << "\n";
-        Instruction *load = builder->CreateCall(fn, vec(base, stride), builtin.str());
-        add_tbaa_metadata(load, op->name);
-        value = load;
-        return;
+        llvm::Function *fn = module->getFunction(builtin.str());
+        if (fn) {
+            Value *base = codegen_buffer_pointer(op->name, op->type.element_of(), ramp->base);
+            Value *stride = codegen(ramp->stride * op->type.bytes());
+            debug(4) << "Creating call to " << builtin.str() << "\n";
+            Instruction *load = builder->CreateCall(fn, vec(base, stride), builtin.str());
+            add_tbaa_metadata(load, op->name);
+            value = load;
+            return;
+        }
     }
 
     CodeGen::visit(op);
