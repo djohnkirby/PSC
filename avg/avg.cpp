@@ -1,88 +1,43 @@
-// Halide tutorial lesson 2.
-
-// This lesson demonstrates how to pass in input images.
-
-// On linux, you can compile and run it like so:
-// g++ lesson_02*.cpp -I ../include -L ../bin -lHalide -lpthread -ldl -lpng -o lesson_02
-// LD_LIBRARY_PATH=../bin ./lesson_02
-
-// On os x:
-// g++ lesson_02*.cpp -I ../include -L ../bin -lHalide `libpng-config --cflags --ldflags` -o lesson_02
-// DYLD_LIBRARY_PATH=../bin ./lesson_02
-
-// The only Halide header file you need is Halide.h. It includes all of Halide.
+#include <stdio.h>
 #include <Halide.h>
-
-// Include some support code for loading pngs. It assumes there's an
-// Image type, so we'll pull the one from Halide namespace;
 using Halide::Image;
 #include "../apps/support/image_io.h"
 
+
+/* Define benchmarking functionality */
+typedef unsigned long long ticks;       // the full CPU cycle counter is 64 bits
+static  __inline__ ticks getticks(void) {       // read the CPU cycle counter
+        unsigned a, d;
+        asm volatile("rdtsc" : "=a" (a), "=d" (d));
+        return ((ticks)a) | (((ticks)d) << 32);
+}
+
+/* Define min function */
 template <class T> const T& min (const T& a, const T& b) {
   return !(b<a)?a:b;     // or: return !comp(b,a)?a:b; for version (2)
 }
 
 int main(int argc, char **argv) {
-
-    // This program defines a single-stage imaging pipeline that
-    // brightens an image.
-
+		ticks tick0, tick1;
 		if( argc < 2 )
-			exit(EXIT_FAILURE);
+		{
+			printf("You need to specify two images\n");
+			return 0;
+		}
     // First we'll load the input image we wish to brighten.
     Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
-		printf("INput.channels() = %d\n", input.channels());
 		Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);
-		printf("Input2.channels() = %d\n", input2.channels());
-    // Next we define our Func object that represents our one pipeline
-    // stage.
-    Halide::Func average;
+    
+		Halide::Func average;
 
-    // Our Func will have three arguments, representing the position
-    // in the image and the color channel. Halide treats color
-    // channels as an extra dimension of the image.
     Halide::Var x, y, c;
 
-    // Normally we'd probably write the whole function definition on
-    // one line. Here we'll break it apart so we can explain what
-    // we're doing at every step.
-
-    // For each pixel of the input image.
     Halide::Expr value = input(x, y, c);
 		Halide::Expr value2 = input2(x, y, c);
+		value = value/2.0f + value2/2.0f;
 
-    // Cast it to a floating point value.
-
-    // Multiply it by 1.5 to brighten it. Halide represents real
-    // numbers as floats, not doubles, so we stick an 'f' on the end
-    // of our constant.
-    value = value/2.0f + value2/2.0f;
-
-    // Define the function.
     average(x, y, c) = Halide::cast<uint8_t>(value);
 
-    // The equivalent one-liner to all of the above is:
-    //
-    // brighter(x, y, c) = Halide::cast<uint8_t>(min(input(x, y, c) * 1.5f, 255));
-    //
-    // In the shorter version:
-    // - I skipped the cast to float, because multiplying by 1.5f does
-    //   that automatically.
-    // - I also used integer constants in clamp, because they get cast
-    //   to match the type of the first argument.
-    // - I left the Halide:: off clamp. It's unnecessary due to Koenig
-    //   lookup.
-
-    // Remember. All we've done so far is build a representation of a
-    // Halide program in memory. We haven't actually processed any
-    // pixels yet. We haven't even compiled that Halide program yet.
-
-    // So now we'll realize the Func. The size of the output image
-    // should match the size of the input image. If we just wanted to
-    // brighten a portion of the input image we could request a
-    // smaller size. If we request a larger size Halide will throw an
-    // error at runtime telling us we're trying to read out of bounds
-    // on the input image.
 		int w1 = input.width();
 		int w2 = input2.width();
 		int w = min(w1, w2);
@@ -92,22 +47,26 @@ int main(int argc, char **argv) {
 		int c1 = input.channels();
 		int c2 = input2.channels();
 		int ch = min(c1, c2);
+		
+		/* Start benchmarking*/
 
+		tick0 = getticks();
     Halide::Image<uint8_t> output = average.realize(w, h, ch);
-
-/*	for( int j = 0; j < output.height(); j ++ )
+		tick1 = getticks();
+		
+		printf("Executed in %f CPU ticks\n", (double)(tick1 - tick0));
+	for( int j = 0; j < output.height(); j ++ )
 		for ( int i = 0; i < output.width(); i ++ )
 			if ( output(i,j) != (input(i,j) + input2(i,j))/2 )
 				{
 		 			printf("Something went wrong!\n"
                "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
                        i, j, (input(i,j)+input2(i,j))/2, output(i, j));
-				}*/
+				}
 
 
-    // Save the output for inspection. It should look like a bright parrot.
     save(output, "output1.png");
 
     printf("Success!\n");
-    return 0;
+    return 1;
 }
