@@ -12,21 +12,39 @@ static  __inline__ ticks getticks(void) {       // read the CPU cycle counter
         return ((ticks)a) | (((ticks)d) << 32);
 }
 
+double getclockspeed()
+{
+	ticks micros0, micros1;
+	int sec = 2;
+	double tdiff;
+  micros0 = getticks();
+ 	sleep(sec);
+  micros1 = getticks();
+  tdiff = micros1-micros0;
+	return tdiff/sec;
+}
+
 /* Define min function */
 template <class T> const T& min (const T& a, const T& b) {
   return !(b<a)?a:b;     // or: return !comp(b,a)?a:b; for version (2)
 }
 
-int main(int argc, char **argv) {
+double min_arr( double * dubs, int n )
+{
+  int i;
+  double mindub = dubs[0];
+  for( i = 1; i < n; i ++ )
+    if (dubs[i] < mindub)
+      mindub = dubs[i];
+  return mindub; 
+}
+
+
+double avg(char * im1, char * im2) {
 		ticks tick0, tick1;
-		if( argc < 2 )
-		{
-			printf("You need to specify two images\n");
-			return 0;
-		}
     // First we'll load the input image we wish to brighten.
-    Halide::Image<uint8_t> input = load<uint8_t>(argv[1]);
-		Halide::Image<uint8_t> input2 = load<uint8_t>(argv[2]);
+    Halide::Image<uint8_t> input = load<uint8_t>(im1);
+		Halide::Image<uint8_t> input2 = load<uint8_t>(im2);
     
 		Halide::Func average;
 
@@ -54,7 +72,7 @@ int main(int argc, char **argv) {
     Halide::Image<uint8_t> output = average.realize(w, h, ch);
 		tick1 = getticks();
 		
-		printf("Executed in %f CPU ticks\n", (double)(tick1 - tick0));
+//		printf("Executed in %f CPU ticks\n", (double)(tick1 - tick0));
 	for( int j = 0; j < output.height(); j ++ )
 		for ( int i = 0; i < output.width(); i ++ )
 			if ( output(i,j) != (input(i,j) + input2(i,j))/2 )
@@ -62,11 +80,56 @@ int main(int argc, char **argv) {
 		 			printf("Something went wrong!\n"
                "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
                        i, j, (input(i,j)+input2(i,j))/2, output(i, j));
+					return -1.0;
 				}
 
 
-    save(output, "output1.png");
+ //   save(output, "output1.png");
 
-    printf("Success!\n");
-    return 1;
+//    printf("Success!\n");
+    return (double)(tick1-tick0);
+}
+
+int main(int argc, char **argv)
+{
+	int N = 10;
+	int i;
+	double ticks[N];
+	double clockspeed;
+
+ if( argc < 3 )
+   {
+     printf("You need to specify at least two images\n");
+     return 0.0;
+   }
+	/*Support two or four*/
+	if( argc == 3 )
+		for( i = 0; i < N; i ++ )
+			ticks[i] = avg(argv[1], argv[2]);
+	else if( argc == 5 )
+		for( i = 0; i < N; i = i + 2 )
+		{
+			ticks[i] = avg(argv[1], argv[2]);
+			ticks[i+1] = avg(argv[3] , argv[4]);
+		}
+	else
+		{
+			printf("Huh? Weird arg count, exiting...\n");
+			return 0;
+		}
+
+	clockspeed = getclockspeed();
+
+	/* Print total CPU cycles */
+	printf("Execution times for each trial in clock cycles:\n");
+	for( i = 0; i < N-1; i ++ )
+		printf("%f, ", ticks[i]);
+	printf("%f\n", ticks[N-1]);
+	printf("minimum was: %f\n", min_arr(ticks, N));
+
+	/* Print time for each */
+	printf("Execution times for each trial in milliseconds:\n");
+	for( i = 0; i < N-1; i ++ )
+		printf("%f, ", (ticks[i]/clockspeed)*1000 );
+	printf("%f\n", (ticks[N-1]/clockspeed)*1000);
 }
