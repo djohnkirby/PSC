@@ -1,5 +1,11 @@
 #include <stdio.h>
 #include <Halide.h>
+#include <png.h>
+#include <math.h>
+#include <ctype.h>
+#include <jpeglib.h>
+#include <tiffio.h>
+#include "myimio.h"
 using Halide::Image;
 #include "../apps/support/image_io.h"
 
@@ -39,6 +45,23 @@ double min_arr( double * dubs, int n )
   return mindub; 
 }
 
+double avg_c( char * im1, char * im2 )
+{
+	struct image *input, *input2;
+	int i, j, h, w;
+	unsigned char * result;
+	input = read_image(im1);
+	input2 = read_image(im2);
+	h = min(input->ht, input2->ht);
+	w = min(input->wid, input2->wid);
+	result = malloc(h*w*sizeof(unsigned char));
+	
+	for( j = 0; j < h; j ++ )
+		for( i = 0; i < w; i ++ )
+			result[j*w + i] = (unsigned char)(0.5f*input->pp[j*w + i] +	0.5f*input2->pp[j*w + i]);
+		
+	
+}
 
 double avg(char * im1, char * im2) {
 		ticks tick0, tick1;
