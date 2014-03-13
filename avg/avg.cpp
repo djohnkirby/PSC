@@ -63,7 +63,7 @@ double avg_c( char * im1, char * im2 )
 	
 }
 
-double avg(char * im1, char * im2) {
+double avg_h(char * im1, char * im2) {
 		ticks tick0, tick1;
     // First we'll load the input image we wish to brighten.
     Halide::Image<uint8_t> input = load<uint8_t>(im1);
@@ -128,12 +128,12 @@ int main(int argc, char **argv)
 	/*Support two or four*/
 	if( argc == 3 )
 		for( i = 0; i < N; i ++ )
-			ticks[i] = avg(argv[1], argv[2]);
+			ticks[i] = avg_h(argv[1], argv[2]);
 	else if( argc == 5 )
 		for( i = 0; i < N; i = i + 2 )
 		{
-			ticks[i] = avg(argv[1], argv[2]);
-			ticks[i+1] = avg(argv[3] , argv[4]);
+			ticks[i] = avg_h(argv[1], argv[2]);
+			ticks[i+1] = avg_h(argv[3] , argv[4]);
 		}
 	else
 		{
