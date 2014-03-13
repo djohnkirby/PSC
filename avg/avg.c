@@ -64,7 +64,7 @@ struct image * read_png(char * file_name)
         height = png_get_image_height(png_ptr, info_ptr);
         color_type = png_get_color_type(png_ptr, info_ptr);
         bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-				printf("%d\n", (int)color_type);
+			//	printf("%d\n", (int)color_type);
 				returnMe = newimage( width, height, 3);
 
         number_of_passes = png_set_interlace_handling(png_ptr);
