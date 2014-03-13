@@ -4,6 +4,24 @@
 #include <stdlib.h>
 #include "myimio.h"
 
+void abort_(const char * s, ...)
+{
+        va_list args;
+        va_start(args, s);
+        vfprintf(stderr, s, args);
+        fprintf(stderr, "\n");
+        va_end(args);
+        abort();
+}
+
+/* Define benchmarking functionality */
+typedef unsigned long long ticks;       // the full CPU cycle counter is 64 bits
+static  __inline__ ticks getticks(void) {       // read the CPU cycle counter
+        unsigned a, d;
+        asm volatile("rdtsc" : "=a" (a), "=d" (d));
+        return ((ticks)a) | (((ticks)d) << 32);
+}
+
 struct image * read_png(char * file_name)
 {
   int x, y, width, height;
@@ -46,6 +64,8 @@ struct image * read_png(char * file_name)
         height = png_get_image_height(png_ptr, info_ptr);
         color_type = png_get_color_type(png_ptr, info_ptr);
         bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+				printf("%d\n", (int)color_type);
+				returnMe = newimage( width, height, 1);
 
         number_of_passes = png_set_interlace_handling(png_ptr);
         png_read_update_info(png_ptr, info_ptr);
@@ -59,19 +79,17 @@ struct image * read_png(char * file_name)
                 row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
 
         png_read_image(png_ptr, row_pointers);
-  fclose(fp);
+  			fclose(fp);
 
-   for (y=0; y<height; y++) {
-                png_byte* row = row_pointers[y];
-                for (x=0; x<width; x++) {
-                        png_byte* ptr = &(row[x*4]);
-                        printf("Pixel at position [ %d - %d ] has RGBA values: %d - %d - %d - %d\n",
-                               x, y, ptr[0], ptr[1], ptr[2], ptr[3]);
-
-                        /* set red value to 0 and green value to the blue one */
-                        ptr[0] = 0;
-                        ptr[1] = ptr[2];
-                }
+   			for (y=0; y<height; y++) {
+	        png_byte* row = row_pointers[y];  
+        	for (x=0; x<width; x++) {
+          	png_byte* ptr = &(row[x*4]);
+            printf("Pixel at position [ %d - %d ] has RGBA values: %d - %d - %d - %d\n",
+                    x, y, ptr[0], ptr[1], ptr[2], ptr[3]);
+						/*ptr[0] = r, ptr[1] = g, ptr[2] = b, ptr[3] = alpha*/
+						
+           }
         }
 
 	return(returnMe);
@@ -112,9 +130,9 @@ double avg_c( char * im1, char * im2 )
 {
 	ticks tick0, tick1; 
 	int i, j, h, w, thisindex;
-	image * input = read_png( im1 );
-	image * input2 = read_png( im2 );
-	image * output;
+	struct image * input = read_png( im1 );
+	struct image * input2 = read_png( im2 );
+	struct image * output;
 	w = min( input->wid, input2->wid );
 	h = min( input->ht, input2->ht );
 	//Assuming that we have a grayscale image for now. In the future learn something more about
@@ -150,7 +168,7 @@ double avg_c( char * im1, char * im2 )
 int main( int argc,  char ** argv )
 {
 	
-nt N = 10;
+	int N = 10;
   int i;
   double ticks[N];
   double clockspeed;
@@ -167,7 +185,7 @@ nt N = 10;
   else if( argc == 5 )
     for( i = 0; i < N; i = i + 2 )
     {
-      ticks[i] = avgi_c(argv[1], argv[2]);
+      ticks[i] = avg_c(argv[1], argv[2]);
       ticks[i+1] = avg_c(argv[3] , argv[4]);
     }
   else
