@@ -24,7 +24,7 @@ static  __inline__ ticks getticks(void) {       // read the CPU cycle counter
 
 struct image * read_png(char * file_name)
 {
-  int x, y, width, height;
+  int x, y, width, height, thisindex;
   png_byte color_type;
   png_byte bit_depth;
 
@@ -65,7 +65,7 @@ struct image * read_png(char * file_name)
         color_type = png_get_color_type(png_ptr, info_ptr);
         bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 				printf("%d\n", (int)color_type);
-				returnMe = newimage( width, height, 1);
+				returnMe = newimage( width, height, 3);
 
         number_of_passes = png_set_interlace_handling(png_ptr);
         png_read_update_info(png_ptr, info_ptr);
@@ -85,10 +85,11 @@ struct image * read_png(char * file_name)
 	        png_byte* row = row_pointers[y];  
         	for (x=0; x<width; x++) {
           	png_byte* ptr = &(row[x*4]);
-            printf("Pixel at position [ %d - %d ] has RGBA values: %d - %d - %d - %d\n",
-                    x, y, ptr[0], ptr[1], ptr[2], ptr[3]);
+//            printf("Pixel at position [ %d - %d ] has RGBA values: %d - %d - %d - %d\n",
+//                    x, y, ptr[0], ptr[1], ptr[2], ptr[3]);
 						/*ptr[0] = r, ptr[1] = g, ptr[2] = b, ptr[3] = alpha*/
-						
+						thisindex = x + y* width;
+						returnMe->pp[thisindex] = (unsigned char)(ptr[0]/3.0 + ptr[1]/3.0 + ptr[2]/3.0);					
            }
         }
 
@@ -151,7 +152,7 @@ double avg_c( char * im1, char * im2 )
 		for( i = 0; i < w; i ++ )
 		{
  			thisindex = i + j*w;
-			if( output->pp[thisindex] !=  0.5f*(input->pp[thisindex])  + 0.5f*(input2->pp[thisindex]) )
+			if( output->pp[thisindex] !=  (unsigned char)(0.5f*(input->pp[thisindex])  + 0.5f*(input2->pp[thisindex]) ))
 			{
 				printf("Something went wrong!\n"
                "Pixel %d, %d was supposed to be %d, but instead it's %d\n",
