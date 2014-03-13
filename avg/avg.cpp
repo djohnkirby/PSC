@@ -18,6 +18,16 @@ static  __inline__ ticks getticks(void) {       // read the CPU cycle counter
         return ((ticks)a) | (((ticks)d) << 32);
 }
 
+struct image * read_png(char * file_name)
+{
+	struct image returnMe;
+	FILE *fp = fopen(file_name, "rb");
+	if(!fp)
+		exit(EXIT_FAILURE);
+	
+	return(returnMe);
+}
+
 double getclockspeed()
 {
 	ticks micros0, micros1;
