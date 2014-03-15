@@ -4,7 +4,7 @@ avg_c: avg.c
 	gcc avg.c -lpng -ljpeg -ltiff -o avg_c
 
 avg_hs_driver: avg_hs_driver.cpp avg_hs.o
-	g++ 
+	g++ avg_hs_driver.cpp avg_h.o -I /home/dkirby/Halide-current/include -L /home/dkirby/Halide-current/bin -lHalide -lpthread -ldl -lpng -o avg_h_static
 
 avg_hs.o: avg_hs
 	./avg_hs

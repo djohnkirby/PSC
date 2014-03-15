@@ -5,8 +5,9 @@
 #include <ctype.h>
 #include <jpeglib.h>
 #include <tiffio.h>
+#include "../apps/support/static_image.h"
 //#include "myimio.h"
-using Halide::Image;
+//using Halide::Image;
 #include "../apps/support/image_io.h"
 
 typedef unsigned long long ticks;       // the full CPU cycle counter is 64 bits
