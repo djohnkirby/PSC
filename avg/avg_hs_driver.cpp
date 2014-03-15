@@ -5,10 +5,11 @@
 #include <ctype.h>
 #include <jpeglib.h>
 #include <tiffio.h>
-#include "../apps/support/static_image.h"
+//#include "../apps/support/static_image.h"
 //#include "myimio.h"
-//using Halide::Image;
+using Halide::Image;
 #include "../apps/support/image_io.h"
+#include "average.h"
 
 typedef unsigned long long ticks;       // the full CPU cycle counter is 64 bits
 static  __inline__ ticks getticks(void) {       // read the CPU cycle counter
@@ -46,11 +47,11 @@ double min_arr( double * dubs, int n )
 double avg_h( char * im1, char * im2 )
 {
 	ticks tick0, tick1;
-//  Halide::Image<uint8_t> input = load<uint8_t>(im1);
-//  Halide::Image<uint8_t> input2 = load<uint8_t>(im2);
+  Halide::Image<uint8_t> input = load<uint8_t>(im1);
+  Halide::Image<uint8_t> input2 = load<uint8_t>(im2);
 	
 	tick0 = getticks();
-	Halide::Image<uint8_t> output = average( im1, im2 );
+	Halide::Image<uint8_t> output = average( input, input2 );
 	tick1 = getticks();
 	save(output, "output2.png");
 	return (double)(tick1 - tick0);
