@@ -6,8 +6,12 @@ avg_c: avg.c
 avg_hs_driver: avg_hs_driver.cpp avg_hs.o
 	g++ 
 
-avg_hs.o: avg_h.cpp
-	g++ avg_h.cpp -I /home/dkirby/Halide-current/include -L /home/dkirby/Halide-current/bin/ -lHalide -lpthread -ldl -lpng -o avg_hs.o
+avg_hs.o: avg_hs
+	./avg_hs
+
+avg_hs: ../../  avg_h.cpp
+	$(MAKE) -C ../../ $(LIB_HALIDE)
+	g++ avg_h.cpp -I /home/dkirby/Halide-current/include -L /home/dkirby/Halide-current/bin/ -lHalide -lpthread -ldl -lpng -o avg_hs
 
 avg_h: avg.cpp
 	 g++ avg.cpp -I /home/dkirby/Halide-current/include -L /home/dkirby/Halide-current/bin -lHalide -lpthread -ldl -lpng -ljpeg -ltiff -o avg_h

@@ -4,8 +4,8 @@ using namespace Halide;
 
 int main( int argc, char ** argv )
 {
-	ImageParam input(UInt(8), 2);
-	ImageParam input2(UInt(8), 2);
+	ImageParam input(UInt(8), 3);
+	ImageParam input2(UInt(8), 3);
 	Halide::Func average;
 
   Halide::Var x, y, c;
@@ -15,5 +15,7 @@ int main( int argc, char ** argv )
   value = value/2.0f + value2/2.0f;
 
   average(x, y, c) = Halide::cast<uint8_t>(value);
-	average.compile_to_file("avg_h", input, input2);
+
+	average.compile_to_file("average", input, input2);
+	return 0;
 }
