@@ -1,12 +1,12 @@
 #include <Halide.h>
 using namespace Halide;
-#include "../apps/support/image_io.h"
+//#include "../apps/support/image_io.h"
 
 int main( int argc, char ** argv )
 {
 	ImageParam input(UInt(8), 2);
 	ImageParam input2(UInt(8), 2);
-	Func average("average");
+	Halide::Func average;
 
   Halide::Var x("x"), y("y"), xi("xi"), yi("yi"), c("c");
 
