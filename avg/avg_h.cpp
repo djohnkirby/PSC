@@ -4,11 +4,11 @@ using namespace Halide;
 
 int main( int argc, char ** argv )
 {
-	ImageParam input(UInt(8), 3);
-	ImageParam input2(UInt(8), 3);
-	Halide::Func average("average");
+	ImageParam input(UInt(8), 2);
+	ImageParam input2(UInt(8), 2);
+	Func average("average");
 
-  Halide::Var x, y, xi, yi, c;
+  Halide::Var x("x"), y("y"), xi("xi"), yi("yi"), c("c");
 
   Halide::Expr value = input(x, y);
   Halide::Expr value2 = input2(x, y);
