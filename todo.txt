@@ -1,5 +1,5 @@
-1. Get halide to work again -> Done!
-2. Make image average vs. Halide -> Halide done.
-3. Make C version by playing with iavg.c / make own C version.
-4. Try some different Halide schedules, find what is fastest.
+1. Make C version by playing with iavg.c / make own C version. -> Done
+	- Make C version super efficient
+2. Get Halide static version to work
+3. Try some different Halide schedules, find what is fastest.
 5. Make skew/affine transform image average vs. Halide.
