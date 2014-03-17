@@ -1,13 +1,13 @@
 #include <stdio.h>
-#include <Halide.h>
+//#include <Halide.h>
 #include <png.h>
 #include <math.h>
 #include <ctype.h>
 #include <jpeglib.h>
 #include <tiffio.h>
-//#include "../apps/support/static_image.h"
+#include "../apps/support/static_image.h"
 //#include "myimio.h"
-using Halide::Image;
+//using Halide::Image;
 #include "../apps/support/image_io.h"
 #include "average.h"
 
@@ -47,11 +47,11 @@ double min_arr( double * dubs, int n )
 double avg_h( char * im1, char * im2 )
 {
 	ticks tick0, tick1;
-  Halide::Image<uint8_t> input = load<uint8_t>(im1);
-  Halide::Image<uint8_t> input2 = load<uint8_t>(im2);
-	Halide::Image<uint8_t> output(min(input.width(), input2.width()), min(input.width(), input2.width()));
+  Image<uint8_t> input = load<uint8_t>(im1);
+  Image<uint8_t> input2 = load<uint8_t>(im2);
+	Image<uint8_t> output(min(input.width(), input2.width()), min(input.width(), input2.width()));
 	tick0 = getticks();
-	average( input.raw_buffer(), input2.raw_buffer(), output.raw_buffer() );
+	average( input, input2, output );
 	tick1 = getticks();
 	save(output, "output2.png");
 	return (double)(tick1 - tick0);
