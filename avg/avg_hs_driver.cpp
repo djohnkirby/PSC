@@ -18,6 +18,16 @@ static  __inline__ ticks getticks(void) {       // read the CPU cycle counter
         return ((ticks)a) | (((ticks)d) << 32);
 }
 
+/*This routine loads kB kilobytes of junk into cache to try to force
+	everything else to be evicted*/
+void clearCache(int kB)
+{
+	int i;
+	int * comicallyLargeArray = (int *)malloc((kB*1000) * sizeof(int));
+	for( i = 0; i < kB*1000; i ++ )
+		comicallyLargeArray[i] = i;
+}
+
 double getclockspeed()
 {
   ticks micros0, micros1;
@@ -72,7 +82,10 @@ int main(int argc, char **argv)
   /*Support two or four*/
   if( argc == 3 )
     for( i = 0; i < N; i ++ )
+		{
       ticks[i] = avg_h(argv[1], argv[2]);
+			clearCache(6144);
+		}
   else if( argc == 5 )
     for( i = 0; i < N; i = i + 2 )
     {

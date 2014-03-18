@@ -17,7 +17,12 @@ int main( int argc, char ** argv )
   average(x, y) = Halide::cast<uint8_t>(value);
 	
 	//The Schedule
-	average.split(y,y,yi,8).parallel(y).vectorize(x,8);
+	//This schedule's performance : 2x10^6 pixels/ms <- I'm skeptical of this
+	//average.split(y,y,yi,8).parallel(y).vectorize(x,8);
+
+	//This schedule's performance: 
+	average.tile(x, y, xi, yi, 8, 8).parallel(y).vectorize(x, 8);
+
 	//Split y into sections of 8 scanlines
 	//Compute scanlines in parallel in vectors of size 8
 	

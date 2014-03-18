@@ -20,4 +20,4 @@ make_images: make_images.cpp
 	g++ make_images.cpp -I  /home/dkirby/Halide-current/include -L /home/dkirby/Halide-current/bin -lHalide -lpthread -ldl -lpng -o make_images
 
 clean:
-	rm avg_h_static avg_hs.o avg_hs
+	rm avg_h_static average.o avg_hs
