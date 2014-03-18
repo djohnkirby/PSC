@@ -24,8 +24,9 @@ void clearCache(int kB)
 {
 	int i;
 	int * comicallyLargeArray = (int *)malloc((kB*1000) * sizeof(int));
-	for( i = 0; i < kB*1000; i ++ )
-		comicallyLargeArray[i] = i;
+	comicallyLargeArray[0] = -1;
+	for( i = 1; i < kB*1000; i ++ )
+		comicallyLargeArray[i] = comicallyLargeArray[i-1] + 1;
 }
 
 double getclockspeed()

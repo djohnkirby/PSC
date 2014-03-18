@@ -21,7 +21,7 @@ int main( int argc, char ** argv )
 	//average.split(y,y,yi,8).parallel(y).vectorize(x,8);
 
 	//This schedule's performance: 
-	average.tile(x, y, xi, yi, 8, 8).parallel(y).vectorize(x, 8);
+	average.tile(x, y, xi, yi, 100, 100).parallel(y).vectorize(x, 8);
 
 	//Split y into sections of 8 scanlines
 	//Compute scanlines in parallel in vectors of size 8
