@@ -99,5 +99,6 @@ int main(int argc, char **argv)
   for( i = 0; i < N-1; i ++ )
     printf("%f, ", (ticks[i]/clockspeed)*1000 );
   printf("%f\n", (ticks[N-1]/clockspeed)*1000);
+	printf("Minimum was: %f\n", (min_arr(ticks, N)/clockspeed)*1000);
 }
 
