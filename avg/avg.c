@@ -35,8 +35,8 @@ struct image * read_png(char * file_name)
 
   struct image * returnMe;
   char header[8];
-  FILE *fp = fopen(file_name, "rb");
-  if(!fp)
+	FILE *fp = fopen(file_name, "rb");
+	if(!fp)
     exit(EXIT_FAILURE);
   fread(header, 1, 8, fp);
         if (png_sig_cmp(header, 0, 8))
@@ -95,6 +95,80 @@ struct image * read_png(char * file_name)
 
 	return(returnMe);
 }
+
+void write_png_file(char* file_name, image * im)
+{
+        /* create file */
+				int x, y, thisindex, width, height;
+			  png_structp png_ptr;
+ 			 	png_infop info_ptr;
+				width = im->wid;
+				height = im->ht;
+				png_byte color_type;
+			  png_byte bit_depth;
+	
+
+        FILE *fp = fopen(file_name, "wb");
+        if (!fp)
+                abort_("[write_png_file] File %s could not be opened for writing", file_name);
+
+
+        /* initialize stuff */
+        png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+        if (!png_ptr)
+                abort_("[write_png_file] png_create_write_struct failed");
+
+        info_ptr = png_create_info_struct(png_ptr);
+        if (!info_ptr)
+                abort_("[write_png_file] png_create_info_struct failed");
+
+        if (setjmp(png_jmpbuf(png_ptr)))
+                abort_("[write_png_file] Error during init_io");
+
+        png_init_io(png_ptr, fp);
+
+
+        /* write header */
+        if (setjmp(png_jmpbuf(png_ptr)))
+                abort_("[write_png_file] Error during writing header");
+
+        png_set_IHDR(png_ptr, info_ptr, width, height,
+                     bit_depth, color_type, PNG_INTERLACE_NONE,
+                     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+        png_write_info(png_ptr, info_ptr);
+
+			/* write image object into png*/
+       for (y=0; y<height; y++) {
+          png_byte* row = row_pointers[y];
+          for (x=0; x<width; x++) {
+            png_byte* ptr = &(row[x*4]);
+            thisindex = x + y* width;
+						row_pointers[y][x] = im->pp[thisindex];
+           }
+
+        /* write bytes */
+        if (setjmp(png_jmpbuf(png_ptr)))
+                abort_("[write_png_file] Error during writing bytes");
+
+        png_write_image(png_ptr, row_pointers);
+
+
+        /* end write */
+        if (setjmp(png_jmpbuf(png_ptr)))
+                abort_("[write_png_file] Error during end of write");
+
+        png_write_end(png_ptr, NULL);
+
+        /* cleanup heap allocation */
+        for (y=0; y<height; y++)
+                free(row_pointers[y]);
+        free(row_pointers);
+
+        fclose(fp);
+}
+
 
 double getclockspeed()
 {
