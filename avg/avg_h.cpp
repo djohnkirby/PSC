@@ -22,6 +22,9 @@ int main( int argc, char ** argv )
 
 	//This schedule's performance: 
 	average.tile(x, y, xi, yi, 100, 100).parallel(y).vectorize(x, 8);
+	
+	//A schedule that runs on GPU and is comically slow
+//	average.cuda_tile(x, y, 100, 100);
 
 	//Split y into sections of 8 scanlines
 	//Compute scanlines in parallel in vectors of size 8

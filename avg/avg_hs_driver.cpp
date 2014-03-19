@@ -55,6 +55,15 @@ double min_arr( double * dubs, int n )
   return mindub;
 }
 
+double avg_arr( double * dubs, int n )
+{
+	int i;
+	double total = 0.0;
+	for( i = 0; i < n; i ++ )
+		total = total + dubs[i];
+	return total/n;
+}
+
 double avg_h( char * im1, char * im2 )
 {
 	ticks tick0, tick1;
@@ -70,7 +79,7 @@ double avg_h( char * im1, char * im2 )
 
 int main(int argc, char **argv)
 {
-  int N = 10;
+  int N = 100;
   int i;
   double ticks[N];
   double clockspeed;
@@ -102,17 +111,20 @@ int main(int argc, char **argv)
   clockspeed = getclockspeed();
 
   /* Print total CPU cycles */
-  printf("Execution times for each trial in clock cycles:\n");
-  for( i = 0; i < N-1; i ++ )
-    printf("%f, ", ticks[i]);
-  printf("%f\n", ticks[N-1]);
-  printf("minimum was: %f\n", min_arr(ticks, N));
-
+//  printf("Execution times for each trial in clock cycles:\n");
+  //for( i = 0; i < N-1; i ++ )
+  //  printf("%f, ", ticks[i]);
+  //printf("%f\n", ticks[N-1]);
+  printf("minimum number of clock cycles was: %f\n", min_arr(ticks, N));
+	printf("Average was: %f\n", avg_arr(ticks, N));
+	printf("First run performance was %f\n", ticks[0]);
   /* Print time for each */
-  printf("Execution times for each trial in milliseconds:\n");
-  for( i = 0; i < N-1; i ++ )
-    printf("%f, ", (ticks[i]/clockspeed)*1000 );
-  printf("%f\n", (ticks[N-1]/clockspeed)*1000);
-	printf("Minimum was: %f\n", (min_arr(ticks, N)/clockspeed)*1000);
+//  printf("Execution times for each trial in milliseconds:\n");
+ // for( i = 0; i < N-1; i ++ )
+  //  printf("%f, ", (ticks[i]/clockspeed)*1000 );
+  //printf("%f\n", (ticks[N-1]/clockspeed)*1000);
+	printf("Minimum time was: %f milliseconds\n", (min_arr(ticks, N)/clockspeed)*1000);
+	printf("Average milliseconds: %f\n", (avg_arr(ticks, N)/clockspeed)*1000);
+	printf("First time milliseconds was %f\n", (ticks[0]/clockspeed)*1000);
 }
 

@@ -140,14 +140,15 @@ double avg_c( char * im1, char * im2 )
 	//png_byte.
 	output = newimage(w, h, 1);
 	tick0 = getticks();
+	#pragma omp parallel for private(i,j, thisindex)
 	for( j = 0; j < h; j ++ )
 		for( i = 0; i < w; i ++ )
 		{
 			thisindex = i + j*w;
 			output->pp[thisindex] = 0.5f*(input->pp[thisindex])  + 0.5f*(input2->pp[thisindex]);
 		}
+
 	tick1 = getticks();
-	
 	for( j = 0; j < h; j ++ )
 		for( i = 0; i < w; i ++ )
 		{

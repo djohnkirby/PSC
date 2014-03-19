@@ -1,7 +1,7 @@
 all: avg_hs_driver avg_hs.o avg_hs
 
 avg_c: avg.c
-	gcc avg.c -lpng -ljpeg -ltiff -o avg_c
+	gcc avg.c -lpng -ljpeg -ltiff -fopenmp -o avg_c
 
 avg_hs_driver: avg_hs_driver.cpp avg_hs.o
 	g++ avg_hs_driver.cpp average.o -I /home/dkirby/Halide-current/include -L /home/dkirby/Halide-current/bin -lHalide -lpthread -ldl -lpng -o avg_h_static
@@ -20,4 +20,4 @@ make_images: make_images.cpp
 	g++ make_images.cpp -I  /home/dkirby/Halide-current/include -L /home/dkirby/Halide-current/bin -lHalide -lpthread -ldl -lpng -o make_images
 
 clean:
-	rm avg_h_static average.o avg_hs
+	rm avg_h_static average.o avg_hs avg_c
