@@ -64,7 +64,8 @@ struct image * read_png(char * file_name)
         height = png_get_image_height(png_ptr, info_ptr);
         color_type = png_get_color_type(png_ptr, info_ptr);
         bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-			//	printf("%d\n", (int)color_type);
+//				printf("color type: %d\n", (int)color_type);
+//				printf("bit_depth: %d\n", (int)bit_depth);
 				returnMe = newimage( width, height, 3);
 
         number_of_passes = png_set_interlace_handling(png_ptr);
@@ -96,7 +97,7 @@ struct image * read_png(char * file_name)
 	return(returnMe);
 }
 
-void write_png_file(char* file_name, image * im)
+void write_png_file(struct image * im, char * file_name)
 {
         /* create file */
 				int x, y, thisindex, width, height;
@@ -104,9 +105,9 @@ void write_png_file(char* file_name, image * im)
  			 	png_infop info_ptr;
 				width = im->wid;
 				height = im->ht;
-				png_byte color_type;
-			  png_byte bit_depth;
-	
+				png_byte color_type = (png_byte)(6);
+			  png_byte bit_depth = (png_byte)(8);
+				png_bytep * row_pointers;
 
         FILE *fp = fopen(file_name, "wb");
         if (!fp)
@@ -132,7 +133,7 @@ void write_png_file(char* file_name, image * im)
         /* write header */
         if (setjmp(png_jmpbuf(png_ptr)))
                 abort_("[write_png_file] Error during writing header");
-
+				// Need to preserve bit_depth and color_type
         png_set_IHDR(png_ptr, info_ptr, width, height,
                      bit_depth, color_type, PNG_INTERLACE_NONE,
                      PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
@@ -147,6 +148,7 @@ void write_png_file(char* file_name, image * im)
             thisindex = x + y* width;
 						row_pointers[y][x] = im->pp[thisindex];
            }
+				}
 
         /* write bytes */
         if (setjmp(png_jmpbuf(png_ptr)))
@@ -235,7 +237,8 @@ double avg_c( char * im1, char * im2 )
           return -1.0;
 
 			}
-	  } 
+	  }
+	write_png_file( output, "output.png"); 
 	return (double)(tick1-tick0);
 
 }
