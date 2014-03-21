@@ -35,8 +35,8 @@ struct image * read_png(char * file_name)
 
   struct image * returnMe;
   char header[8];
-  FILE *fp = fopen(file_name, "rb");
-  if(!fp)
+	FILE *fp = fopen(file_name, "rb");
+	if(!fp)
     exit(EXIT_FAILURE);
   fread(header, 1, 8, fp);
         if (png_sig_cmp(header, 0, 8))
@@ -64,7 +64,8 @@ struct image * read_png(char * file_name)
         height = png_get_image_height(png_ptr, info_ptr);
         color_type = png_get_color_type(png_ptr, info_ptr);
         bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-			//	printf("%d\n", (int)color_type);
+//				printf("color type: %d\n", (int)color_type);
+//				printf("bit_depth: %d\n", (int)bit_depth);
 				returnMe = newimage( width, height, 3);
 
         number_of_passes = png_set_interlace_handling(png_ptr);
@@ -77,6 +78,7 @@ struct image * read_png(char * file_name)
         row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * height);
         for (y=0; y<height; y++)
                 row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
+				printf("png_get_rowbytes(png_ptr, info_ptr) = %d\n", (int)png_get_rowbytes(png_ptr,info_ptr));
 
         png_read_image(png_ptr, row_pointers);
   			fclose(fp);
@@ -92,9 +94,91 @@ struct image * read_png(char * file_name)
 						returnMe->pp[thisindex] = (unsigned char)(ptr[0]/3.0 + ptr[1]/3.0 + ptr[2]/3.0);					
            }
         }
-
+	free(row_pointers);
 	return(returnMe);
 }
+
+void write_png_file(struct image * im, char * file_name)
+{
+        /* create file */
+				int x, y, thisindex, width, height;
+			  png_structp png_ptr;
+ 			 	png_infop info_ptr;
+				width = im->wid;
+				height = im->ht;
+				png_byte color_type = (png_byte)(6);
+			  png_byte bit_depth = (png_byte)(8);
+				png_bytep * row_pointers;
+				/* malloc row pointers*/
+				row_pointers = (png_bytep*)malloc(sizeof(png_bytep)* im->ht);
+				for( y = 0; y < im-> ht; y ++ )
+					row_pointers[y] = (png_byte * )malloc(im->wid *sizeof(char)*4);
+				printf("Hold on to your butts\n");
+        FILE *fp = fopen(file_name, "wb");
+        if (!fp)
+                abort_("[write_png_file] File %s could not be opened for writing", file_name);
+
+
+        /* initialize stuff */
+        png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+        if (!png_ptr)
+                abort_("[write_png_file] png_create_write_struct failed");
+
+        info_ptr = png_create_info_struct(png_ptr);
+        if (!info_ptr)
+                abort_("[write_png_file] png_create_info_struct failed");
+
+        if (setjmp(png_jmpbuf(png_ptr)))
+                abort_("[write_png_file] Error during init_io");
+
+        png_init_io(png_ptr, fp);
+
+
+        /* write header */
+        if (setjmp(png_jmpbuf(png_ptr)))
+                abort_("[write_png_file] Error during writing header");
+				// Need to preserve bit_depth and color_type
+        png_set_IHDR(png_ptr, info_ptr, width, height,
+                     bit_depth, color_type, PNG_INTERLACE_NONE,
+                     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+				printf("Just set the IHDR\n");
+        png_write_info(png_ptr, info_ptr);
+
+			/* write image object into png*/
+       for (y=0; y<height; y++) {
+          png_byte* row = row_pointers[y];
+          for (x=0; x < width; x ++ ) {
+            png_byte* ptr = &(row[x]);
+            thisindex = x + y* width;
+						row_pointers[y][4*x] = im->pp[thisindex];
+						row_pointers[y][4*x+1] = im->pp[thisindex];
+						row_pointers[y][4*x+2] = im->pp[thisindex];
+						row_pointers[y][4*x+3] = im->pp[thisindex];
+           }
+				}
+				printf("Wrote stuff\n");
+        /* write bytes */
+        if (setjmp(png_jmpbuf(png_ptr)))
+                abort_("[write_png_file] Error during writing bytes");
+
+        png_write_image(png_ptr, row_pointers);
+
+
+        /* end write */
+        if (setjmp(png_jmpbuf(png_ptr)))
+                abort_("[write_png_file] Error during end of write");
+
+        png_write_end(png_ptr, NULL);
+
+        /* cleanup heap allocation */
+        for (y=0; y<height; y++)
+                free(row_pointers[y]);
+        free(row_pointers);
+
+        fclose(fp);
+}
+
 
 double getclockspeed()
 {
@@ -140,15 +224,15 @@ double avg_c( char * im1, char * im2 )
 	//png_byte.
 	output = newimage(w, h, 1);
 	tick0 = getticks();
-	//#pragma omp parallel for shared(output)
+	#pragma omp parallel for private(i,j, thisindex)
 	for( j = 0; j < h; j ++ )
 		for( i = 0; i < w; i ++ )
 		{
 			thisindex = i + j*w;
 			output->pp[thisindex] = 0.5f*(input->pp[thisindex])  + 0.5f*(input2->pp[thisindex]);
 		}
+
 	tick1 = getticks();
-	
 	for( j = 0; j < h; j ++ )
 		for( i = 0; i < w; i ++ )
 		{
@@ -161,7 +245,8 @@ double avg_c( char * im1, char * im2 )
           return -1.0;
 
 			}
-	  } 
+	  }
+	write_png_file( output, "output.png"); 
 	return (double)(tick1-tick0);
 
 }
@@ -170,7 +255,7 @@ double avg_c( char * im1, char * im2 )
 int main( int argc,  char ** argv )
 {
 	
-	int N = 10;
+	int N = 1;
   int i;
   double ticks[N];
   double clockspeed;
