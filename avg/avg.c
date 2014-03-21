@@ -224,7 +224,7 @@ double avg_c( char * im1, char * im2 )
 	//png_byte.
 	output = newimage(w, h, 1);
 	tick0 = getticks();
-	#pragma omp parallel for private(i,j, thisindex)
+	#pragma acc kernels
 	for( j = 0; j < h; j ++ )
 		for( i = 0; i < w; i ++ )
 		{
