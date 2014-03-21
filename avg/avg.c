@@ -78,6 +78,7 @@ struct image * read_png(char * file_name)
         row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * height);
         for (y=0; y<height; y++)
                 row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
+				printf("png_get_rowbytes(png_ptr, info_ptr) = %d\n", (int)png_get_rowbytes(png_ptr,info_ptr));
 
         png_read_image(png_ptr, row_pointers);
   			fclose(fp);
@@ -93,7 +94,7 @@ struct image * read_png(char * file_name)
 						returnMe->pp[thisindex] = (unsigned char)(ptr[0]/3.0 + ptr[1]/3.0 + ptr[2]/3.0);					
            }
         }
-
+	free(row_pointers);
 	return(returnMe);
 }
 
@@ -108,7 +109,11 @@ void write_png_file(struct image * im, char * file_name)
 				png_byte color_type = (png_byte)(6);
 			  png_byte bit_depth = (png_byte)(8);
 				png_bytep * row_pointers;
-
+				/* malloc row pointers*/
+				row_pointers = (png_bytep*)malloc(sizeof(png_bytep)* im->ht);
+				for( y = 0; y < im-> ht; y ++ )
+					row_pointers[y] = (png_byte * )malloc(im->wid *sizeof(char)*4);
+				printf("Hold on to your butts\n");
         FILE *fp = fopen(file_name, "wb");
         if (!fp)
                 abort_("[write_png_file] File %s could not be opened for writing", file_name);
@@ -137,19 +142,22 @@ void write_png_file(struct image * im, char * file_name)
         png_set_IHDR(png_ptr, info_ptr, width, height,
                      bit_depth, color_type, PNG_INTERLACE_NONE,
                      PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
-
+				printf("Just set the IHDR\n");
         png_write_info(png_ptr, info_ptr);
 
 			/* write image object into png*/
        for (y=0; y<height; y++) {
           png_byte* row = row_pointers[y];
-          for (x=0; x<width; x++) {
-            png_byte* ptr = &(row[x*4]);
+          for (x=0; x < width; x ++ ) {
+            png_byte* ptr = &(row[x]);
             thisindex = x + y* width;
-						row_pointers[y][x] = im->pp[thisindex];
+						row_pointers[y][4*x] = im->pp[thisindex];
+						row_pointers[y][4*x+1] = im->pp[thisindex];
+						row_pointers[y][4*x+2] = im->pp[thisindex];
+						row_pointers[y][4*x+3] = im->pp[thisindex];
            }
 				}
-
+				printf("Wrote stuff\n");
         /* write bytes */
         if (setjmp(png_jmpbuf(png_ptr)))
                 abort_("[write_png_file] Error during writing bytes");
@@ -247,7 +255,7 @@ double avg_c( char * im1, char * im2 )
 int main( int argc,  char ** argv )
 {
 	
-	int N = 10;
+	int N = 1;
   int i;
   double ticks[N];
   double clockspeed;
