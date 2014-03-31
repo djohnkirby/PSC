@@ -93,6 +93,7 @@ int main(int argc, char **argv)
   if( argc == 3 )
     for( i = 0; i < N; i ++ )
 		{
+			avg_h(argv[1], argv[2]); //Run once to initialize stuff This doesn't seem to do anything
       ticks[i] = avg_h(argv[1], argv[2]);
 			clearCache(6144);
 		}

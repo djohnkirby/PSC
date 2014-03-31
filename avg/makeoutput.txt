@@ -1,0 +1,78 @@
+Injecting tracing...
+Injecting profiling...
+Adding checks for parameters
+Computing bounds of each function's value
+Adding checks for images
+Performing computation bounds inference...
+Performing sliding window optimization...
+Performing allocation bounds inference...
+Uniquifying variable names...
+Performing storage folding optimization...
+Injecting debug_to_file calls...
+Simplifying...
+Dynamically skipping stages...
+Performing storage flattening...
+Removing code that depends on undef values...
+Simplifying...
+Unrolling...
+Simplifying...
+Vectorizing...
+Simplifying...
+Specializing clamped ramps...
+Detecting vector interleavings...
+Injecting early frees...
+Simplifying...
+Simplified: 
+let average.extent.0.required = (min((((((average.extent.0 + -1)/800)*800) + average.min.0) + 800), (average.min.0 + average.extent.0)) - min(average.min.0, ((average.min.0 + average.extent.0) + -800)))
+let average.min.0.required = min(average.min.0, ((average.min.0 + average.extent.0) + -800))
+let average.extent.1.required = (min((((((average.extent.1 + -1)/800)*800) + average.min.1) + 800), (average.min.1 + average.extent.1)) - min(average.min.1, ((average.min.1 + average.extent.1) + -800)))
+let average.min.1.required = min(average.min.1, ((average.min.1 + average.extent.1) + -800))
+if (average.host_and_dev_are_null) {
+  rewrite_buffer(average.buffer, 1, average.min.0.required, average.extent.0.required, 1, average.min.1.required, average.extent.1.required, average.extent.0.required)
+}
+if (p0.host_and_dev_are_null) {
+  rewrite_buffer(p0.buffer, 1, average.min.0.required, average.extent.0.required, 1, average.min.1.required, average.extent.1.required, average.extent.0.required)
+}
+if (p1.host_and_dev_are_null) {
+  rewrite_buffer(p1.buffer, 1, average.min.0.required, average.extent.0.required, 1, average.min.1.required, average.extent.1.required, average.extent.0.required)
+}
+if (!((average.host_and_dev_are_null || p0.host_and_dev_are_null) || p1.host_and_dev_are_null)) {
+  assert((average.elem_size == 1), "Output buffer average has type uint8, but elem_size of the buffer_t passed in is %d instead of 1", average.elem_size)
+  assert((p0.elem_size == 1), "Input buffer p0 has type uint8, but elem_size of the buffer_t passed in is %d instead of 1", p0.elem_size)
+  assert((p1.elem_size == 1), "Input buffer p1 has type uint8, but elem_size of the buffer_t passed in is %d instead of 1", p1.elem_size)
+  assert((average.min.0 <= average.min.0.required), "Output buffer average is accessed at %d, which before the min (%d) in dimension 0", average.min.0.required, average.min.0)
+  assert((((average.min.0.required + average.extent.0.required) - average.extent.0) <= average.min.0), "Output buffer average is accessed at %d, which is beyond the max (%d) in dimension 0", ((average.min.0.required + average.extent.0.required) + -1), ((average.min.0 + average.extent.0) + -1))
+  assert((average.min.1 <= average.min.1.required), "Output buffer average is accessed at %d, which before the min (%d) in dimension 1", average.min.1.required, average.min.1)
+  assert((((average.min.1.required + average.extent.1.required) - average.extent.1) <= average.min.1), "Output buffer average is accessed at %d, which is beyond the max (%d) in dimension 1", ((average.min.1.required + average.extent.1.required) + -1), ((average.min.1 + average.extent.1) + -1))
+  assert((p0.min.0 <= average.min.0.required), "Input buffer p0 is accessed at %d, which before the min (%d) in dimension 0", average.min.0.required, p0.min.0)
+  assert((((average.min.0.required + average.extent.0.required) - p0.extent.0) <= p0.min.0), "Input buffer p0 is accessed at %d, which is beyond the max (%d) in dimension 0", ((average.min.0.required + average.extent.0.required) + -1), ((p0.min.0 + p0.extent.0) + -1))
+  assert((p0.min.1 <= average.min.1.required), "Input buffer p0 is accessed at %d, which before the min (%d) in dimension 1", average.min.1.required, p0.min.1)
+  assert((((average.min.1.required + average.extent.1.required) - p0.extent.1) <= p0.min.1), "Input buffer p0 is accessed at %d, which is beyond the max (%d) in dimension 1", ((average.min.1.required + average.extent.1.required) + -1), ((p0.min.1 + p0.extent.1) + -1))
+  assert((p1.min.0 <= average.min.0.required), "Input buffer p1 is accessed at %d, which before the min (%d) in dimension 0", average.min.0.required, p1.min.0)
+  assert((((average.min.0.required + average.extent.0.required) - p1.extent.0) <= p1.min.0), "Input buffer p1 is accessed at %d, which is beyond the max (%d) in dimension 0", ((average.min.0.required + average.extent.0.required) + -1), ((p1.min.0 + p1.extent.0) + -1))
+  assert((p1.min.1 <= average.min.1.required), "Input buffer p1 is accessed at %d, which before the min (%d) in dimension 1", average.min.1.required, p1.min.1)
+  assert((((average.min.1.required + average.extent.1.required) - p1.extent.1) <= p1.min.1), "Input buffer p1 is accessed at %d, which is beyond the max (%d) in dimension 1", ((average.min.1.required + average.extent.1.required) + -1), ((p1.min.1 + p1.extent.1) + -1))
+  assert((average.stride.0 == 1), "Static constraint violated: average.stride.0 == 1")
+  assert((p0.stride.0 == 1), "Static constraint violated: p0.stride.0 == 1")
+  assert((p1.stride.0 == 1), "Static constraint violated: p1.stride.0 == 1")
+  produce average {
+    parallel (average.s0.y.blockidy, 0, ((average.extent.1 + 799)/800)) {
+      let average.s0.y.threadidy.base = min(((average.s0.y.blockidy*800) + average.min.1), ((average.min.1 + average.extent.1) + -800))
+      parallel (average.s0.x.blockidx, 0, ((average.extent.0 + 799)/800)) {
+        let average.s0.x.threadidx.base = min(((average.s0.x.blockidx*800) + average.min.0), ((average.min.0 + average.extent.0) + -800))
+        parallel (average.s0.y.threadidy, 0, 800) {
+          parallel (average.s0.x.threadidx, 0, 800) {
+            average[(((average.s0.x.threadidx.base + average.s0.x.threadidx) - average.min.0) + (((average.s0.y.threadidy.base + average.s0.y.threadidy) - average.min.1)*average.stride.1))] = uint8(((float32(p0[(((average.s0.x.threadidx.base + average.s0.x.threadidx) + ((average.s0.y.threadidy.base + average.s0.y.threadidy)*p0.stride.1)) - (p0.min.0 + (p0.min.1*p0.stride.1)))]) + float32(p1[(((average.s0.x.threadidx.base + average.s0.x.threadidx) + ((average.s0.y.threadidy.base + average.s0.y.threadidy)*p1.stride.1)) - (p1.min.0 + (p1.min.1*p1.stride.1)))]))*0.500000f))
+          }
+        }
+      }
+    }
+  }
+  assert(uint1(1), "Dummy consume step")
+}
+
+
+Target triple of initial module: x86_64--linux-gnu
+Generating llvm bitcode...
+Compiling to native code...
+Cleaning up cuda context: 0, 0

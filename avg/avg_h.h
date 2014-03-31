@@ -1,5 +1,5 @@
-#ifndef HALIDE_average
-#define HALIDE_average
+#ifndef HALIDE_avg_h
+#define HALIDE_avg_h
 #ifndef BUFFER_T_DEFINED
 #define BUFFER_T_DEFINED
 #include <stdint.h>
@@ -17,5 +17,5 @@ typedef struct buffer_t {
 #ifndef HALIDE_FUNCTION_ATTRS
 #define HALIDE_FUNCTION_ATTRS
 #endif
-extern "C" int average(buffer_t *p0, buffer_t *p1, buffer_t *average) HALIDE_FUNCTION_ATTRS;
+extern "C" int avg_h(buffer_t *p0, buffer_t *p1, buffer_t *f0) HALIDE_FUNCTION_ATTRS;
 #endif

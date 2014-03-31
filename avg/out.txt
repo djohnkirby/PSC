@@ -1,0 +1,55 @@
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+png_get_rowbytes(png_ptr, info_ptr) = 3200
+Hold on to your butts
+Just set the IHDR
+Wrote stuff
+Execution times for each trial in clock cycles:
+3047272.000000, 2545665.000000, 2520390.000000, 2531198.000000, 2534055.000000, 2520345.000000, 2535217.000000, 2508953.000000, 2523173.000000, 2545080.000000
+minimum was: 2508953.000000
+Execution times for each trial in milliseconds:
+1.018240, 0.850629, 0.842184, 0.845795, 0.846750, 0.842169, 0.847138, 0.838362, 0.843114, 0.850434

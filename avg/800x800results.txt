@@ -1,0 +1,6 @@
+minimum number of clock cycles was: 806222678.000000
+Average was: 846779911.440000
+First run performance was 864634763.000000
+Minimum time was: 269.396793 milliseconds
+Average milliseconds: 282.948866
+First time milliseconds was 288.915009
