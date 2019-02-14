@@ -1,0 +1,166 @@
+ies0
+Code536
+Commits907
+Issues41
+Marketplace0
+Topics0
+Wikis2
+Users0
+Languages
+227 JavaScript
+102 Markdown
+53 HTML
+22 Text
+13 XML
+12 Python
+11 Perl
+7 Java Properties
+5 Java
+4 C++
+Advanced search 
+536 code results
+@LkbOne
+LkbOne/CIPortal – GitlabPlatformHttpClientHelper.java
+Showing the top match Last indexed on Nov 9, 2018
+Java
+                url+="ws"+hookUrl;
+                break;
+            case "Merge Request":
+                url += "http://" + gitIp + "/api/v4/projects/" + projectId + "/merge_requests";
+                break;
+        }
+        return url;
+@yamamotomako
+yamamotomako/snp_call_pipeline – README.md
+Showing the top two matches Last indexed on Jul 8, 2018
+Markdown
+3. alignment
+
+4. merge
+
+5. add index
+
+-----------------------
+
+6. pileup
+
+7. file converting for anotation
+This is the sample program of detection of snip-genome sequence (SNP calling), and also educational purpose for learning building one of genome piplines.
+This is really the first commition of my work about genome analyzing.
+@rindra36
+rindra36/e-upload – index.js
+Showing the top two matches Last indexed on Aug 7, 2018
+JavaScript
+ * @param  {Object} Components
+ * @return {Object}
+ */
+export default function (Glide, Components, Events) {
+  /**
+   * Merge instance transformers with collection of default transformers.
+  ].concat(Glide._t, [Rtl])
+
+  return {
+    /**
+     * Piplines translate value with registered transformers.
+@woznyjakub
+woznyjakub/challenge35 – index.js
+Showing the top two matches Last indexed on Oct 12, 2018
+JavaScript
+ * @param  {Object} Components
+ * @return {Object}
+ */
+export default function (Glide, Components, Events) {
+  /**
+   * Merge instance transformers with collection of default transformers.
+  ].concat(Glide._t, [Rtl])
+
+  return {
+    /**
+     * Piplines translate value with registered transformers.
+@amitwh
+amitwh/website – index.js
+Showing the top two matches Last indexed on Nov 10, 2018
+JavaScript
+ * @param  {Object} Components
+ * @return {Object}
+ */
+export default function (Glide, Components, Events) {
+  /**
+   * Merge instance transformers with collection of default transformers.
+  ].concat(Glide._t, [Rtl])
+
+  return {
+    /**
+     * Piplines translate value with registered transformers.
+@anurag-ks
+anurag-ks/anurag-ks.github.io – index.js
+Showing the top two matches Last indexed 11 days ago
+JavaScript
+ * @param  {Object} Components
+ * @return {Object}
+ */
+export default function (Glide, Components, Events) {
+  /**
+   * Merge instance transformers with collection of default transformers.
+  ].concat(Glide._t, [Rtl])
+
+  return {
+    /**
+     * Piplines translate value with registered transformers.
+@glidejs
+glidejs/glide – index.js
+Showing the top two matches Last indexed on Jul 16, 2018
+JavaScript
+ * @param  {Object} Components
+ * @return {Object}
+ */
+export default function (Glide, Components, Events) {
+  /**
+   * Merge instance transformers with collection of default transformers.
+  ].concat(Glide._t, [Rtl])
+
+  return {
+    /**
+     * Piplines translate value with registered transformers.
+@aszulist
+aszulist/java – workspace.xml
+Showing the top two matches Last indexed on Jul 6, 2018
+XML
+    <list default="true" id="b689030f-ea8f-4b24-bd6f-add2e8bc7dbc" name="Default" comment="" />
+    <ignored path="Errorless Processing Piplines with Optionals.iws" />
+    <ignored path=".idea/workspace.xml" />
+  <component name="FavoritesManager">
+    <favorites_list name="Errorless Processing Piplines with Optionals" />
+  </component>
+  <component name="FileEditorManager">
+@MooHoll
+MooHoll/Allele-Specific_Bumblebee – CONTRIBUTING.md
+Showing the top two matches Last indexed on Dec 11, 2018
+Markdown
+- twitter: @mooholl 
+
+The goal of this project is to design and link piplines for allele-specific expression and allele-specific methylation for organisms with extremely low methylation levels, i.e. 0.5% CpGs. 
+In general, we follow the "fork-and-pull" Git workflow.
+
+**NOTE: Be sure to merge the latest from "upstream" before making a pull request!**
+@geomoose
+geomoose/geomoose – pipelines.map
+Showing the top two matches Last indexed on Jun 27, 2018
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+		METADATA
+			'ows_title' 'Piplines'
+			'ows_srs' 'EPSG:26915 EPSG:4326 EPSG:900913 EPSG:3857'
+© 2019 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
